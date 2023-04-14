@@ -9,6 +9,26 @@
   <body>
     <h1>NetworkMate</h1>
 
-    <h2>{{ .Name }}</h2>
+    <h2>Contacts</h2>
+    <ul>
+      {{ range .Contacts }}
+      <li>
+        <dl>
+          <dt>ID</dt>
+          <dd>{{ .ID }}</dd>
+        </dl>
+
+        <dl>
+          <dt>Name</dt>
+          <dd>{{ .Name }}</dd>
+        </dl>
+
+        <dl>
+          <dt>Address</dt>
+          <dd>{{ .Address }}</dd>
+        </dl>
+      </li>
+      {{ end }}
+    </ul>
   </body>
 </html>

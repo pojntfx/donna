@@ -5,15 +5,20 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/pojntfx/networkmate/pkg/models"
+	"github.com/pojntfx/networkmate/pkg/persisters"
 	"github.com/pojntfx/networkmate/pkg/templates"
 )
 
 type Backend struct {
-	tpl *template.Template
+	tpl       *template.Template
+	persister *persisters.Persister
 }
 
-func NewBackend() *Backend {
-	return &Backend{}
+func NewBackend(persister *persisters.Persister) *Backend {
+	return &Backend{
+		persister: persister,
+	}
 }
 
 func (b *Backend) Init() error {
@@ -28,12 +33,21 @@ func (b *Backend) Init() error {
 }
 
 type indexData struct {
-	Name string
+	Contacts []models.Contact
 }
 
 func (b *Backend) HandleIndex(w http.ResponseWriter, r *http.Request) {
+	contacts, err := b.persister.GetContacts(r.Context())
+	if err != nil {
+		log.Println("Could not fetch contacts:", err)
+
+		http.Error(w, "Could not fetch contacts", http.StatusInternalServerError)
+
+		return
+	}
+
 	if err := b.tpl.ExecuteTemplate(w, "index.html", indexData{
-		Name: "Felicitas",
+		Contacts: contacts,
 	}); err != nil {
 		log.Println("Could not render template, continuing:", err)
 

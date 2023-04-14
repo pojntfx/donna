@@ -1,6 +1,0 @@
-no-tests: true
-psql:
-  dbname: networkmate
-  user: postgres
-  sslmode: disable
-  host: localhost

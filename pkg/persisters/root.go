@@ -1,43 +1,48 @@
-package psql
+package persisters
+
+//go:generate sqlc -f ../../sqlc.yaml generate
 
 import (
+	"context"
 	"database/sql"
 
-	_ "github.com/lib/pq"
 	"github.com/pojntfx/networkmate/pkg/migrations"
-	migrate "github.com/rubenv/sql-migrate"
+	"github.com/pojntfx/networkmate/pkg/models"
+	"github.com/pressly/goose/v3"
 )
 
-//go:generate sqlboiler psql -o ../../pkg/models -c ../../sqlboiler.yaml
-
-type RootPersister struct {
-	db *sql.DB
+type Persister struct {
+	dbaddr  string
+	queries *models.Queries
 }
 
-func NewRootPersister() *RootPersister {
-	return &RootPersister{}
+func NewPersister(dbaddr string) *Persister {
+	return &Persister{
+		dbaddr: dbaddr,
+	}
 }
 
-func (p *RootPersister) Open(dbURL string) error {
-	// Connect to the DB
-	db, err := sql.Open("postgres", dbURL)
+func (p *Persister) Init() error {
+	db, err := sql.Open("postgres", p.dbaddr)
 	if err != nil {
 		return err
 	}
 
-	// Configure the db
-	db.SetMaxOpenConns(1) // Prevent "database locked" errors
+	goose.SetBaseFS(migrations.FS)
 
-	// Run migrations
-	if _, err := migrate.Exec(db, "postgres", migrate.AssetMigrationSource{
-		Asset:    migrations.Asset,
-		AssetDir: migrations.AssetDir,
-		Dir:      "../migrations",
-	}, migrate.Up); err != nil {
+	if err := goose.SetDialect("postgres"); err != nil {
 		return err
 	}
 
-	p.db = db
+	if err := goose.Up(db, "."); err != nil {
+		return err
+	}
+
+	p.queries = models.New(db)
 
 	return nil
+}
+
+func (p *Persister) GetContacts(ctx context.Context) ([]models.Contact, error) {
+	return p.queries.GetContacts(ctx)
 }
