@@ -1,4 +1,0 @@
-psql:
-  dialect: postgres
-  datasource: dbname=networkmate user=postgres sslmode=disable
-  dir: pkg/migrations

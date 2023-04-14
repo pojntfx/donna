@@ -4,12 +4,11 @@ import (
 	"database/sql"
 
 	_ "github.com/lib/pq"
-	"github.com/pojntfx/networkmate/internal/migrations"
+	"github.com/pojntfx/networkmate/pkg/migrations"
 	migrate "github.com/rubenv/sql-migrate"
 )
 
-//go:generate sqlboiler psql -o ../../internal/models -c ../../sqlboiler.yaml
-//go:generate go-bindata -pkg migrations -o ../../internal/migrations/migrations.go ../migrations
+//go:generate sqlboiler psql -o ../../pkg/models -c ../../sqlboiler.yaml
 
 type RootPersister struct {
 	db *sql.DB
