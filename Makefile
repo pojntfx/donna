@@ -1,5 +1,5 @@
 clean:
-	rm -rf pkg/models
+	rm -rf internal/models
 	docker rm -f networkmate-postgres
 
 depend: clean

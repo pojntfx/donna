@@ -5,9 +5,9 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/pojntfx/networkmate/pkg/models"
+	"github.com/pojntfx/networkmate/internal/models"
+	"github.com/pojntfx/networkmate/internal/templates"
 	"github.com/pojntfx/networkmate/pkg/persisters"
-	"github.com/pojntfx/networkmate/pkg/templates"
 )
 
 type Backend struct {
