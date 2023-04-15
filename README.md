@@ -1,6 +1,6 @@
-# NetworkMate
+# Donna
 
-Lean web 1.0-style personal CRM.
+Minimal personal CRM.
 
 ## Overview
 
@@ -8,6 +8,6 @@ Lean web 1.0-style personal CRM.
 
 ## License
 
-NetworkMate (c) 2023 Felicitas Pojtinger and contributors
+Donna (c) 2023 Felicitas Pojtinger and contributors
 
 SPDX-License-Identifier: AGPL-3.0

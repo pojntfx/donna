@@ -6,8 +6,8 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/pojntfx/networkmate/internal/migrations"
-	"github.com/pojntfx/networkmate/internal/models"
+	"github.com/pojntfx/donna/internal/migrations"
+	"github.com/pojntfx/donna/internal/models"
 	"github.com/pressly/goose/v3"
 )
 

@@ -6,13 +6,13 @@ import (
 	"net/http"
 
 	_ "github.com/lib/pq"
-	"github.com/pojntfx/networkmate/pkg/backend"
-	"github.com/pojntfx/networkmate/pkg/persisters"
+	"github.com/pojntfx/donna/pkg/backend"
+	"github.com/pojntfx/donna/pkg/persisters"
 )
 
 func main() {
 	laddr := flag.String("laddr", ":1337", "Listen address")
-	dbaddr := flag.String("dbaddr", "host=localhost user=postgres dbname=networkmate sslmode=disable", "Database address")
+	dbaddr := flag.String("dbaddr", "host=localhost user=postgres dbname=donna sslmode=disable", "Database address")
 
 	flag.Parse()
 

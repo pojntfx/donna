@@ -6,8 +6,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/pojntfx/networkmate/internal/templates"
-	"github.com/pojntfx/networkmate/pkg/persisters"
+	"github.com/pojntfx/donna/internal/templates"
+	"github.com/pojntfx/donna/pkg/persisters"
 )
 
 var (

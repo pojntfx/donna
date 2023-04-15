@@ -1,4 +1,4 @@
-module github.com/pojntfx/networkmate
+module github.com/pojntfx/donna
 
 go 1.20
 

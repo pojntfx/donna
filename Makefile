@@ -1,10 +1,10 @@
 clean:
 	rm -rf internal/models
-	docker rm -f networkmate-postgres
+	docker rm -f donna-postgres
 
 depend: clean
-	docker run -d --name networkmate-postgres -p 5432:5432 -e POSTGRES_HOST_AUTH_METHOD=trust -e POSTGRES_DB=networkmate postgres
-	docker exec networkmate-postgres bash -c 'until pg_isready; do sleep 1; done'
+	docker run -d --name donna-postgres -p 5432:5432 -e POSTGRES_HOST_AUTH_METHOD=trust -e POSTGRES_DB=donna postgres
+	docker exec donna-postgres bash -c 'until pg_isready; do sleep 1; done'
 
 	go install github.com/kyleconroy/sqlc/cmd/sqlc@latest
 
