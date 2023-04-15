@@ -1,34 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>NetworkMate</title>
-  </head>
+  {{ template "header.html" . }}
+
   <body>
-    <h1>NetworkMate</h1>
-
-    <h2>Contacts</h2>
-    <ul>
-      {{ range .Contacts }}
-      <li>
-        <dl>
-          <dt>ID</dt>
-          <dd>{{ .ID }}</dd>
-        </dl>
-
-        <dl>
-          <dt>Name</dt>
-          <dd>{{ .Name }}</dd>
-        </dl>
-
-        <dl>
-          <dt>Address</dt>
-          <dd>{{ .Address }}</dd>
-        </dl>
-      </li>
-      {{ end }}
-    </ul>
+    {{ template "nav.html" . }} {{ template "footer.html" . }}
   </body>
 </html>

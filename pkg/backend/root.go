@@ -1,13 +1,17 @@
 package backend
 
 import (
+	"errors"
 	"html/template"
 	"log"
 	"net/http"
 
-	"github.com/pojntfx/networkmate/internal/models"
 	"github.com/pojntfx/networkmate/internal/templates"
 	"github.com/pojntfx/networkmate/pkg/persisters"
+)
+
+var (
+	errCouldNotRenderTemplate = errors.New("could not render template")
 )
 
 type Backend struct {
@@ -33,25 +37,32 @@ func (b *Backend) Init() error {
 }
 
 type indexData struct {
-	Contacts []models.Contact
+	Page string
 }
 
 func (b *Backend) HandleIndex(w http.ResponseWriter, r *http.Request) {
-	contacts, err := b.persister.GetContacts(r.Context())
-	if err != nil {
-		log.Println("Could not fetch contacts:", err)
+	if r.URL.Path != "/" {
+		w.WriteHeader(http.StatusNotFound)
 
-		http.Error(w, "Could not fetch contacts", http.StatusInternalServerError)
+		if err := b.tpl.ExecuteTemplate(w, "404.html", indexData{
+			Page: "Page not found",
+		}); err != nil {
+			log.Println(errCouldNotRenderTemplate, err)
+
+			http.Error(w, errCouldNotRenderTemplate.Error(), http.StatusInternalServerError)
+
+			return
+		}
 
 		return
 	}
 
 	if err := b.tpl.ExecuteTemplate(w, "index.html", indexData{
-		Contacts: contacts,
+		Page: "Home",
 	}); err != nil {
-		log.Println("Could not render template, continuing:", err)
+		log.Println(errCouldNotRenderTemplate, err)
 
-		http.Error(w, "Could not render template", http.StatusInternalServerError)
+		http.Error(w, errCouldNotRenderTemplate.Error(), http.StatusInternalServerError)
 
 		return
 	}
