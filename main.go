@@ -56,6 +56,7 @@ func main() {
 
 	mux := http.NewServeMux()
 
+	mux.HandleFunc("/journal", b.HandleJournal)
 	mux.HandleFunc("/", b.HandleIndex)
 
 	log.Println("Listening on", *laddr)

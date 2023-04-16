@@ -1,3 +1,3 @@
--- name: GetContacts :many
+-- name: GetJournalEntries :many
 select *
-from contacts;
+from journal_entries;

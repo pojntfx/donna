@@ -4,10 +4,13 @@
 
 package models
 
-import ()
+import (
+	"time"
+)
 
-type Contact struct {
-	ID      string
-	Name    string
-	Address string
+type JournalEntry struct {
+	ID    int32
+	Title string
+	Date  time.Time
+	Body  string
 }

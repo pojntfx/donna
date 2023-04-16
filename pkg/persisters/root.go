@@ -43,6 +43,6 @@ func (p *Persister) Init() error {
 	return nil
 }
 
-func (p *Persister) GetContacts(ctx context.Context) ([]models.Contact, error) {
-	return p.queries.GetContacts(ctx)
+func (p *Persister) GetJournalEntries(ctx context.Context) ([]models.JournalEntry, error) {
+	return p.queries.GetJournalEntries(ctx)
 }

@@ -9,21 +9,26 @@ import (
 	"context"
 )
 
-const getContacts = `-- name: GetContacts :many
-select id, name, address
-from contacts
+const getJournalEntries = `-- name: GetJournalEntries :many
+select id, title, date, body
+from journal_entries
 `
 
-func (q *Queries) GetContacts(ctx context.Context) ([]Contact, error) {
-	rows, err := q.db.QueryContext(ctx, getContacts)
+func (q *Queries) GetJournalEntries(ctx context.Context) ([]JournalEntry, error) {
+	rows, err := q.db.QueryContext(ctx, getJournalEntries)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Contact
+	var items []JournalEntry
 	for rows.Next() {
-		var i Contact
-		if err := rows.Scan(&i.ID, &i.Name, &i.Address); err != nil {
+		var i JournalEntry
+		if err := rows.Scan(
+			&i.ID,
+			&i.Title,
+			&i.Date,
+			&i.Body,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
