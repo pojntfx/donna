@@ -3,7 +3,10 @@ package main
 import (
 	"flag"
 	"log"
+	"net"
 	"net/http"
+	"os"
+	"strconv"
 
 	_ "github.com/lib/pq"
 	"github.com/pojntfx/donna/pkg/backend"
@@ -11,10 +14,33 @@ import (
 )
 
 func main() {
-	laddr := flag.String("laddr", ":1337", "Listen address")
-	dbaddr := flag.String("dbaddr", "host=localhost user=postgres dbname=donna sslmode=disable", "Database address")
+	laddr := flag.String("laddr", ":1337", "Listen address (port can also be set with `PORT` env variable)")
+	dbaddr := flag.String("dbaddr", "postgresql://postgres@localhost:5432/donna?sslmode=disable", "Database address (can also be set using `DATABASE_URL` env variable)")
 
 	flag.Parse()
+
+	if p := os.Getenv("PORT"); p != "" {
+		log.Println("Using port from PORT env variable")
+
+		la, err := net.ResolveTCPAddr("tcp", *laddr)
+		if err != nil {
+			panic(err)
+		}
+
+		p, err := strconv.Atoi(p)
+		if err != nil {
+			panic(err)
+		}
+
+		la.Port = p
+		*laddr = la.String()
+	}
+
+	if da := os.Getenv("DATABASE_URL"); da != "" {
+		log.Println("Using database address from DATABASE_URL env variable")
+
+		*dbaddr = da
+	}
 
 	p := persisters.NewPersister(*dbaddr)
 
