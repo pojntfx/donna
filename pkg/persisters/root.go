@@ -46,3 +46,10 @@ func (p *Persister) Init() error {
 func (p *Persister) GetJournalEntries(ctx context.Context) ([]models.JournalEntry, error) {
 	return p.queries.GetJournalEntries(ctx)
 }
+
+func (p *Persister) CreateJournalEntries(ctx context.Context, title, body string) error {
+	return p.queries.CreateJournalEntries(ctx, models.CreateJournalEntriesParams{
+		Title: title,
+		Body:  body,
+	})
+}

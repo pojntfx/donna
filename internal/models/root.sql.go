@@ -9,6 +9,21 @@ import (
 	"context"
 )
 
+const createJournalEntries = `-- name: CreateJournalEntries :exec
+insert into journal_entries (title, body)
+values ($1, $2)
+`
+
+type CreateJournalEntriesParams struct {
+	Title string
+	Body  string
+}
+
+func (q *Queries) CreateJournalEntries(ctx context.Context, arg CreateJournalEntriesParams) error {
+	_, err := q.db.ExecContext(ctx, createJournalEntries, arg.Title, arg.Body)
+	return err
+}
+
 const getJournalEntries = `-- name: GetJournalEntries :many
 select id, title, date, body
 from journal_entries

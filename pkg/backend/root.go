@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/pojntfx/donna/internal/models"
 	"github.com/pojntfx/donna/internal/templates"
@@ -14,6 +15,9 @@ import (
 var (
 	errCouldNotRenderTemplate = errors.New("could not render template")
 	errCouldNotFetchFromDB    = errors.New("could not fetch from DB")
+	errCouldNotParseForm      = errors.New("could not parse form")
+	errInvalidForm            = errors.New("could not use invalid form")
+	errCouldNotInsertIntoDB   = errors.New("could not insert into DB")
 )
 
 type Backend struct {
@@ -46,7 +50,7 @@ func (b *Backend) Init() error {
 	return nil
 }
 
-type indexData struct {
+type pageData struct {
 	Page string
 }
 
@@ -54,7 +58,7 @@ func (b *Backend) HandleIndex(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		w.WriteHeader(http.StatusNotFound)
 
-		if err := b.tpl.ExecuteTemplate(w, "404.html", indexData{
+		if err := b.tpl.ExecuteTemplate(w, "404.html", pageData{
 			Page: "Page not found",
 		}); err != nil {
 			log.Println(errCouldNotRenderTemplate, err)
@@ -67,7 +71,7 @@ func (b *Backend) HandleIndex(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := b.tpl.ExecuteTemplate(w, "index.html", indexData{
+	if err := b.tpl.ExecuteTemplate(w, "index.html", pageData{
 		Page: "Home",
 	}); err != nil {
 		log.Println(errCouldNotRenderTemplate, err)
@@ -79,7 +83,7 @@ func (b *Backend) HandleIndex(w http.ResponseWriter, r *http.Request) {
 }
 
 type journalData struct {
-	indexData
+	pageData
 	Entries []models.JournalEntry
 }
 
@@ -94,7 +98,7 @@ func (b *Backend) HandleJournal(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := b.tpl.ExecuteTemplate(w, "journal.html", journalData{
-		indexData: indexData{
+		pageData: pageData{
 			Page: "Journal",
 		},
 		Entries: journalEntries,
@@ -105,4 +109,54 @@ func (b *Backend) HandleJournal(w http.ResponseWriter, r *http.Request) {
 
 		return
 	}
+}
+
+func (b *Backend) HandleAddJournal(w http.ResponseWriter, r *http.Request) {
+	if err := b.tpl.ExecuteTemplate(w, "journal_add.html", pageData{
+		Page: "Journal",
+	}); err != nil {
+		log.Println(errCouldNotRenderTemplate, err)
+
+		http.Error(w, errCouldNotRenderTemplate.Error(), http.StatusInternalServerError)
+
+		return
+	}
+}
+
+func (b *Backend) HandleCreateJournal(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		log.Println(errCouldNotParseForm, err)
+
+		http.Error(w, errCouldNotParseForm.Error(), http.StatusInternalServerError)
+
+		return
+	}
+
+	title := r.FormValue("title")
+	if strings.TrimSpace(title) == "" {
+		log.Println(errInvalidForm)
+
+		http.Error(w, errInvalidForm.Error(), http.StatusUnprocessableEntity)
+
+		return
+	}
+
+	body := r.FormValue("body")
+	if strings.TrimSpace(body) == "" {
+		log.Println(errInvalidForm)
+
+		http.Error(w, errInvalidForm.Error(), http.StatusUnprocessableEntity)
+
+		return
+	}
+
+	if err := b.persister.CreateJournalEntries(r.Context(), title, body); err != nil {
+		log.Println(errCouldNotInsertIntoDB, err)
+
+		http.Error(w, errCouldNotInsertIntoDB.Error(), http.StatusInternalServerError)
+
+		return
+	}
+
+	http.Redirect(w, r, "/journal", http.StatusFound)
 }

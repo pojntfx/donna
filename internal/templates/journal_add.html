@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  {{ template "header.html" . }}
+
+  <body>
+    {{ template "nav.html" . }}
+
+    <h1>Add a Journal Entry</h1>
+
+    <form action="/journal/create">
+      <label for="title">Title</label>
+      <br />
+      <input type="text" name="title" id="title" required />
+      <br />
+
+      <label for="body">Body</label>
+      <br />
+      <textarea name="body" id="body" required></textarea>
+      <br />
+
+      <input type="submit" value="Add journal" />
+    </form>
+
+    {{ template "footer.html" . }}
+  </body>
+</html>
