@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/pojntfx/donna/internal/models"
@@ -18,6 +19,7 @@ var (
 	errCouldNotParseForm      = errors.New("could not parse form")
 	errInvalidForm            = errors.New("could not use invalid form")
 	errCouldNotInsertIntoDB   = errors.New("could not insert into DB")
+	errCouldNotDeleteFromDB   = errors.New("could not delete from DB")
 )
 
 type Backend struct {
@@ -150,10 +152,48 @@ func (b *Backend) HandleCreateJournal(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := b.persister.CreateJournalEntries(r.Context(), title, body); err != nil {
+	if err := b.persister.CreateJournalEntry(r.Context(), title, body); err != nil {
 		log.Println(errCouldNotInsertIntoDB, err)
 
 		http.Error(w, errCouldNotInsertIntoDB.Error(), http.StatusInternalServerError)
+
+		return
+	}
+
+	http.Redirect(w, r, "/journal", http.StatusFound)
+}
+
+func (b *Backend) HandleDeleteJournal(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		log.Println(errCouldNotParseForm, err)
+
+		http.Error(w, errCouldNotParseForm.Error(), http.StatusInternalServerError)
+
+		return
+	}
+
+	rid := r.FormValue("id")
+	if strings.TrimSpace(rid) == "" {
+		log.Println(errInvalidForm)
+
+		http.Error(w, errInvalidForm.Error(), http.StatusUnprocessableEntity)
+
+		return
+	}
+
+	id, err := strconv.Atoi(rid)
+	if err != nil {
+		log.Println(errInvalidForm)
+
+		http.Error(w, errInvalidForm.Error(), http.StatusUnprocessableEntity)
+
+		return
+	}
+
+	if err := b.persister.DeleteJournalEntry(r.Context(), int32(id)); err != nil {
+		log.Println(errCouldNotDeleteFromDB, err)
+
+		http.Error(w, errCouldNotDeleteFromDB.Error(), http.StatusInternalServerError)
 
 		return
 	}

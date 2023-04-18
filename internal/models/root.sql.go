@@ -9,18 +9,28 @@ import (
 	"context"
 )
 
-const createJournalEntries = `-- name: CreateJournalEntries :exec
+const createJournalEntry = `-- name: CreateJournalEntry :exec
 insert into journal_entries (title, body)
 values ($1, $2)
 `
 
-type CreateJournalEntriesParams struct {
+type CreateJournalEntryParams struct {
 	Title string
 	Body  string
 }
 
-func (q *Queries) CreateJournalEntries(ctx context.Context, arg CreateJournalEntriesParams) error {
-	_, err := q.db.ExecContext(ctx, createJournalEntries, arg.Title, arg.Body)
+func (q *Queries) CreateJournalEntry(ctx context.Context, arg CreateJournalEntryParams) error {
+	_, err := q.db.ExecContext(ctx, createJournalEntry, arg.Title, arg.Body)
+	return err
+}
+
+const deleteJournalEntry = `-- name: DeleteJournalEntry :exec
+delete from journal_entries
+where id = $1
+`
+
+func (q *Queries) DeleteJournalEntry(ctx context.Context, id int32) error {
+	_, err := q.db.ExecContext(ctx, deleteJournalEntry, id)
 	return err
 }
 

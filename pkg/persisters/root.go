@@ -47,9 +47,13 @@ func (p *Persister) GetJournalEntries(ctx context.Context) ([]models.JournalEntr
 	return p.queries.GetJournalEntries(ctx)
 }
 
-func (p *Persister) CreateJournalEntries(ctx context.Context, title, body string) error {
-	return p.queries.CreateJournalEntries(ctx, models.CreateJournalEntriesParams{
+func (p *Persister) CreateJournalEntry(ctx context.Context, title, body string) error {
+	return p.queries.CreateJournalEntry(ctx, models.CreateJournalEntryParams{
 		Title: title,
 		Body:  body,
 	})
+}
+
+func (p *Persister) DeleteJournalEntry(ctx context.Context, id int32) error {
+	return p.queries.DeleteJournalEntry(ctx, id)
 }

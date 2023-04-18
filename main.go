@@ -58,6 +58,7 @@ func main() {
 
 	mux.HandleFunc("/journal/add", b.HandleAddJournal)
 	mux.HandleFunc("/journal/create", b.HandleCreateJournal)
+	mux.HandleFunc("/journal/delete", b.HandleDeleteJournal)
 	mux.HandleFunc("/journal", b.HandleJournal)
 	mux.HandleFunc("/", b.HandleIndex)
 
