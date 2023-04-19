@@ -66,3 +66,39 @@ func (q *Queries) GetJournalEntries(ctx context.Context) ([]JournalEntry, error)
 	}
 	return items, nil
 }
+
+const getJournalEntry = `-- name: GetJournalEntry :one
+select id, title, date, body
+from journal_entries
+where id = $1
+`
+
+func (q *Queries) GetJournalEntry(ctx context.Context, id int32) (JournalEntry, error) {
+	row := q.db.QueryRowContext(ctx, getJournalEntry, id)
+	var i JournalEntry
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.Date,
+		&i.Body,
+	)
+	return i, err
+}
+
+const updateJournalEntry = `-- name: UpdateJournalEntry :exec
+update journal_entries
+set title = $2,
+    body = $3
+where id = $1
+`
+
+type UpdateJournalEntryParams struct {
+	ID    int32
+	Title string
+	Body  string
+}
+
+func (q *Queries) UpdateJournalEntry(ctx context.Context, arg UpdateJournalEntryParams) error {
+	_, err := q.db.ExecContext(ctx, updateJournalEntry, arg.ID, arg.Title, arg.Body)
+	return err
+}

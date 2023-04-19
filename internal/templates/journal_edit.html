@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  {{ template "header.html" . }}
+
+  <body>
+    {{ template "nav.html" . }}
+
+    <h1>Edit a Journal Entry</h1>
+
+    <form action="/journal/update?id={{ .Entry.ID }}">
+      <label for="title">Title</label>
+      <br />
+      <input
+        type="text"
+        name="title"
+        id="title"
+        value="{{ .Entry.Title }}"
+        required
+      />
+      <br />
+
+      <label for="body">Body</label>
+      <br />
+      <textarea name="body" id="body" required>{{ .Entry.Body }}</textarea>
+      <br />
+
+      <a href="/journal">Cancel</a>
+
+      <input type="submit" value="Save changes" />
+    </form>
+
+    {{ template "footer.html" . }}
+  </body>
+</html>

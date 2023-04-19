@@ -20,6 +20,8 @@ var (
 	errInvalidForm            = errors.New("could not use invalid form")
 	errCouldNotInsertIntoDB   = errors.New("could not insert into DB")
 	errCouldNotDeleteFromDB   = errors.New("could not delete from DB")
+	errCouldNotUpdateInDB     = errors.New("could not update in DB")
+	errInvalidQueryParam      = errors.New("could not use invalid query parameter")
 )
 
 type Backend struct {
@@ -89,6 +91,11 @@ type journalData struct {
 	Entries []models.JournalEntry
 }
 
+type journalEntryData struct {
+	pageData
+	Entry models.JournalEntry
+}
+
 func (b *Backend) HandleJournal(w http.ResponseWriter, r *http.Request) {
 	journalEntries, err := b.persister.GetJournalEntries(r.Context())
 	if err != nil {
@@ -115,7 +122,7 @@ func (b *Backend) HandleJournal(w http.ResponseWriter, r *http.Request) {
 
 func (b *Backend) HandleAddJournal(w http.ResponseWriter, r *http.Request) {
 	if err := b.tpl.ExecuteTemplate(w, "journal_add.html", pageData{
-		Page: "Journal",
+		Page: "Add Journal Entry",
 	}); err != nil {
 		log.Println(errCouldNotRenderTemplate, err)
 
@@ -194,6 +201,104 @@ func (b *Backend) HandleDeleteJournal(w http.ResponseWriter, r *http.Request) {
 		log.Println(errCouldNotDeleteFromDB, err)
 
 		http.Error(w, errCouldNotDeleteFromDB.Error(), http.StatusInternalServerError)
+
+		return
+	}
+
+	http.Redirect(w, r, "/journal", http.StatusFound)
+}
+
+func (b *Backend) HandleEditJournal(w http.ResponseWriter, r *http.Request) {
+	rid := r.FormValue("id")
+	if strings.TrimSpace(rid) == "" {
+		log.Println(errInvalidQueryParam)
+
+		http.Error(w, errInvalidQueryParam.Error(), http.StatusUnprocessableEntity)
+
+		return
+	}
+
+	id, err := strconv.Atoi(rid)
+	if err != nil {
+		log.Println(errInvalidQueryParam)
+
+		http.Error(w, errInvalidQueryParam.Error(), http.StatusUnprocessableEntity)
+
+		return
+	}
+
+	journalEntry, err := b.persister.GetJournalEntry(r.Context(), int32(id))
+	if err != nil {
+		log.Println(errCouldNotFetchFromDB, err)
+
+		http.Error(w, errCouldNotFetchFromDB.Error(), http.StatusInternalServerError)
+
+		return
+	}
+
+	if err := b.tpl.ExecuteTemplate(w, "journal_edit.html", journalEntryData{
+		pageData: pageData{
+			Page: "Edit Journal Entry",
+		},
+		Entry: journalEntry,
+	}); err != nil {
+		log.Println(errCouldNotRenderTemplate, err)
+
+		http.Error(w, errCouldNotRenderTemplate.Error(), http.StatusInternalServerError)
+
+		return
+	}
+}
+
+func (b *Backend) HandleUpdateJournal(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		log.Println(errCouldNotParseForm, err)
+
+		http.Error(w, errCouldNotParseForm.Error(), http.StatusInternalServerError)
+
+		return
+	}
+
+	rid := r.FormValue("id")
+	if strings.TrimSpace(rid) == "" {
+		log.Println(errInvalidForm)
+
+		http.Error(w, errInvalidForm.Error(), http.StatusUnprocessableEntity)
+
+		return
+	}
+
+	id, err := strconv.Atoi(rid)
+	if err != nil {
+		log.Println(errInvalidForm)
+
+		http.Error(w, errInvalidForm.Error(), http.StatusUnprocessableEntity)
+
+		return
+	}
+
+	title := r.FormValue("title")
+	if strings.TrimSpace(title) == "" {
+		log.Println(errInvalidForm)
+
+		http.Error(w, errInvalidForm.Error(), http.StatusUnprocessableEntity)
+
+		return
+	}
+
+	body := r.FormValue("body")
+	if strings.TrimSpace(body) == "" {
+		log.Println(errInvalidForm)
+
+		http.Error(w, errInvalidForm.Error(), http.StatusUnprocessableEntity)
+
+		return
+	}
+
+	if err := b.persister.UpdateJournalEntry(r.Context(), int32(id), title, body); err != nil {
+		log.Println(errCouldNotUpdateInDB, err)
+
+		http.Error(w, errCouldNotInsertIntoDB.Error(), http.StatusInternalServerError)
 
 		return
 	}

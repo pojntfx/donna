@@ -56,10 +56,14 @@ func main() {
 
 	mux := http.NewServeMux()
 
+	mux.HandleFunc("/journal", b.HandleJournal)
 	mux.HandleFunc("/journal/add", b.HandleAddJournal)
+	mux.HandleFunc("/journal/edit", b.HandleEditJournal)
+
 	mux.HandleFunc("/journal/create", b.HandleCreateJournal)
 	mux.HandleFunc("/journal/delete", b.HandleDeleteJournal)
-	mux.HandleFunc("/journal", b.HandleJournal)
+	mux.HandleFunc("/journal/update", b.HandleUpdateJournal)
+
 	mux.HandleFunc("/", b.HandleIndex)
 
 	log.Println("Listening on", *laddr)
