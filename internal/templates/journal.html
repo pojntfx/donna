@@ -13,9 +13,9 @@
       {{ range .Entries }}
       <li>
         <h2>
-          <a href="/journal/view?id={{ .ID }}">{{ .Title }}</a>
-
-          <p>{{ .Date }}</p>
+          <a href="/journal/view?id={{ .ID }}"
+            >{{ .Date.Format "2006-01-02" }}: {{ .Title }}</a
+          >
 
           <p>{{ TruncateText .Body 24 }}</p>
 

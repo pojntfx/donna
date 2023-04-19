@@ -7,7 +7,9 @@
 
     <h1>Edit a Journal Entry</h1>
 
-    <form action="/journal/update?id={{ .Entry.ID }}">
+    <form action="/journal/update">
+      <input type="hidden" name="id" id="id" value="{{ .Entry.ID }}" />
+
       <label for="title">Title</label>
       <br />
       <input
