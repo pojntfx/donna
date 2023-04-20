@@ -1,0 +1,34 @@
+body {
+  font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui,
+    helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial,
+    sans-serif;
+  margin: 0 auto;
+  max-width: 50rem;
+  line-height: 1.5em;
+  padding: 0 1rem 1rem 1rem;
+}
+
+body > header {
+  width: 100%;
+}
+
+body > header,
+body > header:first-child > div,
+body > footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+body > header:first-child > div > form {
+  margin-left: 1rem;
+}
+
+body > main {
+  margin: 1rem 0;
+}
+
+main > ul {
+  list-style-type: none;
+  padding: 0;
+}

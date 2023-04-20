@@ -5,21 +5,25 @@
   <body>
     {{ template "nav.html" . }}
 
-    <h1>Add a Journal Entry</h1>
+    <header>
+      <h2>Add a Journal Entry</h2>
+    </header>
 
-    <form action="/journal/create">
-      <label for="title">Title</label>
-      <br />
-      <input type="text" name="title" id="title" required />
-      <br />
+    <main>
+      <form action="/journal/create">
+        <label for="title">Title</label>
+        <br />
+        <input type="text" name="title" id="title" required />
+        <br />
 
-      <label for="body">Body</label>
-      <br />
-      <textarea name="body" id="body" required></textarea>
-      <br />
+        <label for="body">Body</label>
+        <br />
+        <textarea name="body" id="body" required></textarea>
+        <br />
 
-      <input type="submit" value="Add entry" />
-    </form>
+        <input type="submit" value="Add entry" />
+      </form>
+    </main>
 
     {{ template "footer.html" . }}
   </body>

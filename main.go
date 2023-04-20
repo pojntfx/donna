@@ -9,6 +9,7 @@ import (
 	"strconv"
 
 	_ "github.com/lib/pq"
+	"github.com/pojntfx/donna/internal/static"
 	"github.com/pojntfx/donna/pkg/backend"
 	"github.com/pojntfx/donna/pkg/persisters"
 )
@@ -55,6 +56,8 @@ func main() {
 	}
 
 	mux := http.NewServeMux()
+
+	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.FS(static.FS))))
 
 	mux.HandleFunc("/journal", b.HandleJournal)
 	mux.HandleFunc("/journal/add", b.HandleAddJournal)
