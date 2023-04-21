@@ -44,6 +44,7 @@ body > footer {
 
 main input[type="text"],
 main textarea {
+  box-sizing: border-box;
   width: 100%;
 }
 
