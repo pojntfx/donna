@@ -1,6 +1,7 @@
 package backend
 
 import (
+	"bytes"
 	"errors"
 	"html/template"
 	"log"
@@ -11,6 +12,8 @@ import (
 	"github.com/pojntfx/donna/internal/models"
 	"github.com/pojntfx/donna/internal/templates"
 	"github.com/pojntfx/donna/pkg/persisters"
+	"github.com/yuin/goldmark"
+	"github.com/yuin/goldmark/extension"
 )
 
 var (
@@ -36,6 +39,10 @@ func NewBackend(persister *persisters.Persister) *Backend {
 }
 
 func (b *Backend) Init() error {
+	md := goldmark.New(
+		goldmark.WithExtensions(extension.GFM),
+	)
+
 	tpl, err := template.New("").Funcs(template.FuncMap{
 		"TruncateText": func(text string, length int) string {
 			if len(text) <= length {
@@ -43,6 +50,14 @@ func (b *Backend) Init() error {
 			}
 
 			return text[:length] + "…"
+		},
+		"RenderMarkdown": func(text string) template.HTML {
+			var buf bytes.Buffer
+			if err := md.Convert([]byte(text), &buf); err != nil {
+				panic(err)
+			}
+
+			return template.HTML(buf.String())
 		},
 	}).ParseFS(templates.FS, "*.html")
 	if err != nil {

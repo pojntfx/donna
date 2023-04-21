@@ -12,7 +12,7 @@
     </header>
 
     <main>
-      <p>{{ .Entry.Body }}</p>
+      {{ RenderMarkdown .Entry.Body }}
 
       <form
         id="delete"

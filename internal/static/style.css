@@ -21,7 +21,7 @@ body > footer {
   flex-wrap: wrap;
 }
 
-main > ul > li > div:last-child {
+ul > li > div:last-child {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -33,7 +33,7 @@ body > footer > a:first-child {
   margin-right: 1rem;
 }
 
-main > ul {
+body > ul {
   list-style-type: none;
   padding: 0;
 }
