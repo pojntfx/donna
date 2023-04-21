@@ -37,6 +37,7 @@ func (q *Queries) DeleteJournalEntry(ctx context.Context, id int32) error {
 const getJournalEntries = `-- name: GetJournalEntries :many
 select id, title, date, body
 from journal_entries
+order by date desc
 `
 
 func (q *Queries) GetJournalEntries(ctx context.Context) ([]JournalEntry, error) {

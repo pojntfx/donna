@@ -1,6 +1,7 @@
 -- name: GetJournalEntries :many
 select *
-from journal_entries;
+from journal_entries
+order by date desc;
 -- name: GetJournalEntry :one
 select *
 from journal_entries
