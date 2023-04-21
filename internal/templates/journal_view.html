@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  {{ template "header.html" . }}
+
+  <body>
+    {{ template "nav.html" . }}
+
+    <header>
+      <h2>{{ .Entry.Title }}</h2>
+
+      <div>{{ .Entry.Date.Format "2006-01-02 15:04" }}</div>
+    </header>
+
+    <main>
+      <p>{{ .Entry.Body }}</p>
+
+      <form
+        id="delete"
+        action="/journal/delete?id={{ .Entry.ID }}"
+        method="post"
+        onsubmit="return confirm('Are you sure you want to delete this entry?')"
+      ></form>
+
+      <div>
+        <input type="submit" value="Delete" form="delete" />
+
+        <a href="/journal/edit?id={{ .Entry.ID }}">Edit</a>
+      </div>
+    </main>
+
+    {{ template "footer.html" . }}
+  </body>
+</html>

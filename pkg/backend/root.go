@@ -305,3 +305,45 @@ func (b *Backend) HandleUpdateJournal(w http.ResponseWriter, r *http.Request) {
 
 	http.Redirect(w, r, "/journal", http.StatusFound)
 }
+
+func (b *Backend) HandleViewJournal(w http.ResponseWriter, r *http.Request) {
+	rid := r.FormValue("id")
+	if strings.TrimSpace(rid) == "" {
+		log.Println(errInvalidQueryParam)
+
+		http.Error(w, errInvalidQueryParam.Error(), http.StatusUnprocessableEntity)
+
+		return
+	}
+
+	id, err := strconv.Atoi(rid)
+	if err != nil {
+		log.Println(errInvalidQueryParam)
+
+		http.Error(w, errInvalidQueryParam.Error(), http.StatusUnprocessableEntity)
+
+		return
+	}
+
+	journalEntry, err := b.persister.GetJournalEntry(r.Context(), int32(id))
+	if err != nil {
+		log.Println(errCouldNotFetchFromDB, err)
+
+		http.Error(w, errCouldNotFetchFromDB.Error(), http.StatusInternalServerError)
+
+		return
+	}
+
+	if err := b.tpl.ExecuteTemplate(w, "journal_view.html", journalEntryData{
+		pageData: pageData{
+			Page: journalEntry.Title,
+		},
+		Entry: journalEntry,
+	}); err != nil {
+		log.Println(errCouldNotRenderTemplate, err)
+
+		http.Error(w, errCouldNotRenderTemplate.Error(), http.StatusInternalServerError)
+
+		return
+	}
+}
