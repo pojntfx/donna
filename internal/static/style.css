@@ -49,3 +49,11 @@ main textarea {
 a:not(:hover) {
   text-decoration: none;
 }
+
+nav > a {
+  padding-left: 0.1rem;
+}
+
+nav > a:not(:last-child) {
+  padding-right: 0.1rem;
+}
