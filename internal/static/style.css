@@ -28,7 +28,8 @@ main > ul > li > div:last-child {
 }
 
 body > header:first-child > div > h1,
-input[type="submit"] {
+body > header:nth-child(2) > h2,
+body > footer > a:first-child {
   margin-right: 1rem;
 }
 
@@ -56,4 +57,13 @@ nav > a {
 
 nav > a:not(:last-child) {
   padding-right: 0.1rem;
+}
+
+nav {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+input[type="submit"] {
+  margin-right: 0.5rem;
 }
