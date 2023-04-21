@@ -68,6 +68,8 @@ func main() {
 	mux.HandleFunc("/journal/delete", b.HandleDeleteJournal)
 	mux.HandleFunc("/journal/update", b.HandleUpdateJournal)
 
+	mux.HandleFunc("/imprint", b.HandleImprint)
+
 	mux.HandleFunc("/", b.HandleIndex)
 
 	log.Println("Listening on", *laddr)

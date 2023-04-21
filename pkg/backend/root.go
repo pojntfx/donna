@@ -347,3 +347,15 @@ func (b *Backend) HandleViewJournal(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func (b *Backend) HandleImprint(w http.ResponseWriter, r *http.Request) {
+	if err := b.tpl.ExecuteTemplate(w, "imprint.html", pageData{
+		Page: "Imprint",
+	}); err != nil {
+		log.Println(errCouldNotRenderTemplate, err)
+
+		http.Error(w, errCouldNotRenderTemplate.Error(), http.StatusInternalServerError)
+
+		return
+	}
+}
