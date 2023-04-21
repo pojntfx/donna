@@ -3,6 +3,7 @@ package backend
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -174,7 +175,8 @@ func (b *Backend) HandleCreateJournal(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := b.persister.CreateJournalEntry(r.Context(), title, body); err != nil {
+	id, err := b.persister.CreateJournalEntry(r.Context(), title, body)
+	if err != nil {
 		log.Println(errCouldNotInsertIntoDB, err)
 
 		http.Error(w, errCouldNotInsertIntoDB.Error(), http.StatusInternalServerError)
@@ -182,7 +184,7 @@ func (b *Backend) HandleCreateJournal(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "/journal", http.StatusFound)
+	http.Redirect(w, r, fmt.Sprintf("/journal/view?id=%v", id), http.StatusFound)
 }
 
 func (b *Backend) HandleDeleteJournal(w http.ResponseWriter, r *http.Request) {
@@ -318,7 +320,7 @@ func (b *Backend) HandleUpdateJournal(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "/journal", http.StatusFound)
+	http.Redirect(w, r, "/journal/view?id="+rid, http.StatusFound)
 }
 
 func (b *Backend) HandleViewJournal(w http.ResponseWriter, r *http.Request) {

@@ -9,9 +9,10 @@ import (
 	"context"
 )
 
-const createJournalEntry = `-- name: CreateJournalEntry :exec
+const createJournalEntry = `-- name: CreateJournalEntry :one
 insert into journal_entries (title, body)
 values ($1, $2)
+returning id
 `
 
 type CreateJournalEntryParams struct {
@@ -19,9 +20,11 @@ type CreateJournalEntryParams struct {
 	Body  string
 }
 
-func (q *Queries) CreateJournalEntry(ctx context.Context, arg CreateJournalEntryParams) error {
-	_, err := q.db.ExecContext(ctx, createJournalEntry, arg.Title, arg.Body)
-	return err
+func (q *Queries) CreateJournalEntry(ctx context.Context, arg CreateJournalEntryParams) (int32, error) {
+	row := q.db.QueryRowContext(ctx, createJournalEntry, arg.Title, arg.Body)
+	var id int32
+	err := row.Scan(&id)
+	return id, err
 }
 
 const deleteJournalEntry = `-- name: DeleteJournalEntry :exec

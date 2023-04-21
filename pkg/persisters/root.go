@@ -47,7 +47,7 @@ func (p *Persister) GetJournalEntries(ctx context.Context) ([]models.JournalEntr
 	return p.queries.GetJournalEntries(ctx)
 }
 
-func (p *Persister) CreateJournalEntry(ctx context.Context, title, body string) error {
+func (p *Persister) CreateJournalEntry(ctx context.Context, title, body string) (int32, error) {
 	return p.queries.CreateJournalEntry(ctx, models.CreateJournalEntryParams{
 		Title: title,
 		Body:  body,

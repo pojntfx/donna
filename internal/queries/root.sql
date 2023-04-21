@@ -6,9 +6,10 @@ order by date desc;
 select *
 from journal_entries
 where id = $1;
--- name: CreateJournalEntry :exec
+-- name: CreateJournalEntry :one
 insert into journal_entries (title, body)
-values ($1, $2);
+values ($1, $2)
+returning id;
 -- name: DeleteJournalEntry :exec
 delete from journal_entries
 where id = $1;
