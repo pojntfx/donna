@@ -18,17 +18,34 @@ body > footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
 }
 
-body > header:first-child > div > form {
-  margin-left: 1rem;
+main > ul > li > div:last-child {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
-body > main {
-  margin: 1rem 0;
+body > header:first-child > div > h1,
+input[type="submit"] {
+  margin-right: 1rem;
 }
 
 main > ul {
   list-style-type: none;
   padding: 0;
+}
+
+body > footer {
+  margin-top: 1rem;
+}
+
+main input[type="text"],
+main textarea {
+  width: 100%;
+}
+
+a:not(:hover) {
+  text-decoration: none;
 }

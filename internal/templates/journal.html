@@ -6,35 +6,37 @@
     {{ template "nav.html" . }}
 
     <header>
-      <h2>Journal</h1>
+      <h2>Journal</h2>
 
       <a href="/journal/add">Add a journal entry</a>
     </header>
 
     <main>
-     <ul>
-       {{ range .Entries }}
-       <li>
-         <h3>
-           <a href="/journal/view?id={{ .ID }}"
-             >{{ .Date.Format "2006-01-02" }}: {{ .Title }}</a
-           >
+      <ul>
+        {{ range .Entries }}
+        <li>
+          <h3>
+            <a href="/journal/view?id={{ .ID }}"
+              >{{ .Date.Format "2006-01-02" }}: {{ .Title }}</a
+            >
+          </h3>
 
-           <p>{{ TruncateText .Body 200 }}</p>
+          <p>{{ TruncateText .Body 200 }}</p>
 
-           <form
-             action="/journal/delete?id={{ .ID }}"
-             method="post"
-             onsubmit="return confirm('Are you sure you want to delete this entry?')"
-           >
-             <input type="submit" value="Delete" />
-           </form>
+          <div>
+            <form
+              action="/journal/delete?id={{ .ID }}"
+              method="post"
+              onsubmit="return confirm('Are you sure you want to delete this entry?')"
+            >
+              <input type="submit" value="Delete" />
+            </form>
 
-           <a href="/journal/edit?id={{ .ID }}">Edit</a>
-         </h3>
-       </li>
-       {{ end }}
-     </ul>
+            <a href="/journal/edit?id={{ .ID }}">Edit</a>
+          </div>
+        </li>
+        {{ end }}
+      </ul>
     </main>
 
     {{ template "footer.html" . }}

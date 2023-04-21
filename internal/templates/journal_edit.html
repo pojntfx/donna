@@ -10,7 +10,7 @@
     </header>
 
     <main>
-      <form action="/journal/update">
+      <form id="update" action="/journal/update">
         <input type="hidden" name="id" id="id" value="{{ .Entry.ID }}" />
 
         <label for="title">Title</label>
@@ -26,13 +26,17 @@
 
         <label for="body">Body</label>
         <br />
-        <textarea name="body" id="body" required>{{ .Entry.Body }}</textarea>
+        <textarea name="body" id="body" required rows="20">
+{{ .Entry.Body }}</textarea
+        >
         <br />
+      </form>
+
+      <div>
+        <input type="submit" value="Save changes" form="update" />
 
         <a href="/journal">Cancel</a>
-
-        <input type="submit" value="Save changes" />
-      </form>
+      </div>
     </main>
 
     {{ template "footer.html" . }}
