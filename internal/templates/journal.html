@@ -17,7 +17,7 @@
         <li>
           <h3>
             <a href="/journal/view?id={{ .ID }}"
-              >{{ .Date.Format "2006-01-02" }}: {{ .Title }}</a
+              >{{ .Date.Format "2006-01-02 15:04" }}: {{ .Title }}</a
             >
           </h3>
 
@@ -35,6 +35,8 @@
             <a href="/journal/edit?id={{ .ID }}">Edit</a>
           </div>
         </li>
+        {{ else }}
+        <li>No journal entries yet.</li>
         {{ end }}
       </ul>
     </main>
