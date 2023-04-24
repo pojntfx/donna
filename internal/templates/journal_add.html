@@ -11,6 +11,19 @@
 
     <main>
       <form action="/journal/create">
+        <fieldset>
+          <legend>How as your day?</legend>
+
+          <input type="radio" id="happy" name="happy" value="3" />
+          <label for="happy">😊</label>
+
+          <input type="radio" id="ok" name="ok" value="2" />
+          <label for="ok">😐</label>
+
+          <input type="radio" id="bad" name="bad" value="bad" />
+          <label for="bad">😞</label>
+        </fieldset>
+
         <label for="title">Title</label>
         <br />
         <input type="text" name="title" id="title" required autofocus />

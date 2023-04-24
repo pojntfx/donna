@@ -38,7 +38,7 @@ func (q *Queries) DeleteJournalEntry(ctx context.Context, id int32) error {
 }
 
 const getJournalEntries = `-- name: GetJournalEntries :many
-select id, title, date, body
+select id, title, date, body, rating
 from journal_entries
 order by date desc
 `
@@ -57,6 +57,7 @@ func (q *Queries) GetJournalEntries(ctx context.Context) ([]JournalEntry, error)
 			&i.Title,
 			&i.Date,
 			&i.Body,
+			&i.Rating,
 		); err != nil {
 			return nil, err
 		}
@@ -72,7 +73,7 @@ func (q *Queries) GetJournalEntries(ctx context.Context) ([]JournalEntry, error)
 }
 
 const getJournalEntry = `-- name: GetJournalEntry :one
-select id, title, date, body
+select id, title, date, body, rating
 from journal_entries
 where id = $1
 `
@@ -85,6 +86,7 @@ func (q *Queries) GetJournalEntry(ctx context.Context, id int32) (JournalEntry, 
 		&i.Title,
 		&i.Date,
 		&i.Body,
+		&i.Rating,
 	)
 	return i, err
 }
