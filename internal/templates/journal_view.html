@@ -6,7 +6,11 @@
     {{ template "nav.html" . }}
 
     <header>
-      <h2>{{ .Entry.Title }}</h2>
+      <div>
+        <a href="/journal">🔙</a>
+
+        <h2>{{ .Entry.Title }}</h2>
+      </div>
 
       <div>{{ .Entry.Date.Format "2006-01-02 15:04" }}</div>
     </header>
@@ -22,9 +26,9 @@
       ></form>
 
       <div>
-        <input type="submit" value="Delete" form="delete" />
+        <input type="submit" value="🗑️ Delete" form="delete" />
 
-        <a href="/journal/edit?id={{ .Entry.ID }}">Edit</a>
+        <a href="/journal/edit?id={{ .Entry.ID }}">✏️ Edit</a>
       </div>
     </main>
 

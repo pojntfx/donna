@@ -79,7 +79,7 @@ func (b *Backend) HandleIndex(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
 
 		if err := b.tpl.ExecuteTemplate(w, "404.html", pageData{
-			Page: "Page not found",
+			Page: "🕳️ Page not found",
 		}); err != nil {
 			log.Println(errCouldNotRenderTemplate, err)
 
@@ -92,7 +92,7 @@ func (b *Backend) HandleIndex(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := b.tpl.ExecuteTemplate(w, "index.html", pageData{
-		Page: "Home",
+		Page: "🏠 Home",
 	}); err != nil {
 		log.Println(errCouldNotRenderTemplate, err)
 
@@ -124,7 +124,7 @@ func (b *Backend) HandleJournal(w http.ResponseWriter, r *http.Request) {
 
 	if err := b.tpl.ExecuteTemplate(w, "journal.html", journalData{
 		pageData: pageData{
-			Page: "Journal",
+			Page: "📓 Journal",
 		},
 		Entries: journalEntries,
 	}); err != nil {
@@ -138,7 +138,7 @@ func (b *Backend) HandleJournal(w http.ResponseWriter, r *http.Request) {
 
 func (b *Backend) HandleAddJournal(w http.ResponseWriter, r *http.Request) {
 	if err := b.tpl.ExecuteTemplate(w, "journal_add.html", pageData{
-		Page: "Add Journal Entry",
+		Page: "➕ Add Journal Entry",
 	}); err != nil {
 		log.Println(errCouldNotRenderTemplate, err)
 
@@ -255,7 +255,7 @@ func (b *Backend) HandleEditJournal(w http.ResponseWriter, r *http.Request) {
 
 	if err := b.tpl.ExecuteTemplate(w, "journal_edit.html", journalEntryData{
 		pageData: pageData{
-			Page: "Edit Journal Entry",
+			Page: "✏️ Edit Journal Entry",
 		},
 		Entry: journalEntry,
 	}); err != nil {
@@ -367,7 +367,7 @@ func (b *Backend) HandleViewJournal(w http.ResponseWriter, r *http.Request) {
 
 func (b *Backend) HandleImprint(w http.ResponseWriter, r *http.Request) {
 	if err := b.tpl.ExecuteTemplate(w, "imprint.html", pageData{
-		Page: "Imprint",
+		Page: "ℹ️ Imprint",
 	}); err != nil {
 		log.Println(errCouldNotRenderTemplate, err)
 

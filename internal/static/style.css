@@ -14,6 +14,7 @@ body > header {
 
 body > header,
 body > header:first-child > div,
+body > header:nth-child(2) > div,
 body > footer {
   display: flex;
   justify-content: space-between;
@@ -31,6 +32,10 @@ body > header:first-child > div > h1,
 body > header:nth-child(2) > h2,
 body > footer > a:first-child {
   margin-right: 1rem;
+}
+
+body > header:nth-child(2) > div > h2 {
+  margin-left: 0.5rem;
 }
 
 body > ul {
