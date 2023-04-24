@@ -6,30 +6,30 @@
     {{ template "nav.html" . }}
 
     <header>
-      <h2>Add a Journal Entry</h2>
+      <h2>✍️ Add a Journal Entry</h2>
     </header>
 
     <main>
       <form action="/journal/create">
         <fieldset>
-          <legend>How as your day?</legend>
+          <legend>🎚️ How as your day?</legend>
 
-          <input type="radio" id="happy" name="happy" value="3" />
+          <input type="radio" id="happy" name="rating" value="3" checked />
           <label for="happy">😊</label>
 
-          <input type="radio" id="ok" name="ok" value="2" />
+          <input type="radio" id="ok" name="rating" value="2" />
           <label for="ok">😐</label>
 
-          <input type="radio" id="bad" name="bad" value="bad" />
+          <input type="radio" id="bad" name="rating" value="1" />
           <label for="bad">😞</label>
         </fieldset>
 
-        <label for="title">Title</label>
+        <label for="title">🗞️ Title</label>
         <br />
         <input type="text" name="title" id="title" required autofocus />
         <br />
 
-        <label for="body">Body</label>
+        <label for="body">📜 Body</label>
         <br />
         <textarea name="body" id="body" required rows="20"></textarea>
         <br />

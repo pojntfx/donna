@@ -14,11 +14,16 @@
     <ul>
       {{ range .Entries }}
       <li>
-        <h3>
-          <a href="/journal/view?id={{ .ID }}"
-            >{{ .Date.Format "2006-01-02 15:04" }}: {{ .Title }}</a
-          >
-        </h3>
+        <div>
+          <h3>
+            <a href="/journal/view?id={{ .ID }}">{{ .Title }}</a>
+          </h3>
+
+          <div>
+            {{ .Date.Format "2006-01-02 15:04" }} | {{if eq .Rating 3}}😊{{else
+            if eq .Rating 2}}😐{{else if eq .Rating 1}}😞{{end}}
+          </div>
+        </div>
 
         <p>{{ RenderMarkdown (TruncateText .Body 50) }}</p>
 

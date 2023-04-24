@@ -10,18 +10,19 @@ import (
 )
 
 const createJournalEntry = `-- name: CreateJournalEntry :one
-insert into journal_entries (title, body)
-values ($1, $2)
+insert into journal_entries (title, body, rating)
+values ($1, $2, $3)
 returning id
 `
 
 type CreateJournalEntryParams struct {
-	Title string
-	Body  string
+	Title  string
+	Body   string
+	Rating int32
 }
 
 func (q *Queries) CreateJournalEntry(ctx context.Context, arg CreateJournalEntryParams) (int32, error) {
-	row := q.db.QueryRowContext(ctx, createJournalEntry, arg.Title, arg.Body)
+	row := q.db.QueryRowContext(ctx, createJournalEntry, arg.Title, arg.Body, arg.Rating)
 	var id int32
 	err := row.Scan(&id)
 	return id, err
@@ -94,17 +95,24 @@ func (q *Queries) GetJournalEntry(ctx context.Context, id int32) (JournalEntry, 
 const updateJournalEntry = `-- name: UpdateJournalEntry :exec
 update journal_entries
 set title = $2,
-    body = $3
+    body = $3,
+    rating = $4
 where id = $1
 `
 
 type UpdateJournalEntryParams struct {
-	ID    int32
-	Title string
-	Body  string
+	ID     int32
+	Title  string
+	Body   string
+	Rating int32
 }
 
 func (q *Queries) UpdateJournalEntry(ctx context.Context, arg UpdateJournalEntryParams) error {
-	_, err := q.db.ExecContext(ctx, updateJournalEntry, arg.ID, arg.Title, arg.Body)
+	_, err := q.db.ExecContext(ctx, updateJournalEntry,
+		arg.ID,
+		arg.Title,
+		arg.Body,
+		arg.Rating,
+	)
 	return err
 }

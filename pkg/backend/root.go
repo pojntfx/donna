@@ -175,7 +175,25 @@ func (b *Backend) HandleCreateJournal(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id, err := b.persister.CreateJournalEntry(r.Context(), title, body)
+	rrating := r.FormValue("rating")
+	if strings.TrimSpace(rrating) == "" {
+		log.Println(errInvalidForm)
+
+		http.Error(w, errInvalidForm.Error(), http.StatusUnprocessableEntity)
+
+		return
+	}
+
+	rating, err := strconv.Atoi(rrating)
+	if err != nil {
+		log.Println(errInvalidForm)
+
+		http.Error(w, errInvalidForm.Error(), http.StatusUnprocessableEntity)
+
+		return
+	}
+
+	id, err := b.persister.CreateJournalEntry(r.Context(), title, body, int32(rating))
 	if err != nil {
 		log.Println(errCouldNotInsertIntoDB, err)
 
@@ -312,7 +330,25 @@ func (b *Backend) HandleUpdateJournal(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := b.persister.UpdateJournalEntry(r.Context(), int32(id), title, body); err != nil {
+	rrating := r.FormValue("rating")
+	if strings.TrimSpace(rrating) == "" {
+		log.Println(errInvalidForm)
+
+		http.Error(w, errInvalidForm.Error(), http.StatusUnprocessableEntity)
+
+		return
+	}
+
+	rating, err := strconv.Atoi(rrating)
+	if err != nil {
+		log.Println(errInvalidForm)
+
+		http.Error(w, errInvalidForm.Error(), http.StatusUnprocessableEntity)
+
+		return
+	}
+
+	if err := b.persister.UpdateJournalEntry(r.Context(), int32(id), title, body, int32(rating)); err != nil {
 		log.Println(errCouldNotUpdateInDB, err)
 
 		http.Error(w, errCouldNotInsertIntoDB.Error(), http.StatusInternalServerError)

@@ -47,10 +47,11 @@ func (p *Persister) GetJournalEntries(ctx context.Context) ([]models.JournalEntr
 	return p.queries.GetJournalEntries(ctx)
 }
 
-func (p *Persister) CreateJournalEntry(ctx context.Context, title, body string) (int32, error) {
+func (p *Persister) CreateJournalEntry(ctx context.Context, title, body string, rating int32) (int32, error) {
 	return p.queries.CreateJournalEntry(ctx, models.CreateJournalEntryParams{
-		Title: title,
-		Body:  body,
+		Title:  title,
+		Body:   body,
+		Rating: rating,
 	})
 }
 
@@ -62,10 +63,11 @@ func (p *Persister) GetJournalEntry(ctx context.Context, id int32) (models.Journ
 	return p.queries.GetJournalEntry(ctx, id)
 }
 
-func (p *Persister) UpdateJournalEntry(ctx context.Context, id int32, title, body string) error {
+func (p *Persister) UpdateJournalEntry(ctx context.Context, id int32, title, body string, rating int32) error {
 	return p.queries.UpdateJournalEntry(ctx, models.UpdateJournalEntryParams{
-		ID:    id,
-		Title: title,
-		Body:  body,
+		ID:     id,
+		Title:  title,
+		Body:   body,
+		Rating: rating,
 	})
 }

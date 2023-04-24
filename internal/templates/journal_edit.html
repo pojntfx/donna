@@ -6,14 +6,66 @@
     {{ template "nav.html" . }}
 
     <header>
-      <h2>Edit "{{ .Entry.Title }}"</h2>
+      <h2>✏️ Edit "{{ .Entry.Title }}"</h2>
     </header>
 
     <main>
       <form id="update" action="/journal/update">
         <input type="hidden" name="id" id="id" value="{{ .Entry.ID }}" />
 
-        <label for="title">Title</label>
+        <fieldset>
+          <legend>🎚️ How as your day?</legend>
+
+          <input
+            type="radio"
+            id="happy"
+            name="rating"
+            value="3"
+            {{-
+            if
+            eq
+            .Entry.Rating
+            3
+            -}}checked{{-
+            end
+            -}}
+          />
+          <label for="happy">😊</label>
+
+          <input
+            type="radio"
+            id="ok"
+            name="rating"
+            value="2"
+            {{-
+            if
+            eq
+            .Entry.Rating
+            2
+            -}}checked{{-
+            end
+            -}}
+          />
+          <label for="ok">😐</label>
+
+          <input
+            type="radio"
+            id="bad"
+            name="rating"
+            value="1"
+            {{-
+            if
+            eq
+            .Entry.Rating
+            1
+            -}}checked{{-
+            end
+            -}}
+          />
+          <label for="bad">😞</label>
+        </fieldset>
+
+        <label for="title">🗞️ Title</label>
         <br />
         <input
           type="text"
@@ -25,7 +77,7 @@
         />
         <br />
 
-        <label for="body">Body</label>
+        <label for="body">📜 Body</label>
         <br />
         <textarea name="body" id="body" required rows="20">
 {{ .Entry.Body }}</textarea

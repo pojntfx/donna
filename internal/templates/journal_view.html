@@ -12,7 +12,13 @@
         <h2>{{ .Entry.Title }}</h2>
       </div>
 
-      <div>{{ .Entry.Date.Format "2006-01-02 15:04" }}</div>
+      <div>
+        <div>📅 {{ .Entry.Date.Format "2006-01-02 15:04" }}</div>
+        <div>
+          🎚️ Your day was: {{if eq .Entry.Rating 3}}😊{{else if eq .Entry.Rating
+          2}}😐{{else if eq .Entry.Rating 1}}😞{{end}}
+        </div>
+      </div>
     </header>
 
     <main>
