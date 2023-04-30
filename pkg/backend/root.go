@@ -57,6 +57,7 @@ func NewBackend(
 
 	oidcIssuer,
 	oidcClientID,
+	oidcClientSecret string,
 	oidcRedirectURL string,
 ) *Backend {
 	return &Backend{
@@ -64,7 +65,7 @@ func NewBackend(
 
 		oidcIssuer:       oidcIssuer,
 		oidcClientID:     oidcClientID,
-		oidcClientSecret: oidcClientID,
+		oidcClientSecret: oidcClientSecret,
 		oidcRedirectURL:  oidcRedirectURL,
 	}
 }
@@ -159,7 +160,6 @@ func (b *Backend) authenticate(w http.ResponseWriter, r *http.Request) (bool, st
 		Email         string `json:"email"`
 		EmailVerified bool   `json:"email_verified"`
 	}
-
 	if err := id.Claims(&claims); err != nil {
 		return false, "", err
 	}
@@ -228,7 +228,7 @@ func (b *Backend) HandleAuthorize(w http.ResponseWriter, r *http.Request) {
 		Expires:  time.Now().Add(time.Hour * 24 * 365),
 		HttpOnly: true,
 		Secure:   true,
-		SameSite: http.SameSiteLaxMode,
+		SameSite: http.SameSiteStrictMode,
 		Path:     "/",
 	})
 
@@ -247,7 +247,7 @@ func (b *Backend) HandleAuthorize(w http.ResponseWriter, r *http.Request) {
 		Expires:  oauth2Token.Expiry,
 		HttpOnly: true,
 		Secure:   true,
-		SameSite: http.SameSiteLaxMode,
+		SameSite: http.SameSiteStrictMode,
 		Path:     "/",
 	})
 
