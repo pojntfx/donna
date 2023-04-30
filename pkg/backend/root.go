@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/pojntfx/donna/internal/models"
@@ -42,9 +43,10 @@ type Backend struct {
 	tpl       *template.Template
 	persister *persisters.Persister
 
-	oidcIssuer      string
-	oidcClientID    string
-	oidcRedirectURL string
+	oidcIssuer       string
+	oidcClientID     string
+	oidcClientSecret string
+	oidcRedirectURL  string
 
 	config   *oauth2.Config
 	verifier *oidc.IDTokenVerifier
@@ -60,9 +62,10 @@ func NewBackend(
 	return &Backend{
 		persister: persister,
 
-		oidcIssuer:      oidcIssuer,
-		oidcClientID:    oidcClientID,
-		oidcRedirectURL: oidcRedirectURL,
+		oidcIssuer:       oidcIssuer,
+		oidcClientID:     oidcClientID,
+		oidcClientSecret: oidcClientID,
+		oidcRedirectURL:  oidcRedirectURL,
 	}
 }
 
@@ -100,10 +103,11 @@ func (b *Backend) Init(ctx context.Context) error {
 	}
 
 	b.config = &oauth2.Config{
-		ClientID:    b.oidcClientID,
-		RedirectURL: b.oidcRedirectURL,
-		Endpoint:    provider.Endpoint(),
-		Scopes:      []string{oidc.ScopeOpenID},
+		ClientID:     b.oidcClientID,
+		ClientSecret: b.oidcClientSecret,
+		RedirectURL:  b.oidcRedirectURL,
+		Endpoint:     provider.Endpoint(),
+		Scopes:       []string{oidc.ScopeOpenID, oidc.ScopeOfflineAccess, "email", "email_verified"},
 	}
 
 	b.verifier = provider.Verifier(&oidc.Config{
@@ -118,17 +122,6 @@ type pageData struct {
 }
 
 func (b *Backend) authenticate(w http.ResponseWriter, r *http.Request) (bool, string, error) {
-	idToken, err := r.Cookie(idTokenKey)
-	if err != nil {
-		if errors.Is(err, http.ErrNoCookie) {
-			http.Redirect(w, r, b.config.AuthCodeURL(b.oidcRedirectURL), http.StatusFound)
-
-			return true, "", nil
-		}
-
-		return false, "", err
-	}
-
 	// refreshToken, err := r.Cookie(refreshTokenKey)
 	// if err != nil {
 	// 	if errors.Is(err, http.ErrNoCookie) {
@@ -139,6 +132,19 @@ func (b *Backend) authenticate(w http.ResponseWriter, r *http.Request) (bool, st
 
 	// 	return false, "", err
 	// }
+
+	idToken, err := r.Cookie(idTokenKey)
+	if err != nil {
+		if errors.Is(err, http.ErrNoCookie) {
+			// TODO: First try to get a new access token with refresh token and set it on the client. Only if that fails, redirect
+
+			http.Redirect(w, r, b.config.AuthCodeURL(b.oidcRedirectURL), http.StatusFound)
+
+			return true, "", nil
+		}
+
+		return false, "", err
+	}
 
 	id, err := b.verifier.Verify(r.Context(), idToken.Value)
 	if err != nil {
@@ -154,7 +160,7 @@ func (b *Backend) authenticate(w http.ResponseWriter, r *http.Request) (bool, st
 		EmailVerified bool   `json:"email_verified"`
 	}
 
-	if err := id.Claims(claims); err != nil {
+	if err := id.Claims(&claims); err != nil {
 		return false, "", err
 	}
 
@@ -204,6 +210,48 @@ func (b *Backend) HandleIndex(w http.ResponseWriter, r *http.Request) {
 
 		return
 	}
+}
+
+func (b *Backend) HandleAuthorize(w http.ResponseWriter, r *http.Request) {
+	oauth2Token, err := b.config.Exchange(r.Context(), r.URL.Query().Get("code"))
+	if err != nil {
+		log.Println(errCouldNotLogin, err)
+
+		http.Error(w, errCouldNotLogin.Error(), http.StatusUnauthorized)
+
+		return
+	}
+
+	http.SetCookie(w, &http.Cookie{
+		Name:     refreshTokenKey,
+		Value:    oauth2Token.RefreshToken,
+		Expires:  time.Now().Add(time.Hour * 24 * 365),
+		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteLaxMode,
+		Path:     "/",
+	})
+
+	idToken, ok := oauth2Token.Extra("id_token").(string)
+	if !ok {
+		log.Println(errCouldNotLogin, err)
+
+		http.Error(w, errCouldNotLogin.Error(), http.StatusUnauthorized)
+
+		return
+	}
+
+	http.SetCookie(w, &http.Cookie{
+		Name:     idTokenKey,
+		Value:    idToken,
+		Expires:  oauth2Token.Expiry,
+		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteLaxMode,
+		Path:     "/",
+	})
+
+	http.Redirect(w, r, "/", http.StatusFound)
 }
 
 type journalData struct {
