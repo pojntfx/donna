@@ -2,6 +2,7 @@ package backend
 
 import (
 	"bytes"
+	"context"
 	"errors"
 	"fmt"
 	"html/template"
@@ -10,11 +11,13 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/pojntfx/donna/internal/models"
 	"github.com/pojntfx/donna/internal/templates"
 	"github.com/pojntfx/donna/pkg/persisters"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/extension"
+	"golang.org/x/oauth2"
 )
 
 var (
@@ -26,20 +29,44 @@ var (
 	errCouldNotDeleteFromDB   = errors.New("could not delete from DB")
 	errCouldNotUpdateInDB     = errors.New("could not update in DB")
 	errInvalidQueryParam      = errors.New("could not use invalid query parameter")
+	errCouldNotLogin          = errors.New("could not login")
+	errEmailNotVerified       = errors.New("email not verified")
+)
+
+const (
+	idTokenKey      = "id_token"
+	refreshTokenKey = "refresh_token"
 )
 
 type Backend struct {
 	tpl       *template.Template
 	persister *persisters.Persister
+
+	oidcIssuer      string
+	oidcClientID    string
+	oidcRedirectURL string
+
+	config   *oauth2.Config
+	verifier *oidc.IDTokenVerifier
 }
 
-func NewBackend(persister *persisters.Persister) *Backend {
+func NewBackend(
+	persister *persisters.Persister,
+
+	oidcIssuer,
+	oidcClientID,
+	oidcRedirectURL string,
+) *Backend {
 	return &Backend{
 		persister: persister,
+
+		oidcIssuer:      oidcIssuer,
+		oidcClientID:    oidcClientID,
+		oidcRedirectURL: oidcRedirectURL,
 	}
 }
 
-func (b *Backend) Init() error {
+func (b *Backend) Init(ctx context.Context) error {
 	md := goldmark.New(
 		goldmark.WithExtensions(extension.GFM),
 	)
@@ -67,6 +94,22 @@ func (b *Backend) Init() error {
 
 	b.tpl = tpl
 
+	provider, err := oidc.NewProvider(ctx, b.oidcIssuer)
+	if err != nil {
+		return err
+	}
+
+	b.config = &oauth2.Config{
+		ClientID:    b.oidcClientID,
+		RedirectURL: b.oidcRedirectURL,
+		Endpoint:    provider.Endpoint(),
+		Scopes:      []string{oidc.ScopeOpenID},
+	}
+
+	b.verifier = provider.Verifier(&oidc.Config{
+		ClientID: b.oidcClientID,
+	})
+
 	return nil
 }
 
@@ -74,7 +117,68 @@ type pageData struct {
 	Page string
 }
 
+func (b *Backend) authenticate(w http.ResponseWriter, r *http.Request) (bool, string, error) {
+	idToken, err := r.Cookie(idTokenKey)
+	if err != nil {
+		if errors.Is(err, http.ErrNoCookie) {
+			http.Redirect(w, r, b.config.AuthCodeURL(b.oidcRedirectURL), http.StatusFound)
+
+			return true, "", nil
+		}
+
+		return false, "", err
+	}
+
+	// refreshToken, err := r.Cookie(refreshTokenKey)
+	// if err != nil {
+	// 	if errors.Is(err, http.ErrNoCookie) {
+	// 		http.Redirect(w, r, b.config.AuthCodeURL(b.oidcRedirectURL), http.StatusFound)
+
+	// 		return true, "", nil
+	// 	}
+
+	// 	return false, "", err
+	// }
+
+	id, err := b.verifier.Verify(r.Context(), idToken.Value)
+	if err != nil {
+		// TODO: First try to get a new access token with refresh token and set it on the client. Only if that fails, redirect
+
+		http.Redirect(w, r, b.config.AuthCodeURL(b.oidcRedirectURL), http.StatusFound)
+
+		return true, "", nil
+	}
+
+	var claims struct {
+		Email         string `json:"email"`
+		EmailVerified bool   `json:"email_verified"`
+	}
+
+	if err := id.Claims(claims); err != nil {
+		return false, "", err
+	}
+
+	if !claims.EmailVerified {
+		return false, "", errEmailNotVerified
+	}
+
+	return false, claims.Email, nil
+}
+
 func (b *Backend) HandleIndex(w http.ResponseWriter, r *http.Request) {
+	redirected, _, err := b.authenticate(w, r)
+	if err != nil {
+		log.Println(errCouldNotLogin, err)
+
+		http.Error(w, errCouldNotLogin.Error(), http.StatusUnauthorized)
+
+		return
+	}
+
+	if redirected {
+		return
+	}
+
 	if r.URL.Path != "/" {
 		w.WriteHeader(http.StatusNotFound)
 

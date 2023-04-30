@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"log"
 	"net"
@@ -17,8 +18,14 @@ import (
 func main() {
 	laddr := flag.String("laddr", ":1337", "Listen address (port can also be set with `PORT` env variable)")
 	dbaddr := flag.String("dbaddr", "postgresql://postgres@localhost:5432/donna?sslmode=disable", "Database address (can also be set using `DATABASE_URL` env variable)")
+	oidcIssuer := flag.String("oidc-issuer", "", "OIDC Issuer (i.e. https://pojntfx.eu.auth0.com/) (can also be set using the OIDC_ISSUER env variable)")
+	oidcClientID := flag.String("oidc-client-id", "", "OIDC Client ID (i.e. myoidcclientid) (can also be set using the OIDC_CLIENT_ID env variable)")
+	oidcRedirectURL := flag.String("oidc-redirect-url", "http://localhost:1337/login", "OIDC redirect URL (can also be set using the OIDC_REDIRECT_URL env variable)")
 
 	flag.Parse()
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	if p := os.Getenv("PORT"); p != "" {
 		log.Println("Using port from PORT env variable")
@@ -43,15 +50,27 @@ func main() {
 		*dbaddr = da
 	}
 
+	if oi := os.Getenv("OIDC_ISSUER"); oi != "" {
+		log.Println("Using OIDC issuer from OIDC_ISSUER env variable")
+
+		*oidcIssuer = oi
+	}
+
+	if oc := os.Getenv("OIDC_CLIENT_ID"); oc != "" {
+		log.Println("Using OIDC client ID from OIDC_CLIENT_ID env variable")
+
+		*oidcIssuer = oc
+	}
+
 	p := persisters.NewPersister(*dbaddr)
 
 	if err := p.Init(); err != nil {
 		panic(err)
 	}
 
-	b := backend.NewBackend(p)
+	b := backend.NewBackend(p, *oidcIssuer, *oidcClientID, *oidcRedirectURL)
 
-	if err := b.Init(); err != nil {
+	if err := b.Init(ctx); err != nil {
 		panic(err)
 	}
 
