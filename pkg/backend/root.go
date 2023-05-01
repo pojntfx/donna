@@ -251,7 +251,15 @@ func (b *Backend) HandleAuthorize(w http.ResponseWriter, r *http.Request) {
 		Path:     "/",
 	})
 
-	http.Redirect(w, r, "/", http.StatusFound)
+	if err := b.tpl.ExecuteTemplate(w, "signing_in.html", pageData{
+		Page: "🔓 Signing You In ...",
+	}); err != nil {
+		log.Println(errCouldNotRenderTemplate, err)
+
+		http.Error(w, errCouldNotRenderTemplate.Error(), http.StatusInternalServerError)
+
+		return
+	}
 }
 
 type journalData struct {
