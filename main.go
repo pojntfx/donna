@@ -21,7 +21,6 @@ func main() {
 	oidcIssuer := flag.String("oidc-issuer", "", "OIDC Issuer (i.e. https://pojntfx.eu.auth0.com/) (can also be set using the OIDC_ISSUER env variable)")
 	oidcClientID := flag.String("oidc-client-id", "", "OIDC Client ID (i.e. myoidcclientid) (can also be set using the OIDC_CLIENT_ID env variable)")
 	oidcRedirectURL := flag.String("oidc-redirect-url", "http://localhost:1337/authorize", "OIDC redirect URL (can also be set using the OIDC_REDIRECT_URL env variable)")
-	oidcUnauthorizeURL := flag.String("oidc-unauthorize-url", "http://localhost:1337/unauthorize", "OIDC unauthorize URL (can also be set using the OIDC_UNAUTHORIZE_URL env variable)")
 
 	flag.Parse()
 
@@ -69,19 +68,13 @@ func main() {
 		*oidcRedirectURL = v
 	}
 
-	if v := os.Getenv("OIDC_UNAUTHORIZE_URL"); v != "" {
-		log.Println("Using OIDC unauthorize URL from OIDC_UNAUTHORIZE_URL env variable")
-
-		*oidcUnauthorizeURL = v
-	}
-
 	p := persisters.NewPersister(*dbaddr)
 
 	if err := p.Init(); err != nil {
 		panic(err)
 	}
 
-	b := backend.NewBackend(p, *oidcIssuer, *oidcClientID, *oidcRedirectURL, *oidcUnauthorizeURL)
+	b := backend.NewBackend(p, *oidcIssuer, *oidcClientID, *oidcRedirectURL)
 
 	if err := b.Init(ctx); err != nil {
 		panic(err)
@@ -103,7 +96,6 @@ func main() {
 	mux.HandleFunc("/imprint", b.HandleImprint)
 
 	mux.HandleFunc("/authorize", b.HandleAuthorize)
-	mux.HandleFunc("/unauthorize", b.HandleUnauthorize)
 
 	mux.HandleFunc("/", b.HandleIndex)
 

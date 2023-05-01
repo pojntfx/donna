@@ -44,10 +44,9 @@ type Backend struct {
 	tpl       *template.Template
 	persister *persisters.Persister
 
-	oidcIssuer         string
-	oidcClientID       string
-	oidcRedirectURL    string
-	oidcUnauthorizeURL string
+	oidcIssuer      string
+	oidcClientID    string
+	oidcRedirectURL string
 
 	config   *oauth2.Config
 	verifier *oidc.IDTokenVerifier
@@ -58,16 +57,14 @@ func NewBackend(
 
 	oidcIssuer,
 	oidcClientID,
-	oidcRedirectURL,
-	oidcUnauthorizeURL string,
+	oidcRedirectURL string,
 ) *Backend {
 	return &Backend{
 		persister: persister,
 
-		oidcIssuer:         oidcIssuer,
-		oidcClientID:       oidcClientID,
-		oidcRedirectURL:    oidcRedirectURL,
-		oidcUnauthorizeURL: oidcUnauthorizeURL,
+		oidcIssuer:      oidcIssuer,
+		oidcClientID:    oidcClientID,
+		oidcRedirectURL: oidcRedirectURL,
 	}
 }
 
@@ -182,12 +179,10 @@ func (b *Backend) authorize(w http.ResponseWriter, r *http.Request) (bool, autho
 
 	q := logoutURL.Query()
 	q.Set("id_token_hint", idToken.Value)
-	q.Set("post_logout_redirect_uri", b.oidcUnauthorizeURL)
+	q.Set("post_logout_redirect_uri", b.oidcRedirectURL)
 	logoutURL.RawQuery = q.Encode()
 
 	logoutURL = logoutURL.JoinPath("oidc", "logout")
-
-	log.Println(logoutURL)
 
 	return false, authorizationData{
 		Email:     claims.Email,
@@ -243,35 +238,41 @@ type redirectData struct {
 	Href string
 }
 
-func (b *Backend) HandleUnauthorize(w http.ResponseWriter, r *http.Request) {
-	http.SetCookie(w, &http.Cookie{
-		Name:   refreshTokenKey,
-		Value:  "",
-		MaxAge: -1,
-	})
+func (b *Backend) HandleAuthorize(w http.ResponseWriter, r *http.Request) {
+	authCode := r.URL.Query().Get("code")
 
-	http.SetCookie(w, &http.Cookie{
-		Name:   idTokenKey,
-		Value:  "",
-		MaxAge: -1,
-	})
+	// Sign out
+	if authCode == "" {
+		http.SetCookie(w, &http.Cookie{
+			Name:   refreshTokenKey,
+			Value:  "",
+			MaxAge: -1,
+		})
 
-	if err := b.tpl.ExecuteTemplate(w, "redirect.html", redirectData{
-		pageData: pageData{
-			Page: "🔒 Signing You Out ...",
-		},
-		Href: "/",
-	}); err != nil {
-		log.Println(errCouldNotRenderTemplate, err)
+		http.SetCookie(w, &http.Cookie{
+			Name:   idTokenKey,
+			Value:  "",
+			MaxAge: -1,
+		})
 
-		http.Error(w, errCouldNotRenderTemplate.Error(), http.StatusInternalServerError)
+		if err := b.tpl.ExecuteTemplate(w, "redirect.html", redirectData{
+			pageData: pageData{
+				Page: "🔒 Signing You Out ...",
+			},
+			Href: "/",
+		}); err != nil {
+			log.Println(errCouldNotRenderTemplate, err)
+
+			http.Error(w, errCouldNotRenderTemplate.Error(), http.StatusInternalServerError)
+
+			return
+		}
 
 		return
 	}
-}
 
-func (b *Backend) HandleAuthorize(w http.ResponseWriter, r *http.Request) {
-	oauth2Token, err := b.config.Exchange(r.Context(), r.URL.Query().Get("code"))
+	// Sign in
+	oauth2Token, err := b.config.Exchange(r.Context(), authCode)
 	if err != nil {
 		log.Println(errCouldNotLogin, err)
 
