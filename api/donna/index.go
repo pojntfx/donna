@@ -4,9 +4,9 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/pojntfx/donna/internal/static"
 	"github.com/pojntfx/donna/pkg/backend"
 	"github.com/pojntfx/donna/pkg/persisters"
+	"github.com/pojntfx/donna/pkg/static"
 )
 
 var (

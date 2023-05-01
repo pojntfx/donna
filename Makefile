@@ -1,5 +1,5 @@
 clean:
-	rm -rf internal/models
+	rm -rf pkg/models
 	docker rm -f donna-postgres
 
 depend: clean

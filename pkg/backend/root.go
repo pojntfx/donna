@@ -14,9 +14,9 @@ import (
 	"time"
 
 	"github.com/coreos/go-oidc/v3/oidc"
-	"github.com/pojntfx/donna/internal/models"
-	"github.com/pojntfx/donna/internal/templates"
+	"github.com/pojntfx/donna/pkg/models"
 	"github.com/pojntfx/donna/pkg/persisters"
+	"github.com/pojntfx/donna/pkg/templates"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/extension"
 	"golang.org/x/oauth2"

@@ -1,9 +1,9 @@
 version: 2
 sql:
   - engine: postgresql
-    queries: internal/queries
-    schema: internal/migrations
+    queries: pkg/queries
+    schema: pkg/migrations
     gen:
       go:
         package: models
-        out: internal/models
+        out: pkg/models
