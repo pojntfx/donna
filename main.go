@@ -10,7 +10,7 @@ import (
 	"strconv"
 
 	_ "github.com/lib/pq"
-	"github.com/pojntfx/donna/internal/static"
+	"github.com/pojntfx/donna/api/donna"
 	"github.com/pojntfx/donna/pkg/backend"
 	"github.com/pojntfx/donna/pkg/persisters"
 )
@@ -80,26 +80,9 @@ func main() {
 		panic(err)
 	}
 
-	mux := http.NewServeMux()
-
-	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.FS(static.FS))))
-
-	mux.HandleFunc("/journal", b.HandleJournal)
-	mux.HandleFunc("/journal/add", b.HandleAddJournal)
-	mux.HandleFunc("/journal/edit", b.HandleEditJournal)
-	mux.HandleFunc("/journal/view", b.HandleViewJournal)
-
-	mux.HandleFunc("/journal/create", b.HandleCreateJournal)
-	mux.HandleFunc("/journal/delete", b.HandleDeleteJournal)
-	mux.HandleFunc("/journal/update", b.HandleUpdateJournal)
-
-	mux.HandleFunc("/imprint", b.HandleImprint)
-
-	mux.HandleFunc("/authorize", b.HandleAuthorize)
-
-	mux.HandleFunc("/", b.HandleIndex)
-
 	log.Println("Listening on", *laddr)
 
-	panic(http.ListenAndServe(*laddr, mux))
+	panic(http.ListenAndServe(*laddr, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		donna.DonnaHandler(w, r, b)
+	})))
 }
