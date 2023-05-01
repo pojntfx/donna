@@ -2,7 +2,7 @@
   "redirects": [
     {
       "source": "/((?!api/donna/).*)",
-      "destination": "/api/donna/$1"
+      "destination": "/api/donna?path=$1"
     }
   ]
 }
