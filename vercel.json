@@ -1,5 +1,8 @@
 {
   "redirects": [
-    { "source": "^((?!/api/donna/).*)$", "destination": "/api/donna/$1" }
+    {
+      "source": "/((?!api/donna/).*)",
+      "destination": "/api/donna/$1"
+    }
   ]
 }

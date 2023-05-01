@@ -9,7 +9,6 @@ import (
 	"os"
 	"strconv"
 
-	_ "github.com/lib/pq"
 	"github.com/pojntfx/donna/api/donna"
 	"github.com/pojntfx/donna/pkg/backend"
 	"github.com/pojntfx/donna/pkg/persisters"
