@@ -44,7 +44,7 @@ func DonnaHandler(
 }
 
 func Handler(w http.ResponseWriter, r *http.Request) {
-	r.URL.RawPath = r.URL.Query().Get("path")
+	r.URL.Path = r.URL.Query().Get("path")
 
 	if p == nil {
 		p = persisters.NewPersister(os.Getenv("DATABASE_URL"))
