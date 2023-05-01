@@ -8,6 +8,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -43,9 +44,10 @@ type Backend struct {
 	tpl       *template.Template
 	persister *persisters.Persister
 
-	oidcIssuer      string
-	oidcClientID    string
-	oidcRedirectURL string
+	oidcIssuer         string
+	oidcClientID       string
+	oidcRedirectURL    string
+	oidcUnauthorizeURL string
 
 	config   *oauth2.Config
 	verifier *oidc.IDTokenVerifier
@@ -56,14 +58,16 @@ func NewBackend(
 
 	oidcIssuer,
 	oidcClientID,
-	oidcRedirectURL string,
+	oidcRedirectURL,
+	oidcUnauthorizeURL string,
 ) *Backend {
 	return &Backend{
 		persister: persister,
 
-		oidcIssuer:      oidcIssuer,
-		oidcClientID:    oidcClientID,
-		oidcRedirectURL: oidcRedirectURL,
+		oidcIssuer:         oidcIssuer,
+		oidcClientID:       oidcClientID,
+		oidcRedirectURL:    oidcRedirectURL,
+		oidcUnauthorizeURL: oidcUnauthorizeURL,
 	}
 }
 
@@ -115,19 +119,26 @@ func (b *Backend) Init(ctx context.Context) error {
 }
 
 type pageData struct {
+	authorizationData
+
 	Page string
 }
 
-func (b *Backend) authenticate(w http.ResponseWriter, r *http.Request) (bool, string, error) {
+type authorizationData struct {
+	Email     string
+	LogoutURL string
+}
+
+func (b *Backend) authorize(w http.ResponseWriter, r *http.Request) (bool, authorizationData, error) {
 	// refreshToken, err := r.Cookie(refreshTokenKey)
 	// if err != nil {
 	// 	if errors.Is(err, http.ErrNoCookie) {
 	// 		http.Redirect(w, r, b.config.AuthCodeURL(b.oidcRedirectURL), http.StatusFound)
 
-	// 		return true, "", nil
+	// 		return true, authorizationData{}, nil
 	// 	}
 
-	// 	return false, "", err
+	// 	return false, authorizationData{}, err
 	// }
 
 	idToken, err := r.Cookie(idTokenKey)
@@ -137,10 +148,10 @@ func (b *Backend) authenticate(w http.ResponseWriter, r *http.Request) (bool, st
 
 			http.Redirect(w, r, b.config.AuthCodeURL(b.oidcRedirectURL), http.StatusFound)
 
-			return true, "", nil
+			return true, authorizationData{}, nil
 		}
 
-		return false, "", err
+		return false, authorizationData{}, err
 	}
 
 	id, err := b.verifier.Verify(r.Context(), idToken.Value)
@@ -149,7 +160,7 @@ func (b *Backend) authenticate(w http.ResponseWriter, r *http.Request) (bool, st
 
 		http.Redirect(w, r, b.config.AuthCodeURL(b.oidcRedirectURL), http.StatusFound)
 
-		return true, "", nil
+		return true, authorizationData{}, nil
 	}
 
 	var claims struct {
@@ -157,18 +168,35 @@ func (b *Backend) authenticate(w http.ResponseWriter, r *http.Request) (bool, st
 		EmailVerified bool   `json:"email_verified"`
 	}
 	if err := id.Claims(&claims); err != nil {
-		return false, "", err
+		return false, authorizationData{}, err
 	}
 
 	if !claims.EmailVerified {
-		return false, "", errEmailNotVerified
+		return false, authorizationData{}, errEmailNotVerified
 	}
 
-	return false, claims.Email, nil
+	logoutURL, err := url.Parse(b.oidcIssuer)
+	if err != nil {
+		return false, authorizationData{}, err
+	}
+
+	q := logoutURL.Query()
+	q.Set("id_token_hint", idToken.Value)
+	q.Set("post_logout_redirect_uri", b.oidcUnauthorizeURL)
+	logoutURL.RawQuery = q.Encode()
+
+	logoutURL = logoutURL.JoinPath("oidc", "logout")
+
+	log.Println(logoutURL)
+
+	return false, authorizationData{
+		Email:     claims.Email,
+		LogoutURL: logoutURL.String(),
+	}, nil
 }
 
 func (b *Backend) HandleIndex(w http.ResponseWriter, r *http.Request) {
-	redirected, _, err := b.authenticate(w, r)
+	redirected, authorizationData, err := b.authorize(w, r)
 	if err != nil {
 		log.Println(errCouldNotLogin, err)
 
@@ -198,7 +226,41 @@ func (b *Backend) HandleIndex(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := b.tpl.ExecuteTemplate(w, "index.html", pageData{
+		authorizationData: authorizationData,
+
 		Page: "🏠 Home",
+	}); err != nil {
+		log.Println(errCouldNotRenderTemplate, err)
+
+		http.Error(w, errCouldNotRenderTemplate.Error(), http.StatusInternalServerError)
+
+		return
+	}
+}
+
+type redirectData struct {
+	pageData
+	Href string
+}
+
+func (b *Backend) HandleUnauthorize(w http.ResponseWriter, r *http.Request) {
+	http.SetCookie(w, &http.Cookie{
+		Name:   refreshTokenKey,
+		Value:  "",
+		MaxAge: -1,
+	})
+
+	http.SetCookie(w, &http.Cookie{
+		Name:   idTokenKey,
+		Value:  "",
+		MaxAge: -1,
+	})
+
+	if err := b.tpl.ExecuteTemplate(w, "redirect.html", redirectData{
+		pageData: pageData{
+			Page: "🔒 Signing You Out ...",
+		},
+		Href: "/",
 	}); err != nil {
 		log.Println(errCouldNotRenderTemplate, err)
 
@@ -247,8 +309,11 @@ func (b *Backend) HandleAuthorize(w http.ResponseWriter, r *http.Request) {
 		Path:     "/",
 	})
 
-	if err := b.tpl.ExecuteTemplate(w, "signing_in.html", pageData{
-		Page: "🔓 Signing You In ...",
+	if err := b.tpl.ExecuteTemplate(w, "redirect.html", redirectData{
+		pageData: pageData{
+			Page: "🔒 Signing You In ...",
+		},
+		Href: "/",
 	}); err != nil {
 		log.Println(errCouldNotRenderTemplate, err)
 

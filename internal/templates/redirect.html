@@ -6,9 +6,9 @@
     {{ template "nav.html" . }}
 
     <header>
-      <h2>🔓 Signing You In ...</h2>
+      <h2>{{ .Page }}.</h2>
 
-      <a href="/">⏩ Continue manually</a>
+      <a href="{{ .Href }}">⏩ Continue manually</a>
     </header>
 
     {{ template "footer.html" . }}
