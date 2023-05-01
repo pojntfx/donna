@@ -43,10 +43,9 @@ type Backend struct {
 	tpl       *template.Template
 	persister *persisters.Persister
 
-	oidcIssuer       string
-	oidcClientID     string
-	oidcClientSecret string
-	oidcRedirectURL  string
+	oidcIssuer      string
+	oidcClientID    string
+	oidcRedirectURL string
 
 	config   *oauth2.Config
 	verifier *oidc.IDTokenVerifier
@@ -57,16 +56,14 @@ func NewBackend(
 
 	oidcIssuer,
 	oidcClientID,
-	oidcClientSecret string,
 	oidcRedirectURL string,
 ) *Backend {
 	return &Backend{
 		persister: persister,
 
-		oidcIssuer:       oidcIssuer,
-		oidcClientID:     oidcClientID,
-		oidcClientSecret: oidcClientSecret,
-		oidcRedirectURL:  oidcRedirectURL,
+		oidcIssuer:      oidcIssuer,
+		oidcClientID:    oidcClientID,
+		oidcRedirectURL: oidcRedirectURL,
 	}
 }
 
@@ -104,11 +101,10 @@ func (b *Backend) Init(ctx context.Context) error {
 	}
 
 	b.config = &oauth2.Config{
-		ClientID:     b.oidcClientID,
-		ClientSecret: b.oidcClientSecret,
-		RedirectURL:  b.oidcRedirectURL,
-		Endpoint:     provider.Endpoint(),
-		Scopes:       []string{oidc.ScopeOpenID, oidc.ScopeOfflineAccess, "email", "email_verified"},
+		ClientID:    b.oidcClientID,
+		RedirectURL: b.oidcRedirectURL,
+		Endpoint:    provider.Endpoint(),
+		Scopes:      []string{oidc.ScopeOpenID, oidc.ScopeOfflineAccess, "email", "email_verified"},
 	}
 
 	b.verifier = provider.Verifier(&oidc.Config{

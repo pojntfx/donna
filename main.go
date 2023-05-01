@@ -20,7 +20,6 @@ func main() {
 	dbaddr := flag.String("dbaddr", "postgresql://postgres@localhost:5432/donna?sslmode=disable", "Database address (can also be set using `DATABASE_URL` env variable)")
 	oidcIssuer := flag.String("oidc-issuer", "", "OIDC Issuer (i.e. https://pojntfx.eu.auth0.com/) (can also be set using the OIDC_ISSUER env variable)")
 	oidcClientID := flag.String("oidc-client-id", "", "OIDC Client ID (i.e. myoidcclientid) (can also be set using the OIDC_CLIENT_ID env variable)")
-	oidcClientSecret := flag.String("oidc-client-secret", "", "OIDC Client secret (i.e. myoidcclientsecret) (can also be set using the OIDC_CLIENT_SECRET env variable)")
 	oidcRedirectURL := flag.String("oidc-redirect-url", "http://localhost:1337/authorize", "OIDC redirect URL (can also be set using the OIDC_REDIRECT_URL env variable)")
 
 	flag.Parse()
@@ -63,12 +62,6 @@ func main() {
 		*oidcClientID = v
 	}
 
-	if v := os.Getenv("OIDC_CLIENT_SECRET"); v != "" {
-		log.Println("Using OIDC client secret from OIDC_CLIENT_SECRET env variable")
-
-		*oidcClientSecret = v
-	}
-
 	if v := os.Getenv("OIDC_REDIRECT_URL"); v != "" {
 		log.Println("Using OIDC redirect URL from OIDC_REDIRECT_URL env variable")
 
@@ -81,7 +74,7 @@ func main() {
 		panic(err)
 	}
 
-	b := backend.NewBackend(p, *oidcIssuer, *oidcClientID, *oidcClientSecret, *oidcRedirectURL)
+	b := backend.NewBackend(p, *oidcIssuer, *oidcClientID, *oidcRedirectURL)
 
 	if err := b.Init(ctx); err != nil {
 		panic(err)
