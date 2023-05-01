@@ -53,7 +53,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if b == nil {
-		b := backend.NewBackend(p, os.Getenv("OIDC_ISSUER"), os.Getenv("OIDC_CLIENT_ID"), os.Getenv("OIDC_REDIRECT_URL"))
+		b = backend.NewBackend(p, os.Getenv("OIDC_ISSUER"), os.Getenv("OIDC_CLIENT_ID"), os.Getenv("OIDC_REDIRECT_URL"))
 
 		if err := b.Init(r.Context()); err != nil {
 			panic(err)
