@@ -127,7 +127,7 @@ type authorizationData struct {
 }
 
 func (b *Backend) authorize(w http.ResponseWriter, r *http.Request) (bool, authorizationData, error) {
-	refreshToken, err := r.Cookie(refreshTokenKey)
+	rt, err := r.Cookie(refreshTokenKey)
 	if err != nil {
 		if errors.Is(err, http.ErrNoCookie) {
 			http.Redirect(w, r, b.config.AuthCodeURL(b.oidcRedirectURL), http.StatusFound)
@@ -137,8 +137,9 @@ func (b *Backend) authorize(w http.ResponseWriter, r *http.Request) (bool, autho
 
 		return false, authorizationData{}, err
 	}
+	refreshToken := rt.Value
 
-	idToken, err := r.Cookie(idTokenKey)
+	it, err := r.Cookie(idTokenKey)
 	if err != nil {
 		if errors.Is(err, http.ErrNoCookie) {
 			http.Redirect(w, r, b.config.AuthCodeURL(b.oidcRedirectURL), http.StatusFound)
@@ -148,11 +149,12 @@ func (b *Backend) authorize(w http.ResponseWriter, r *http.Request) (bool, autho
 
 		return false, authorizationData{}, err
 	}
+	idToken := it.Value
 
-	id, err := b.verifier.Verify(r.Context(), idToken.Value)
+	id, err := b.verifier.Verify(r.Context(), idToken)
 	if err != nil {
 		oauth2Token, err := b.config.TokenSource(r.Context(), &oauth2.Token{
-			RefreshToken: refreshToken.Value,
+			RefreshToken: refreshToken,
 		}).Token()
 		if err != nil {
 			http.Redirect(w, r, b.config.AuthCodeURL(b.oidcRedirectURL), http.StatusFound)
@@ -160,7 +162,7 @@ func (b *Backend) authorize(w http.ResponseWriter, r *http.Request) (bool, autho
 			return true, authorizationData{}, nil
 		}
 
-		if refreshToken := oauth2Token.RefreshToken; refreshToken != "" {
+		if refreshToken = oauth2Token.RefreshToken; refreshToken != "" {
 			http.SetCookie(w, &http.Cookie{
 				Name:     refreshTokenKey,
 				Value:    refreshToken,
@@ -172,7 +174,8 @@ func (b *Backend) authorize(w http.ResponseWriter, r *http.Request) (bool, autho
 			})
 		}
 
-		idToken, ok := oauth2Token.Extra("id_token").(string)
+		var ok bool
+		idToken, ok = oauth2Token.Extra("id_token").(string)
 		if !ok {
 			http.Redirect(w, r, b.config.AuthCodeURL(b.oidcRedirectURL), http.StatusFound)
 
@@ -188,10 +191,6 @@ func (b *Backend) authorize(w http.ResponseWriter, r *http.Request) (bool, autho
 			SameSite: http.SameSiteStrictMode,
 			Path:     "/",
 		})
-
-		http.Redirect(w, r, b.config.AuthCodeURL(b.oidcRedirectURL), http.StatusFound)
-
-		return true, authorizationData{}, nil
 	}
 
 	var claims struct {
@@ -212,7 +211,7 @@ func (b *Backend) authorize(w http.ResponseWriter, r *http.Request) (bool, autho
 	}
 
 	q := logoutURL.Query()
-	q.Set("id_token_hint", idToken.Value)
+	q.Set("id_token_hint", idToken)
 	q.Set("post_logout_redirect_uri", b.oidcRedirectURL)
 	logoutURL.RawQuery = q.Encode()
 
