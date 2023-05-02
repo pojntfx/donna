@@ -223,49 +223,6 @@ func (b *Backend) authorize(w http.ResponseWriter, r *http.Request) (bool, autho
 	}, nil
 }
 
-func (b *Backend) HandleIndex(w http.ResponseWriter, r *http.Request) {
-	redirected, authorizationData, err := b.authorize(w, r)
-	if err != nil {
-		log.Println(errCouldNotLogin, err)
-
-		http.Error(w, errCouldNotLogin.Error(), http.StatusUnauthorized)
-
-		return
-	}
-
-	if redirected {
-		return
-	}
-
-	if r.URL.Path != "/" {
-		w.WriteHeader(http.StatusNotFound)
-
-		if err := b.tpl.ExecuteTemplate(w, "404.html", pageData{
-			Page: "🕳️ Page not found",
-		}); err != nil {
-			log.Println(errCouldNotRenderTemplate, err)
-
-			http.Error(w, errCouldNotRenderTemplate.Error(), http.StatusInternalServerError)
-
-			return
-		}
-
-		return
-	}
-
-	if err := b.tpl.ExecuteTemplate(w, "index.html", pageData{
-		authorizationData: authorizationData,
-
-		Page: "🏠 Home",
-	}); err != nil {
-		log.Println(errCouldNotRenderTemplate, err)
-
-		http.Error(w, errCouldNotRenderTemplate.Error(), http.StatusInternalServerError)
-
-		return
-	}
-}
-
 type redirectData struct {
 	pageData
 	Href string
@@ -357,6 +314,47 @@ func (b *Backend) HandleAuthorize(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (b *Backend) HandleIndex(w http.ResponseWriter, r *http.Request) {
+	redirected, authorizationData, err := b.authorize(w, r)
+	if err != nil {
+		log.Println(errCouldNotLogin, err)
+
+		http.Error(w, errCouldNotLogin.Error(), http.StatusUnauthorized)
+
+		return
+	} else if redirected {
+		return
+	}
+
+	if r.URL.Path != "/" {
+		w.WriteHeader(http.StatusNotFound)
+
+		if err := b.tpl.ExecuteTemplate(w, "404.html", pageData{
+			Page: "🕳️ Page not found",
+		}); err != nil {
+			log.Println(errCouldNotRenderTemplate, err)
+
+			http.Error(w, errCouldNotRenderTemplate.Error(), http.StatusInternalServerError)
+
+			return
+		}
+
+		return
+	}
+
+	if err := b.tpl.ExecuteTemplate(w, "index.html", pageData{
+		authorizationData: authorizationData,
+
+		Page: "🏠 Home",
+	}); err != nil {
+		log.Println(errCouldNotRenderTemplate, err)
+
+		http.Error(w, errCouldNotRenderTemplate.Error(), http.StatusInternalServerError)
+
+		return
+	}
+}
+
 type journalData struct {
 	pageData
 	Entries []models.JournalEntry
@@ -368,7 +366,18 @@ type journalEntryData struct {
 }
 
 func (b *Backend) HandleJournal(w http.ResponseWriter, r *http.Request) {
-	journalEntries, err := b.persister.GetJournalEntries(r.Context())
+	redirected, authorizationData, err := b.authorize(w, r)
+	if err != nil {
+		log.Println(errCouldNotLogin, err)
+
+		http.Error(w, errCouldNotLogin.Error(), http.StatusUnauthorized)
+
+		return
+	} else if redirected {
+		return
+	}
+
+	journalEntries, err := b.persister.GetJournalEntries(r.Context(), authorizationData.Email)
 	if err != nil {
 		log.Println(errCouldNotFetchFromDB, err)
 
@@ -379,6 +388,8 @@ func (b *Backend) HandleJournal(w http.ResponseWriter, r *http.Request) {
 
 	if err := b.tpl.ExecuteTemplate(w, "journal.html", journalData{
 		pageData: pageData{
+			authorizationData: authorizationData,
+
 			Page: "📓 Journal",
 		},
 		Entries: journalEntries,
@@ -404,6 +415,17 @@ func (b *Backend) HandleAddJournal(w http.ResponseWriter, r *http.Request) {
 }
 
 func (b *Backend) HandleCreateJournal(w http.ResponseWriter, r *http.Request) {
+	redirected, authorizationData, err := b.authorize(w, r)
+	if err != nil {
+		log.Println(errCouldNotLogin, err)
+
+		http.Error(w, errCouldNotLogin.Error(), http.StatusUnauthorized)
+
+		return
+	} else if redirected {
+		return
+	}
+
 	if err := r.ParseForm(); err != nil {
 		log.Println(errCouldNotParseForm, err)
 
@@ -448,7 +470,7 @@ func (b *Backend) HandleCreateJournal(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id, err := b.persister.CreateJournalEntry(r.Context(), title, body, int32(rating))
+	id, err := b.persister.CreateJournalEntry(r.Context(), title, body, int32(rating), authorizationData.Email)
 	if err != nil {
 		log.Println(errCouldNotInsertIntoDB, err)
 
@@ -461,6 +483,17 @@ func (b *Backend) HandleCreateJournal(w http.ResponseWriter, r *http.Request) {
 }
 
 func (b *Backend) HandleDeleteJournal(w http.ResponseWriter, r *http.Request) {
+	redirected, authorizationData, err := b.authorize(w, r)
+	if err != nil {
+		log.Println(errCouldNotLogin, err)
+
+		http.Error(w, errCouldNotLogin.Error(), http.StatusUnauthorized)
+
+		return
+	} else if redirected {
+		return
+	}
+
 	if err := r.ParseForm(); err != nil {
 		log.Println(errCouldNotParseForm, err)
 
@@ -487,7 +520,7 @@ func (b *Backend) HandleDeleteJournal(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := b.persister.DeleteJournalEntry(r.Context(), int32(id)); err != nil {
+	if err := b.persister.DeleteJournalEntry(r.Context(), int32(id), authorizationData.Email); err != nil {
 		log.Println(errCouldNotDeleteFromDB, err)
 
 		http.Error(w, errCouldNotDeleteFromDB.Error(), http.StatusInternalServerError)
@@ -499,6 +532,17 @@ func (b *Backend) HandleDeleteJournal(w http.ResponseWriter, r *http.Request) {
 }
 
 func (b *Backend) HandleEditJournal(w http.ResponseWriter, r *http.Request) {
+	redirected, authorizationData, err := b.authorize(w, r)
+	if err != nil {
+		log.Println(errCouldNotLogin, err)
+
+		http.Error(w, errCouldNotLogin.Error(), http.StatusUnauthorized)
+
+		return
+	} else if redirected {
+		return
+	}
+
 	rid := r.FormValue("id")
 	if strings.TrimSpace(rid) == "" {
 		log.Println(errInvalidQueryParam)
@@ -517,7 +561,7 @@ func (b *Backend) HandleEditJournal(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	journalEntry, err := b.persister.GetJournalEntry(r.Context(), int32(id))
+	journalEntry, err := b.persister.GetJournalEntry(r.Context(), int32(id), authorizationData.Email)
 	if err != nil {
 		log.Println(errCouldNotFetchFromDB, err)
 
@@ -541,6 +585,17 @@ func (b *Backend) HandleEditJournal(w http.ResponseWriter, r *http.Request) {
 }
 
 func (b *Backend) HandleUpdateJournal(w http.ResponseWriter, r *http.Request) {
+	redirected, authorizationData, err := b.authorize(w, r)
+	if err != nil {
+		log.Println(errCouldNotLogin, err)
+
+		http.Error(w, errCouldNotLogin.Error(), http.StatusUnauthorized)
+
+		return
+	} else if redirected {
+		return
+	}
+
 	if err := r.ParseForm(); err != nil {
 		log.Println(errCouldNotParseForm, err)
 
@@ -603,7 +658,7 @@ func (b *Backend) HandleUpdateJournal(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := b.persister.UpdateJournalEntry(r.Context(), int32(id), title, body, int32(rating)); err != nil {
+	if err := b.persister.UpdateJournalEntry(r.Context(), int32(id), title, body, int32(rating), authorizationData.Email); err != nil {
 		log.Println(errCouldNotUpdateInDB, err)
 
 		http.Error(w, errCouldNotInsertIntoDB.Error(), http.StatusInternalServerError)
@@ -615,6 +670,17 @@ func (b *Backend) HandleUpdateJournal(w http.ResponseWriter, r *http.Request) {
 }
 
 func (b *Backend) HandleViewJournal(w http.ResponseWriter, r *http.Request) {
+	redirected, authorizationData, err := b.authorize(w, r)
+	if err != nil {
+		log.Println(errCouldNotLogin, err)
+
+		http.Error(w, errCouldNotLogin.Error(), http.StatusUnauthorized)
+
+		return
+	} else if redirected {
+		return
+	}
+
 	rid := r.FormValue("id")
 	if strings.TrimSpace(rid) == "" {
 		log.Println(errInvalidQueryParam)
@@ -633,7 +699,7 @@ func (b *Backend) HandleViewJournal(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	journalEntry, err := b.persister.GetJournalEntry(r.Context(), int32(id))
+	journalEntry, err := b.persister.GetJournalEntry(r.Context(), int32(id), authorizationData.Email)
 	if err != nil {
 		log.Println(errCouldNotFetchFromDB, err)
 

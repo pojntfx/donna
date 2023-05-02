@@ -9,9 +9,10 @@ import (
 )
 
 type JournalEntry struct {
-	ID     int32
-	Title  string
-	Date   time.Time
-	Body   string
-	Rating int32
+	ID        int32
+	Title     string
+	Date      time.Time
+	Body      string
+	Rating    int32
+	Namespace string
 }

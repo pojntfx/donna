@@ -10,19 +10,25 @@ import (
 )
 
 const createJournalEntry = `-- name: CreateJournalEntry :one
-insert into journal_entries (title, body, rating)
-values ($1, $2, $3)
+insert into journal_entries (title, body, rating, namespace)
+values ($1, $2, $3, $4)
 returning id
 `
 
 type CreateJournalEntryParams struct {
-	Title  string
-	Body   string
-	Rating int32
+	Title     string
+	Body      string
+	Rating    int32
+	Namespace string
 }
 
 func (q *Queries) CreateJournalEntry(ctx context.Context, arg CreateJournalEntryParams) (int32, error) {
-	row := q.db.QueryRowContext(ctx, createJournalEntry, arg.Title, arg.Body, arg.Rating)
+	row := q.db.QueryRowContext(ctx, createJournalEntry,
+		arg.Title,
+		arg.Body,
+		arg.Rating,
+		arg.Namespace,
+	)
 	var id int32
 	err := row.Scan(&id)
 	return id, err
@@ -31,21 +37,28 @@ func (q *Queries) CreateJournalEntry(ctx context.Context, arg CreateJournalEntry
 const deleteJournalEntry = `-- name: DeleteJournalEntry :exec
 delete from journal_entries
 where id = $1
+    and namespace = $2
 `
 
-func (q *Queries) DeleteJournalEntry(ctx context.Context, id int32) error {
-	_, err := q.db.ExecContext(ctx, deleteJournalEntry, id)
+type DeleteJournalEntryParams struct {
+	ID        int32
+	Namespace string
+}
+
+func (q *Queries) DeleteJournalEntry(ctx context.Context, arg DeleteJournalEntryParams) error {
+	_, err := q.db.ExecContext(ctx, deleteJournalEntry, arg.ID, arg.Namespace)
 	return err
 }
 
 const getJournalEntries = `-- name: GetJournalEntries :many
-select id, title, date, body, rating
+select id, title, date, body, rating, namespace
 from journal_entries
+where namespace = $1
 order by date desc
 `
 
-func (q *Queries) GetJournalEntries(ctx context.Context) ([]JournalEntry, error) {
-	rows, err := q.db.QueryContext(ctx, getJournalEntries)
+func (q *Queries) GetJournalEntries(ctx context.Context, namespace string) ([]JournalEntry, error) {
+	rows, err := q.db.QueryContext(ctx, getJournalEntries, namespace)
 	if err != nil {
 		return nil, err
 	}
@@ -59,6 +72,7 @@ func (q *Queries) GetJournalEntries(ctx context.Context) ([]JournalEntry, error)
 			&i.Date,
 			&i.Body,
 			&i.Rating,
+			&i.Namespace,
 		); err != nil {
 			return nil, err
 		}
@@ -74,13 +88,19 @@ func (q *Queries) GetJournalEntries(ctx context.Context) ([]JournalEntry, error)
 }
 
 const getJournalEntry = `-- name: GetJournalEntry :one
-select id, title, date, body, rating
+select id, title, date, body, rating, namespace
 from journal_entries
 where id = $1
+    and namespace = $2
 `
 
-func (q *Queries) GetJournalEntry(ctx context.Context, id int32) (JournalEntry, error) {
-	row := q.db.QueryRowContext(ctx, getJournalEntry, id)
+type GetJournalEntryParams struct {
+	ID        int32
+	Namespace string
+}
+
+func (q *Queries) GetJournalEntry(ctx context.Context, arg GetJournalEntryParams) (JournalEntry, error) {
+	row := q.db.QueryRowContext(ctx, getJournalEntry, arg.ID, arg.Namespace)
 	var i JournalEntry
 	err := row.Scan(
 		&i.ID,
@@ -88,28 +108,32 @@ func (q *Queries) GetJournalEntry(ctx context.Context, id int32) (JournalEntry, 
 		&i.Date,
 		&i.Body,
 		&i.Rating,
+		&i.Namespace,
 	)
 	return i, err
 }
 
 const updateJournalEntry = `-- name: UpdateJournalEntry :exec
 update journal_entries
-set title = $2,
-    body = $3,
-    rating = $4
+set title = $3,
+    body = $4,
+    rating = $5
 where id = $1
+    and namespace = $2
 `
 
 type UpdateJournalEntryParams struct {
-	ID     int32
-	Title  string
-	Body   string
-	Rating int32
+	ID        int32
+	Namespace string
+	Title     string
+	Body      string
+	Rating    int32
 }
 
 func (q *Queries) UpdateJournalEntry(ctx context.Context, arg UpdateJournalEntryParams) error {
 	_, err := q.db.ExecContext(ctx, updateJournalEntry,
 		arg.ID,
+		arg.Namespace,
 		arg.Title,
 		arg.Body,
 		arg.Rating,
