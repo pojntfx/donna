@@ -20,10 +20,13 @@
     <a href="/">🏠 Home</a>
     <a href="/contacts">👥 Contacts</a>
     <a href="/journal">📓 Journal</a>
+
+    {{ if ne .LogoutURL "" }}
     <a
       href="{{ .LogoutURL }}"
       onclick="return confirm('Are you sure you want to log out?')"
       >🏞️️ Logout</a
     >
+    {{ end }}
   </nav>
 </header>

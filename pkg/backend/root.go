@@ -330,6 +330,8 @@ func (b *Backend) HandleIndex(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
 
 		if err := b.tpl.ExecuteTemplate(w, "404.html", pageData{
+			authorizationData: authorizationData,
+
 			Page: "🕳️ Page not found",
 		}); err != nil {
 			log.Println(errCouldNotRenderTemplate, err)
@@ -403,7 +405,20 @@ func (b *Backend) HandleJournal(w http.ResponseWriter, r *http.Request) {
 }
 
 func (b *Backend) HandleAddJournal(w http.ResponseWriter, r *http.Request) {
+	redirected, authorizationData, err := b.authorize(w, r)
+	if err != nil {
+		log.Println(errCouldNotLogin, err)
+
+		http.Error(w, errCouldNotLogin.Error(), http.StatusUnauthorized)
+
+		return
+	} else if redirected {
+		return
+	}
+
 	if err := b.tpl.ExecuteTemplate(w, "journal_add.html", pageData{
+		authorizationData: authorizationData,
+
 		Page: "➕ Add Journal Entry",
 	}); err != nil {
 		log.Println(errCouldNotRenderTemplate, err)
@@ -572,6 +587,8 @@ func (b *Backend) HandleEditJournal(w http.ResponseWriter, r *http.Request) {
 
 	if err := b.tpl.ExecuteTemplate(w, "journal_edit.html", journalEntryData{
 		pageData: pageData{
+			authorizationData: authorizationData,
+
 			Page: "✏️ Edit Journal Entry",
 		},
 		Entry: journalEntry,
@@ -710,6 +727,8 @@ func (b *Backend) HandleViewJournal(w http.ResponseWriter, r *http.Request) {
 
 	if err := b.tpl.ExecuteTemplate(w, "journal_view.html", journalEntryData{
 		pageData: pageData{
+			authorizationData: authorizationData,
+
 			Page: journalEntry.Title,
 		},
 		Entry: journalEntry,
