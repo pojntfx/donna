@@ -127,22 +127,20 @@ type authorizationData struct {
 }
 
 func (b *Backend) authorize(w http.ResponseWriter, r *http.Request) (bool, authorizationData, error) {
-	// refreshToken, err := r.Cookie(refreshTokenKey)
-	// if err != nil {
-	// 	if errors.Is(err, http.ErrNoCookie) {
-	// 		http.Redirect(w, r, b.config.AuthCodeURL(b.oidcRedirectURL), http.StatusFound)
+	refreshToken, err := r.Cookie(refreshTokenKey)
+	if err != nil {
+		if errors.Is(err, http.ErrNoCookie) {
+			http.Redirect(w, r, b.config.AuthCodeURL(b.oidcRedirectURL), http.StatusFound)
 
-	// 		return true, authorizationData{}, nil
-	// 	}
+			return true, authorizationData{}, nil
+		}
 
-	// 	return false, authorizationData{}, err
-	// }
+		return false, authorizationData{}, err
+	}
 
 	idToken, err := r.Cookie(idTokenKey)
 	if err != nil {
 		if errors.Is(err, http.ErrNoCookie) {
-			// TODO: First try to get a new access token with refresh token and set it on the client. Only if that fails, redirect
-
 			http.Redirect(w, r, b.config.AuthCodeURL(b.oidcRedirectURL), http.StatusFound)
 
 			return true, authorizationData{}, nil
@@ -153,7 +151,43 @@ func (b *Backend) authorize(w http.ResponseWriter, r *http.Request) (bool, autho
 
 	id, err := b.verifier.Verify(r.Context(), idToken.Value)
 	if err != nil {
-		// TODO: First try to get a new access token with refresh token and set it on the client. Only if that fails, redirect
+		oauth2Token, err := b.config.TokenSource(r.Context(), &oauth2.Token{
+			RefreshToken: refreshToken.Value,
+		}).Token()
+		if err != nil {
+			http.Redirect(w, r, b.config.AuthCodeURL(b.oidcRedirectURL), http.StatusFound)
+
+			return true, authorizationData{}, nil
+		}
+
+		if refreshToken := oauth2Token.RefreshToken; refreshToken != "" {
+			http.SetCookie(w, &http.Cookie{
+				Name:     refreshTokenKey,
+				Value:    refreshToken,
+				Expires:  time.Now().Add(time.Hour * 24 * 365),
+				HttpOnly: true,
+				Secure:   true,
+				SameSite: http.SameSiteStrictMode,
+				Path:     "/",
+			})
+		}
+
+		idToken, ok := oauth2Token.Extra("id_token").(string)
+		if !ok {
+			http.Redirect(w, r, b.config.AuthCodeURL(b.oidcRedirectURL), http.StatusFound)
+
+			return true, authorizationData{}, nil
+		}
+
+		http.SetCookie(w, &http.Cookie{
+			Name:     idTokenKey,
+			Value:    idToken,
+			Expires:  oauth2Token.Expiry,
+			HttpOnly: true,
+			Secure:   true,
+			SameSite: http.SameSiteStrictMode,
+			Path:     "/",
+		})
 
 		http.Redirect(w, r, b.config.AuthCodeURL(b.oidcRedirectURL), http.StatusFound)
 
