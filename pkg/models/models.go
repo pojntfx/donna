@@ -8,6 +8,16 @@ import (
 	"time"
 )
 
+type Contact struct {
+	ID        int32
+	FirstName string
+	LastName  string
+	Nickname  string
+	Email     string
+	Pronouns  string
+	Namespace string
+}
+
 type JournalEntry struct {
 	ID        int32
 	Title     string

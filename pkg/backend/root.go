@@ -752,3 +752,45 @@ func (b *Backend) HandleImprint(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+type contactsData struct {
+	pageData
+	Entries []models.Contact
+}
+
+func (b *Backend) HandleContacts(w http.ResponseWriter, r *http.Request) {
+	redirected, authorizationData, err := b.authorize(w, r)
+	if err != nil {
+		log.Println(errCouldNotLogin, err)
+
+		http.Error(w, errCouldNotLogin.Error(), http.StatusUnauthorized)
+
+		return
+	} else if redirected {
+		return
+	}
+
+	contacts, err := b.persister.GetContacts(r.Context(), authorizationData.Email)
+	if err != nil {
+		log.Println(errCouldNotFetchFromDB, err)
+
+		http.Error(w, errCouldNotFetchFromDB.Error(), http.StatusInternalServerError)
+
+		return
+	}
+
+	if err := b.tpl.ExecuteTemplate(w, "contacts.html", contactsData{
+		pageData: pageData{
+			authorizationData: authorizationData,
+
+			Page: "👥 Contacts",
+		},
+		Entries: contacts,
+	}); err != nil {
+		log.Println(errCouldNotRenderTemplate, err)
+
+		http.Error(w, errCouldNotRenderTemplate.Error(), http.StatusInternalServerError)
+
+		return
+	}
+}

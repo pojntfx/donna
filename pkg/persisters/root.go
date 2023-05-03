@@ -79,3 +79,7 @@ func (p *Persister) UpdateJournalEntry(ctx context.Context, id int32, title, bod
 		Rating:    rating,
 	})
 }
+
+func (p *Persister) GetContacts(ctx context.Context, namespace string) ([]models.Contact, error) {
+	return p.queries.GetContacts(ctx, namespace)
+}
