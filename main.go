@@ -2,16 +2,24 @@ package main
 
 import (
 	"context"
+	"errors"
 	"flag"
 	"log"
 	"net"
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/pojntfx/donna/api/donna"
 	"github.com/pojntfx/donna/pkg/backend"
 	"github.com/pojntfx/donna/pkg/persisters"
+)
+
+var (
+	errMissingOIDCIssuer      = errors.New("missing OIDC issuer")
+	errMissingOIDCClientID    = errors.New("missing OIDC client ID")
+	errMissingOIDCRedirectURL = errors.New("missing OIDC redirect URL")
 )
 
 func main() {
@@ -65,6 +73,18 @@ func main() {
 		log.Println("Using OIDC redirect URL from OIDC_REDIRECT_URL env variable")
 
 		*oidcRedirectURL = v
+	}
+
+	if strings.TrimSpace(*oidcIssuer) == "" {
+		panic(errMissingOIDCIssuer)
+	}
+
+	if strings.TrimSpace(*oidcClientID) == "" {
+		panic(errMissingOIDCClientID)
+	}
+
+	if strings.TrimSpace(*oidcRedirectURL) == "" {
+		panic(errMissingOIDCRedirectURL)
 	}
 
 	p := persisters.NewPersister(*dbaddr)
