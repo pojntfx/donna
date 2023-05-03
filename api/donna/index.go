@@ -35,6 +35,9 @@ func DonnaHandler(
 	mux.HandleFunc("/journal/update", b.HandleUpdateJournal)
 
 	mux.HandleFunc("/contacts", b.HandleContacts)
+	mux.HandleFunc("/contacts/add", b.HandleAddContact)
+
+	mux.HandleFunc("/contacts/create", b.HandleCreateContact)
 
 	mux.HandleFunc("/imprint", b.HandleImprint)
 

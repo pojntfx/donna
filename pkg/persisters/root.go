@@ -83,3 +83,22 @@ func (p *Persister) UpdateJournalEntry(ctx context.Context, id int32, title, bod
 func (p *Persister) GetContacts(ctx context.Context, namespace string) ([]models.Contact, error) {
 	return p.queries.GetContacts(ctx, namespace)
 }
+
+func (p *Persister) CreateContact(
+	ctx context.Context,
+	firstName string,
+	lastName string,
+	nickname string,
+	email string,
+	pronouns string,
+	namespace string,
+) (int32, error) {
+	return p.queries.CreateContact(ctx, models.CreateContactParams{
+		FirstName: firstName,
+		LastName:  lastName,
+		Nickname:  nickname,
+		Email:     email,
+		Pronouns:  pronouns,
+		Namespace: namespace,
+	})
+}

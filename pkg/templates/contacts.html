@@ -8,7 +8,7 @@
     <header>
       <h2>Contacts</h2>
 
-      <a href="/contacts/add">➕ Add a contact</a>
+      <a href="/contacts/add">🤝 Add a contact</a>
     </header>
 
     <ul>
@@ -22,7 +22,10 @@
             >
           </h3>
 
-          <div>{{ .Email }} | {{ .Pronouns}}</div>
+          <div>
+            {{ .Email }} {{if and (ne .Email "") (ne .Pronouns "")}}|{{end}} {{
+            .Pronouns}}
+          </div>
         </div>
 
         <div>

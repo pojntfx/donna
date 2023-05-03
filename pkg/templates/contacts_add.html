@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  {{ template "header.html" . }}
+
+  <body>
+    {{ template "nav.html" . }}
+
+    <header>
+      <h2>🤝 Add a Contact</h2>
+    </header>
+
+    <main>
+      <form action="/contacts/create">
+        <label for="first_name">🧑 First Name</label>
+        <br />
+        <input
+          type="text"
+          name="first_name"
+          id="first_name"
+          required
+          autofocus
+        />
+        <br />
+
+        <label for="last_name">👪 Last Name</label>
+        <br />
+        <input type="text" name="last_name" id="last_name" required />
+        <br />
+
+        <label for="nickname">📟 Nickname</label>
+        <br />
+        <input type="text" name="nickname" id="nickname" />
+        <br />
+
+        <label for="email">📧 Email</label>
+        <br />
+        <input type="text" name="email" id="email" />
+        <br />
+
+        <label for="pronouns">⚧️ Pronouns</label>
+        <br />
+        <input type="text" name="pronouns" id="pronouns" required />
+        <br />
+
+        <input type="submit" value="➕ Add contact" />
+      </form>
+    </main>
+
+    {{ template "footer.html" . }}
+  </body>
+</html>
