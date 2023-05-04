@@ -42,3 +42,15 @@ func (p *Persister) DeleteContact(ctx context.Context, id int32, namespace strin
 		Namespace: namespace,
 	})
 }
+
+func (p *Persister) UpdateContact(ctx context.Context, id int32, firstName, lastName, nickname, email, pronouns, namespace string) error {
+	return p.queries.UpdateContact(ctx, models.UpdateContactParams{
+		ID:        id,
+		Namespace: namespace,
+		FirstName: firstName,
+		LastName:  lastName,
+		Nickname:  nickname,
+		Email:     email,
+		Pronouns:  pronouns,
+	})
+}

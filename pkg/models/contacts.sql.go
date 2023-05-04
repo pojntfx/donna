@@ -125,3 +125,37 @@ func (q *Queries) GetContacts(ctx context.Context, namespace string) ([]Contact,
 	}
 	return items, nil
 }
+
+const updateContact = `-- name: UpdateContact :exec
+update contacts
+set first_name = $3,
+    last_name = $4,
+    nickname = $5,
+    email = $6,
+    pronouns = $7
+where id = $1
+    and namespace = $2
+`
+
+type UpdateContactParams struct {
+	ID        int32
+	Namespace string
+	FirstName string
+	LastName  string
+	Nickname  string
+	Email     string
+	Pronouns  string
+}
+
+func (q *Queries) UpdateContact(ctx context.Context, arg UpdateContactParams) error {
+	_, err := q.db.ExecContext(ctx, updateContact,
+		arg.ID,
+		arg.Namespace,
+		arg.FirstName,
+		arg.LastName,
+		arg.Nickname,
+		arg.Email,
+		arg.Pronouns,
+	)
+	return err
+}

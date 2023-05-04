@@ -240,7 +240,7 @@ func (b *Controller) HandleViewContact(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	journalEntry, err := b.persister.GetContact(r.Context(), int32(id), authorizationData.Email)
+	contact, err := b.persister.GetContact(r.Context(), int32(id), authorizationData.Email)
 	if err != nil {
 		log.Println(errCouldNotFetchFromDB, err)
 
@@ -253,9 +253,160 @@ func (b *Controller) HandleViewContact(w http.ResponseWriter, r *http.Request) {
 		pageData: pageData{
 			authorizationData: authorizationData,
 
-			Page: journalEntry.FirstName + " " + journalEntry.LastName,
+			Page: contact.FirstName + " " + contact.LastName,
 		},
-		Entry: journalEntry,
+		Entry: contact,
+	}); err != nil {
+		log.Println(errCouldNotRenderTemplate, err)
+
+		http.Error(w, errCouldNotRenderTemplate.Error(), http.StatusInternalServerError)
+
+		return
+	}
+}
+
+func (b *Controller) HandleUpdateContact(w http.ResponseWriter, r *http.Request) {
+	redirected, authorizationData, err := b.authorize(w, r)
+	if err != nil {
+		log.Println(errCouldNotLogin, err)
+
+		http.Error(w, errCouldNotLogin.Error(), http.StatusUnauthorized)
+
+		return
+	} else if redirected {
+		return
+	}
+
+	if err := r.ParseForm(); err != nil {
+		log.Println(errCouldNotParseForm, err)
+
+		http.Error(w, errCouldNotParseForm.Error(), http.StatusInternalServerError)
+
+		return
+	}
+
+	rid := r.FormValue("id")
+	if strings.TrimSpace(rid) == "" {
+		log.Println(errInvalidForm)
+
+		http.Error(w, errInvalidForm.Error(), http.StatusUnprocessableEntity)
+
+		return
+	}
+
+	id, err := strconv.Atoi(rid)
+	if err != nil {
+		log.Println(errInvalidForm)
+
+		http.Error(w, errInvalidForm.Error(), http.StatusUnprocessableEntity)
+
+		return
+	}
+
+	firstName := r.FormValue("first_name")
+	if strings.TrimSpace(firstName) == "" {
+		log.Println(errInvalidForm)
+
+		http.Error(w, errInvalidForm.Error(), http.StatusUnprocessableEntity)
+
+		return
+	}
+
+	lastName := r.FormValue("last_name")
+	if strings.TrimSpace(lastName) == "" {
+		log.Println(errInvalidForm)
+
+		http.Error(w, errInvalidForm.Error(), http.StatusUnprocessableEntity)
+
+		return
+	}
+
+	email := r.FormValue("email")
+	if _, err := mail.ParseAddress(email); err != nil {
+		log.Println(err)
+
+		http.Error(w, errInvalidForm.Error(), http.StatusUnprocessableEntity)
+
+		return
+	}
+
+	nickname := r.FormValue("nickname")
+
+	pronouns := r.FormValue("pronouns")
+	if strings.TrimSpace(pronouns) == "" {
+		log.Println(errInvalidForm)
+
+		http.Error(w, errInvalidForm.Error(), http.StatusUnprocessableEntity)
+
+		return
+	}
+
+	if err := b.persister.UpdateContact(
+		r.Context(),
+		int32(id),
+		firstName,
+		lastName,
+		nickname,
+		email,
+		pronouns,
+		authorizationData.Email,
+	); err != nil {
+		log.Println(errCouldNotUpdateInDB, err)
+
+		http.Error(w, errCouldNotInsertIntoDB.Error(), http.StatusInternalServerError)
+
+		return
+	}
+
+	http.Redirect(w, r, "/contacts/view?id="+rid, http.StatusFound)
+}
+
+func (b *Controller) HandleEditContact(w http.ResponseWriter, r *http.Request) {
+	redirected, authorizationData, err := b.authorize(w, r)
+	if err != nil {
+		log.Println(errCouldNotLogin, err)
+
+		http.Error(w, errCouldNotLogin.Error(), http.StatusUnauthorized)
+
+		return
+	} else if redirected {
+		return
+	}
+
+	rid := r.FormValue("id")
+	if strings.TrimSpace(rid) == "" {
+		log.Println(errInvalidQueryParam)
+
+		http.Error(w, errInvalidQueryParam.Error(), http.StatusUnprocessableEntity)
+
+		return
+	}
+
+	id, err := strconv.Atoi(rid)
+	if err != nil {
+		log.Println(errInvalidQueryParam)
+
+		http.Error(w, errInvalidQueryParam.Error(), http.StatusUnprocessableEntity)
+
+		return
+	}
+
+	contact, err := b.persister.GetContact(r.Context(), int32(id), authorizationData.Email)
+	if err != nil {
+		log.Println(errCouldNotFetchFromDB, err)
+
+		http.Error(w, errCouldNotFetchFromDB.Error(), http.StatusInternalServerError)
+
+		return
+	}
+
+	if err := b.tpl.ExecuteTemplate(w, "contacts_edit.html", contactData{
+		pageData: pageData{
+			authorizationData: authorizationData,
+
+			Page: "✏️ Edit Contact",
+		},
+		Entry: contact,
 	}); err != nil {
 		log.Println(errCouldNotRenderTemplate, err)
 

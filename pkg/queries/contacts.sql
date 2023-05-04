@@ -23,3 +23,12 @@ select *
 from contacts
 where id = $1
     and namespace = $2;
+-- name: UpdateContact :exec
+update contacts
+set first_name = $3,
+    last_name = $4,
+    nickname = $5,
+    email = $6,
+    pronouns = $7
+where id = $1
+    and namespace = $2;
