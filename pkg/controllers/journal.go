@@ -1,4 +1,4 @@
-package backend
+package controllers
 
 import (
 	"fmt"
@@ -20,7 +20,7 @@ type journalEntryData struct {
 	Entry models.JournalEntry
 }
 
-func (b *Backend) HandleJournal(w http.ResponseWriter, r *http.Request) {
+func (b *Controller) HandleJournal(w http.ResponseWriter, r *http.Request) {
 	redirected, authorizationData, err := b.authorize(w, r)
 	if err != nil {
 		log.Println(errCouldNotLogin, err)
@@ -57,7 +57,7 @@ func (b *Backend) HandleJournal(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (b *Backend) HandleAddJournal(w http.ResponseWriter, r *http.Request) {
+func (b *Controller) HandleAddJournal(w http.ResponseWriter, r *http.Request) {
 	redirected, authorizationData, err := b.authorize(w, r)
 	if err != nil {
 		log.Println(errCouldNotLogin, err)
@@ -82,7 +82,7 @@ func (b *Backend) HandleAddJournal(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (b *Backend) HandleCreateJournal(w http.ResponseWriter, r *http.Request) {
+func (b *Controller) HandleCreateJournal(w http.ResponseWriter, r *http.Request) {
 	redirected, authorizationData, err := b.authorize(w, r)
 	if err != nil {
 		log.Println(errCouldNotLogin, err)
@@ -150,7 +150,7 @@ func (b *Backend) HandleCreateJournal(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, fmt.Sprintf("/journal/view?id=%v", id), http.StatusFound)
 }
 
-func (b *Backend) HandleDeleteJournal(w http.ResponseWriter, r *http.Request) {
+func (b *Controller) HandleDeleteJournal(w http.ResponseWriter, r *http.Request) {
 	redirected, authorizationData, err := b.authorize(w, r)
 	if err != nil {
 		log.Println(errCouldNotLogin, err)
@@ -199,7 +199,7 @@ func (b *Backend) HandleDeleteJournal(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/journal", http.StatusFound)
 }
 
-func (b *Backend) HandleEditJournal(w http.ResponseWriter, r *http.Request) {
+func (b *Controller) HandleEditJournal(w http.ResponseWriter, r *http.Request) {
 	redirected, authorizationData, err := b.authorize(w, r)
 	if err != nil {
 		log.Println(errCouldNotLogin, err)
@@ -254,7 +254,7 @@ func (b *Backend) HandleEditJournal(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (b *Backend) HandleUpdateJournal(w http.ResponseWriter, r *http.Request) {
+func (b *Controller) HandleUpdateJournal(w http.ResponseWriter, r *http.Request) {
 	redirected, authorizationData, err := b.authorize(w, r)
 	if err != nil {
 		log.Println(errCouldNotLogin, err)
@@ -339,7 +339,7 @@ func (b *Backend) HandleUpdateJournal(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/journal/view?id="+rid, http.StatusFound)
 }
 
-func (b *Backend) HandleViewJournal(w http.ResponseWriter, r *http.Request) {
+func (b *Controller) HandleViewJournal(w http.ResponseWriter, r *http.Request) {
 	redirected, authorizationData, err := b.authorize(w, r)
 	if err != nil {
 		log.Println(errCouldNotLogin, err)

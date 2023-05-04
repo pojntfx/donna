@@ -1,4 +1,4 @@
-package backend
+package controllers
 
 import (
 	"bytes"
@@ -34,7 +34,7 @@ const (
 	refreshTokenKey = "refresh_token"
 )
 
-type Backend struct {
+type Controller struct {
 	tpl       *template.Template
 	persister *persisters.Persister
 
@@ -46,14 +46,14 @@ type Backend struct {
 	verifier *oidc.IDTokenVerifier
 }
 
-func NewBackend(
+func NewController(
 	persister *persisters.Persister,
 
 	oidcIssuer,
 	oidcClientID,
 	oidcRedirectURL string,
-) *Backend {
-	return &Backend{
+) *Controller {
+	return &Controller{
 		persister: persister,
 
 		oidcIssuer:      oidcIssuer,
@@ -62,7 +62,7 @@ func NewBackend(
 	}
 }
 
-func (b *Backend) Init(ctx context.Context) error {
+func (b *Controller) Init(ctx context.Context) error {
 	md := goldmark.New(
 		goldmark.WithExtensions(extension.GFM),
 	)
@@ -109,7 +109,7 @@ func (b *Backend) Init(ctx context.Context) error {
 	return nil
 }
 
-func (b *Backend) HandleIndex(w http.ResponseWriter, r *http.Request) {
+func (b *Controller) HandleIndex(w http.ResponseWriter, r *http.Request) {
 	redirected, authorizationData, err := b.authorize(w, r)
 	if err != nil {
 		log.Println(errCouldNotLogin, err)
@@ -152,7 +152,7 @@ func (b *Backend) HandleIndex(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (b *Backend) HandleImprint(w http.ResponseWriter, r *http.Request) {
+func (b *Controller) HandleImprint(w http.ResponseWriter, r *http.Request) {
 	if err := b.tpl.ExecuteTemplate(w, "imprint.html", pageData{
 		Page: "ℹ️ Imprint",
 	}); err != nil {

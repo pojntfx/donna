@@ -12,7 +12,7 @@ import (
 	"strings"
 
 	"github.com/pojntfx/donna/api/donna"
-	"github.com/pojntfx/donna/pkg/backend"
+	"github.com/pojntfx/donna/pkg/controllers"
 	"github.com/pojntfx/donna/pkg/persisters"
 )
 
@@ -93,15 +93,15 @@ func main() {
 		panic(err)
 	}
 
-	b := backend.NewBackend(p, *oidcIssuer, *oidcClientID, *oidcRedirectURL)
+	c := controllers.NewController(p, *oidcIssuer, *oidcClientID, *oidcRedirectURL)
 
-	if err := b.Init(ctx); err != nil {
+	if err := c.Init(ctx); err != nil {
 		panic(err)
 	}
 
 	log.Println("Listening on", *laddr)
 
 	panic(http.ListenAndServe(*laddr, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		donna.DonnaHandler(w, r, b)
+		donna.DonnaHandler(w, r, c)
 	})))
 }

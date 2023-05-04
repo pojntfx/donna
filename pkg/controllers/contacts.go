@@ -1,4 +1,4 @@
-package backend
+package controllers
 
 import (
 	"fmt"
@@ -15,7 +15,7 @@ type contactsData struct {
 	Entries []models.Contact
 }
 
-func (b *Backend) HandleContacts(w http.ResponseWriter, r *http.Request) {
+func (b *Controller) HandleContacts(w http.ResponseWriter, r *http.Request) {
 	redirected, authorizationData, err := b.authorize(w, r)
 	if err != nil {
 		log.Println(errCouldNotLogin, err)
@@ -52,7 +52,7 @@ func (b *Backend) HandleContacts(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (b *Backend) HandleAddContact(w http.ResponseWriter, r *http.Request) {
+func (b *Controller) HandleAddContact(w http.ResponseWriter, r *http.Request) {
 	redirected, authorizationData, err := b.authorize(w, r)
 	if err != nil {
 		log.Println(errCouldNotLogin, err)
@@ -77,7 +77,7 @@ func (b *Backend) HandleAddContact(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (b *Backend) HandleCreateContact(w http.ResponseWriter, r *http.Request) {
+func (b *Controller) HandleCreateContact(w http.ResponseWriter, r *http.Request) {
 	redirected, authorizationData, err := b.authorize(w, r)
 	if err != nil {
 		log.Println(errCouldNotLogin, err)
@@ -149,7 +149,7 @@ func (b *Backend) HandleCreateContact(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, fmt.Sprintf("/contacts/view?id=%v", id), http.StatusFound)
 }
 
-func (b *Backend) HandleDeleteContact(w http.ResponseWriter, r *http.Request) {
+func (b *Controller) HandleDeleteContact(w http.ResponseWriter, r *http.Request) {
 	redirected, authorizationData, err := b.authorize(w, r)
 	if err != nil {
 		log.Println(errCouldNotLogin, err)

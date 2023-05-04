@@ -1,4 +1,4 @@
-package backend
+package controllers
 
 import (
 	"errors"
@@ -21,7 +21,7 @@ type authorizationData struct {
 	LogoutURL string
 }
 
-func (b *Backend) authorize(w http.ResponseWriter, r *http.Request) (bool, authorizationData, error) {
+func (b *Controller) authorize(w http.ResponseWriter, r *http.Request) (bool, authorizationData, error) {
 	rt, err := r.Cookie(refreshTokenKey)
 	if err != nil {
 		if errors.Is(err, http.ErrNoCookie) {
@@ -57,6 +57,21 @@ func (b *Backend) authorize(w http.ResponseWriter, r *http.Request) (bool, autho
 			return true, authorizationData{}, nil
 		}
 
+		var ok bool
+		idToken, ok = oauth2Token.Extra("id_token").(string)
+		if !ok {
+			http.Redirect(w, r, b.config.AuthCodeURL(b.oidcRedirectURL), http.StatusFound)
+
+			return true, authorizationData{}, nil
+		}
+
+		id, err = b.verifier.Verify(r.Context(), idToken)
+		if err != nil {
+			http.Redirect(w, r, b.config.AuthCodeURL(b.oidcRedirectURL), http.StatusFound)
+
+			return true, authorizationData{}, nil
+		}
+
 		if refreshToken = oauth2Token.RefreshToken; refreshToken != "" {
 			http.SetCookie(w, &http.Cookie{
 				Name:     refreshTokenKey,
@@ -67,14 +82,6 @@ func (b *Backend) authorize(w http.ResponseWriter, r *http.Request) (bool, autho
 				SameSite: http.SameSiteStrictMode,
 				Path:     "/",
 			})
-		}
-
-		var ok bool
-		idToken, ok = oauth2Token.Extra("id_token").(string)
-		if !ok {
-			http.Redirect(w, r, b.config.AuthCodeURL(b.oidcRedirectURL), http.StatusFound)
-
-			return true, authorizationData{}, nil
 		}
 
 		http.SetCookie(w, &http.Cookie{
@@ -123,7 +130,7 @@ type redirectData struct {
 	Href string
 }
 
-func (b *Backend) HandleAuthorize(w http.ResponseWriter, r *http.Request) {
+func (b *Controller) HandleAuthorize(w http.ResponseWriter, r *http.Request) {
 	authCode := r.URL.Query().Get("code")
 
 	// Sign out
