@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  {{ template "header.html" . }}
+
+  <body>
+    {{ template "nav.html" . }}
+
+    <header>
+      <div>
+        <a href="/contacts">🔙</a>
+
+        <h2>
+          {{ .Entry.FirstName }} {{ .Entry.LastName }} {{ if ne .Entry.Nickname
+          ""}} ({{ .Entry.Nickname }}) {{ end }}
+        </h2>
+      </div>
+
+      <div>
+        {{ .Entry.Email }} {{if and (ne .Entry.Email "") (ne .Entry.Pronouns
+        "")}}|{{end}} {{ .Entry.Pronouns}}
+      </div>
+    </header>
+
+    <main>
+      <form
+        action="/contacts/delete?id={{ .ID }}"
+        method="post"
+        onsubmit="return confirm('Are you sure you want to delete this contact?')"
+      >
+        <input type="submit" value="🗑️ Delete" />
+      </form>
+
+      <a href="/contacts/edit?id={{ .ID }}">✏️ Edit</a>
+    </main>
+
+    {{ template "footer.html" . }}
+  </body>
+</html>

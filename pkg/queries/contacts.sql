@@ -18,3 +18,8 @@ returning id;
 delete from contacts
 where id = $1
     and namespace = $2;
+-- name: GetContact :one
+select *
+from contacts
+where id = $1
+    and namespace = $2;

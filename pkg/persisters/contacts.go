@@ -29,6 +29,13 @@ func (p *Persister) CreateContact(
 	})
 }
 
+func (p *Persister) GetContact(ctx context.Context, id int32, namespace string) (models.Contact, error) {
+	return p.queries.GetContact(ctx, models.GetContactParams{
+		ID:        id,
+		Namespace: namespace,
+	})
+}
+
 func (p *Persister) DeleteContact(ctx context.Context, id int32, namespace string) error {
 	return p.queries.DeleteContact(ctx, models.DeleteContactParams{
 		ID:        id,

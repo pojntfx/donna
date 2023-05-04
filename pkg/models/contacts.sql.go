@@ -61,6 +61,33 @@ func (q *Queries) DeleteContact(ctx context.Context, arg DeleteContactParams) er
 	return err
 }
 
+const getContact = `-- name: GetContact :one
+select id, first_name, last_name, nickname, email, pronouns, namespace
+from contacts
+where id = $1
+    and namespace = $2
+`
+
+type GetContactParams struct {
+	ID        int32
+	Namespace string
+}
+
+func (q *Queries) GetContact(ctx context.Context, arg GetContactParams) (Contact, error) {
+	row := q.db.QueryRowContext(ctx, getContact, arg.ID, arg.Namespace)
+	var i Contact
+	err := row.Scan(
+		&i.ID,
+		&i.FirstName,
+		&i.LastName,
+		&i.Nickname,
+		&i.Email,
+		&i.Pronouns,
+		&i.Namespace,
+	)
+	return i, err
+}
+
 const getContacts = `-- name: GetContacts :many
 select id, first_name, last_name, nickname, email, pronouns, namespace
 from contacts

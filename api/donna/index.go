@@ -36,6 +36,7 @@ func DonnaHandler(
 
 	mux.HandleFunc("/contacts", c.HandleContacts)
 	mux.HandleFunc("/contacts/add", c.HandleAddContact)
+	mux.HandleFunc("/contacts/view", c.HandleViewContact)
 
 	mux.HandleFunc("/contacts/create", c.HandleCreateContact)
 	mux.HandleFunc("/contacts/delete", c.HandleDeleteContact)

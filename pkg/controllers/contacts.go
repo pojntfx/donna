@@ -16,6 +16,11 @@ type contactsData struct {
 	Entries []models.Contact
 }
 
+type contactData struct {
+	pageData
+	Entry models.Contact
+}
+
 func (b *Controller) HandleContacts(w http.ResponseWriter, r *http.Request) {
 	redirected, authorizationData, err := b.authorize(w, r)
 	if err != nil {
@@ -203,4 +208,59 @@ func (b *Controller) HandleDeleteContact(w http.ResponseWriter, r *http.Request)
 	}
 
 	http.Redirect(w, r, "/contacts", http.StatusFound)
+}
+
+func (b *Controller) HandleViewContact(w http.ResponseWriter, r *http.Request) {
+	redirected, authorizationData, err := b.authorize(w, r)
+	if err != nil {
+		log.Println(errCouldNotLogin, err)
+
+		http.Error(w, errCouldNotLogin.Error(), http.StatusUnauthorized)
+
+		return
+	} else if redirected {
+		return
+	}
+
+	rid := r.FormValue("id")
+	if strings.TrimSpace(rid) == "" {
+		log.Println(errInvalidQueryParam)
+
+		http.Error(w, errInvalidQueryParam.Error(), http.StatusUnprocessableEntity)
+
+		return
+	}
+
+	id, err := strconv.Atoi(rid)
+	if err != nil {
+		log.Println(errInvalidQueryParam)
+
+		http.Error(w, errInvalidQueryParam.Error(), http.StatusUnprocessableEntity)
+
+		return
+	}
+
+	journalEntry, err := b.persister.GetContact(r.Context(), int32(id), authorizationData.Email)
+	if err != nil {
+		log.Println(errCouldNotFetchFromDB, err)
+
+		http.Error(w, errCouldNotFetchFromDB.Error(), http.StatusInternalServerError)
+
+		return
+	}
+
+	if err := b.tpl.ExecuteTemplate(w, "contacts_view.html", contactData{
+		pageData: pageData{
+			authorizationData: authorizationData,
+
+			Page: journalEntry.FirstName + " " + journalEntry.LastName,
+		},
+		Entry: journalEntry,
+	}); err != nil {
+		log.Println(errCouldNotRenderTemplate, err)
+
+		http.Error(w, errCouldNotRenderTemplate.Error(), http.StatusInternalServerError)
+
+		return
+	}
 }
