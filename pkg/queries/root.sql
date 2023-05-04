@@ -39,3 +39,7 @@ insert into contacts (
     )
 values ($1, $2, $3, $4, $5, $6)
 returning id;
+-- name: DeleteContact :exec
+delete from contacts
+where id = $1
+    and namespace = $2;

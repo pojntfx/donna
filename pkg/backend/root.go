@@ -891,3 +891,52 @@ func (b *Backend) HandleCreateContact(w http.ResponseWriter, r *http.Request) {
 
 	http.Redirect(w, r, fmt.Sprintf("/contacts/view?id=%v", id), http.StatusFound)
 }
+
+func (b *Backend) HandleDeleteContact(w http.ResponseWriter, r *http.Request) {
+	redirected, authorizationData, err := b.authorize(w, r)
+	if err != nil {
+		log.Println(errCouldNotLogin, err)
+
+		http.Error(w, errCouldNotLogin.Error(), http.StatusUnauthorized)
+
+		return
+	} else if redirected {
+		return
+	}
+
+	if err := r.ParseForm(); err != nil {
+		log.Println(errCouldNotParseForm, err)
+
+		http.Error(w, errCouldNotParseForm.Error(), http.StatusInternalServerError)
+
+		return
+	}
+
+	rid := r.FormValue("id")
+	if strings.TrimSpace(rid) == "" {
+		log.Println(errInvalidForm)
+
+		http.Error(w, errInvalidForm.Error(), http.StatusUnprocessableEntity)
+
+		return
+	}
+
+	id, err := strconv.Atoi(rid)
+	if err != nil {
+		log.Println(errInvalidForm)
+
+		http.Error(w, errInvalidForm.Error(), http.StatusUnprocessableEntity)
+
+		return
+	}
+
+	if err := b.persister.DeleteContact(r.Context(), int32(id), authorizationData.Email); err != nil {
+		log.Println(errCouldNotDeleteFromDB, err)
+
+		http.Error(w, errCouldNotDeleteFromDB.Error(), http.StatusInternalServerError)
+
+		return
+	}
+
+	http.Redirect(w, r, "/contacts", http.StatusFound)
+}

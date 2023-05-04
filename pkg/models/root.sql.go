@@ -70,6 +70,22 @@ func (q *Queries) CreateJournalEntry(ctx context.Context, arg CreateJournalEntry
 	return id, err
 }
 
+const deleteContact = `-- name: DeleteContact :exec
+delete from contacts
+where id = $1
+    and namespace = $2
+`
+
+type DeleteContactParams struct {
+	ID        int32
+	Namespace string
+}
+
+func (q *Queries) DeleteContact(ctx context.Context, arg DeleteContactParams) error {
+	_, err := q.db.ExecContext(ctx, deleteContact, arg.ID, arg.Namespace)
+	return err
+}
+
 const deleteJournalEntry = `-- name: DeleteJournalEntry :exec
 delete from journal_entries
 where id = $1

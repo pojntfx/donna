@@ -38,6 +38,7 @@ func DonnaHandler(
 	mux.HandleFunc("/contacts/add", b.HandleAddContact)
 
 	mux.HandleFunc("/contacts/create", b.HandleCreateContact)
+	mux.HandleFunc("/contacts/delete", b.HandleDeleteContact)
 
 	mux.HandleFunc("/imprint", b.HandleImprint)
 

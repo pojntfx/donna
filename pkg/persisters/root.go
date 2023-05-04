@@ -102,3 +102,10 @@ func (p *Persister) CreateContact(
 		Namespace: namespace,
 	})
 }
+
+func (p *Persister) DeleteContact(ctx context.Context, id int32, namespace string) error {
+	return p.queries.DeleteContact(ctx, models.DeleteContactParams{
+		ID:        id,
+		Namespace: namespace,
+	})
+}
