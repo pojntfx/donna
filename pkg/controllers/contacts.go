@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/mail"
 	"strconv"
 	"strings"
 
@@ -115,10 +116,16 @@ func (b *Controller) HandleCreateContact(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	var (
-		nickname = r.FormValue("nickname")
-		email    = r.FormValue("email")
-	)
+	email := r.FormValue("email")
+	if _, err := mail.ParseAddress(email); err != nil {
+		log.Println(err)
+
+		http.Error(w, errInvalidForm.Error(), http.StatusUnprocessableEntity)
+
+		return
+	}
+
+	nickname := r.FormValue("nickname")
 
 	pronouns := r.FormValue("pronouns")
 	if strings.TrimSpace(pronouns) == "" {

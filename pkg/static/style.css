@@ -60,6 +60,7 @@ body > footer {
 }
 
 main input[type="text"],
+main input[type="email"],
 main textarea {
   box-sizing: border-box;
   width: 100%;
