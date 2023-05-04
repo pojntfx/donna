@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/coreos/go-oidc/v3 v3.5.0
 	github.com/lib/pq v1.10.9
-	github.com/pressly/goose/v3 v3.10.0
+	github.com/pressly/goose/v3 v3.11.0
 	github.com/yuin/goldmark v1.5.4
 	golang.org/x/oauth2 v0.7.0
 )
