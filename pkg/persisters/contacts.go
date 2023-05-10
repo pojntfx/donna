@@ -54,10 +54,3 @@ func (p *Persister) UpdateContact(ctx context.Context, id int32, firstName, last
 		Pronouns:  pronouns,
 	})
 }
-
-func (p *Persister) ContactBelongsToNamespace(ctx context.Context, id int32, namespace string) (bool, error) {
-	return p.queries.ContactBelongsToNamespace(ctx, models.ContactBelongsToNamespaceParams{
-		ID:        id,
-		Namespace: namespace,
-	})
-}

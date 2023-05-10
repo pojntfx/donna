@@ -10,29 +10,41 @@ import (
 )
 
 const createDebt = `-- name: CreateDebt :one
-insert into debts (
-        id,
-        amount,
-        currency,
-        contact_id
-    )
-values ($1, $2, $3, $4)
-returning id
+with contact as (
+    select id
+    from contacts
+    where contacts.id = $1
+        and namespace = $2
+),
+insertion as (
+    insert into debts (amount, currency, contact_id)
+    select $3,
+        $4,
+        $1
+    from contact
+    where exists (
+            select 1
+            from contact
+        )
+    returning debts.id
+)
+select id
+from insertion
 `
 
 type CreateDebtParams struct {
 	ID        int32
+	Namespace string
 	Amount    float64
 	Currency  string
-	ContactID int32
 }
 
 func (q *Queries) CreateDebt(ctx context.Context, arg CreateDebtParams) (int32, error) {
 	row := q.db.QueryRowContext(ctx, createDebt,
 		arg.ID,
+		arg.Namespace,
 		arg.Amount,
 		arg.Currency,
-		arg.ContactID,
 	)
 	var id int32
 	err := row.Scan(&id)

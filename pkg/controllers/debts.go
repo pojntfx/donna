@@ -46,23 +46,6 @@ func (b *Controller) HandleCreateDebt(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	belongsToNamespace, err := b.persister.ContactBelongsToNamespace(r.Context(), int32(contactID), authorizationData.Email)
-	if err != nil {
-		log.Println(errCouldNotFetchFromDB, err)
-
-		http.Error(w, errCouldNotInsertIntoDB.Error(), http.StatusInternalServerError)
-
-		return
-	}
-
-	if !belongsToNamespace {
-		log.Println(errCouldNotLogin, err)
-
-		http.Error(w, errCouldNotLogin.Error(), http.StatusUnauthorized)
-
-		return
-	}
-
 	ramount := r.FormValue("amount")
 	if strings.TrimSpace(rcontactID) == "" {
 		log.Println(errInvalidForm)
@@ -92,8 +75,10 @@ func (b *Controller) HandleCreateDebt(w http.ResponseWriter, r *http.Request) {
 
 	if _, err := b.persister.CreateDebt(
 		r.Context(),
+
 		amount,
 		currency,
+
 		int32(contactID),
 		authorizationData.Email,
 	); err != nil {

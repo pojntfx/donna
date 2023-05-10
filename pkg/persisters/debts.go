@@ -6,11 +6,19 @@ import (
 	"github.com/pojntfx/donna/pkg/models"
 )
 
-// TODO: Use transaction and check if contact belongs to namespace before trying to continue
-func (p *Persister) CreateDebt(ctx context.Context, amount float64, currency string, contactID int32, namespace string) (int32, error) {
+func (p *Persister) CreateDebt(
+	ctx context.Context,
+
+	amount float64,
+	currency string,
+
+	contactID int32,
+	namespace string,
+) (int32, error) {
 	return p.queries.CreateDebt(ctx, models.CreateDebtParams{
+		ID:        contactID,
+		Namespace: namespace,
 		Amount:    amount,
 		Currency:  currency,
-		ContactID: contactID,
 	})
 }
