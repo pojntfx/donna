@@ -28,8 +28,8 @@ func (b *Controller) HandleCreateDebt(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	contactID := r.FormValue("contact_id")
-	if strings.TrimSpace(contactID) == "" {
+	rcontactID := r.FormValue("contact_id")
+	if strings.TrimSpace(rcontactID) == "" {
 		log.Println(errInvalidForm)
 
 		http.Error(w, errInvalidForm.Error(), http.StatusUnprocessableEntity)
@@ -37,7 +37,7 @@ func (b *Controller) HandleCreateDebt(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id, err := strconv.Atoi(contactID)
+	contactID, err := strconv.Atoi(rcontactID)
 	if err != nil {
 		log.Println(errInvalidForm)
 
@@ -46,7 +46,7 @@ func (b *Controller) HandleCreateDebt(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	belongsToNamespace, err := b.persister.ContactBelongsToNamespace(r.Context(), int32(id), authorizationData.Email)
+	belongsToNamespace, err := b.persister.ContactBelongsToNamespace(r.Context(), int32(contactID), authorizationData.Email)
 	if err != nil {
 		log.Println(errCouldNotFetchFromDB, err)
 
@@ -55,5 +55,54 @@ func (b *Controller) HandleCreateDebt(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, fmt.Sprintf("/debts/view?id=%v", id), http.StatusFound)
+	if !belongsToNamespace {
+		log.Println(errCouldNotLogin, err)
+
+		http.Error(w, errCouldNotLogin.Error(), http.StatusUnauthorized)
+
+		return
+	}
+
+	ramount := r.FormValue("amount")
+	if strings.TrimSpace(rcontactID) == "" {
+		log.Println(errInvalidForm)
+
+		http.Error(w, errInvalidForm.Error(), http.StatusUnprocessableEntity)
+
+		return
+	}
+
+	amount, err := strconv.ParseFloat(ramount, 64)
+	if err != nil {
+		log.Println(errInvalidForm)
+
+		http.Error(w, errInvalidForm.Error(), http.StatusUnprocessableEntity)
+
+		return
+	}
+
+	currency := r.FormValue("currency")
+	if strings.TrimSpace(currency) == "" {
+		log.Println(errInvalidForm)
+
+		http.Error(w, errInvalidForm.Error(), http.StatusUnprocessableEntity)
+
+		return
+	}
+
+	if _, err := b.persister.CreateDebt(
+		r.Context(),
+		amount,
+		currency,
+		int32(contactID),
+		authorizationData.Email,
+	); err != nil {
+		log.Println(errCouldNotInsertIntoDB, err)
+
+		http.Error(w, errCouldNotInsertIntoDB.Error(), http.StatusInternalServerError)
+
+		return
+	}
+
+	http.Redirect(w, r, fmt.Sprintf("/contacts/view?id=%v", contactID), http.StatusFound)
 }
