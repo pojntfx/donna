@@ -32,3 +32,10 @@ set first_name = $3,
     pronouns = $7
 where id = $1
     and namespace = $2;
+-- name: ContactBelongsToNamespace :one
+select exists (
+        select 1
+        from contacts
+        where id = $1
+            and namespace = $2
+    );

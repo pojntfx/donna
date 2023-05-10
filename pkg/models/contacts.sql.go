@@ -9,6 +9,27 @@ import (
 	"context"
 )
 
+const contactBelongsToNamespace = `-- name: ContactBelongsToNamespace :one
+select exists (
+        select 1
+        from contacts
+        where id = $1
+            and namespace = $2
+    )
+`
+
+type ContactBelongsToNamespaceParams struct {
+	ID        int32
+	Namespace string
+}
+
+func (q *Queries) ContactBelongsToNamespace(ctx context.Context, arg ContactBelongsToNamespaceParams) (bool, error) {
+	row := q.db.QueryRowContext(ctx, contactBelongsToNamespace, arg.ID, arg.Namespace)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
 const createContact = `-- name: CreateContact :one
 insert into contacts (
         first_name,

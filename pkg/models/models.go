@@ -18,6 +18,13 @@ type Contact struct {
 	Namespace string
 }
 
+type Debt struct {
+	ID        int32
+	Amount    float64
+	Currency  string
+	ContactID int32
+}
+
 type JournalEntry struct {
 	ID        int32
 	Title     string
