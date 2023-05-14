@@ -22,3 +22,15 @@ func (p *Persister) CreateDebt(
 		Currency:  currency,
 	})
 }
+
+func (p *Persister) GetDebts(
+	ctx context.Context,
+
+	contactID int32,
+	namespace string,
+) ([]models.GetDebtsRow, error) {
+	return p.queries.GetDebts(ctx, models.GetDebtsParams{
+		ID:        contactID,
+		Namespace: namespace,
+	})
+}

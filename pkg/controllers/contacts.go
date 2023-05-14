@@ -19,6 +19,7 @@ type contactsData struct {
 type contactData struct {
 	pageData
 	Entry models.Contact
+	Debts []models.GetDebtsRow
 }
 
 func (b *Controller) HandleContacts(w http.ResponseWriter, r *http.Request) {
@@ -249,6 +250,15 @@ func (b *Controller) HandleViewContact(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	debts, err := b.persister.GetDebts(r.Context(), int32(id), authorizationData.Email)
+	if err != nil {
+		log.Println(errCouldNotFetchFromDB, err)
+
+		http.Error(w, errCouldNotFetchFromDB.Error(), http.StatusInternalServerError)
+
+		return
+	}
+
 	if err := b.tpl.ExecuteTemplate(w, "contacts_view.html", contactData{
 		pageData: pageData{
 			authorizationData: authorizationData,
@@ -256,6 +266,7 @@ func (b *Controller) HandleViewContact(w http.ResponseWriter, r *http.Request) {
 			Page: contact.FirstName + " " + contact.LastName,
 		},
 		Entry: contact,
+		Debts: debts,
 	}); err != nil {
 		log.Println(errCouldNotRenderTemplate, err)
 

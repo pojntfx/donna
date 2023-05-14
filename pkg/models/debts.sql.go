@@ -50,3 +50,47 @@ func (q *Queries) CreateDebt(ctx context.Context, arg CreateDebtParams) (int32, 
 	err := row.Scan(&id)
 	return id, err
 }
+
+const getDebts = `-- name: GetDebts :many
+select debts.id,
+    debts.amount,
+    debts.currency
+from contacts
+    right join debts on debts.contact_id = contacts.id
+where contacts.id = $1
+    and contacts.namespace = $2
+`
+
+type GetDebtsParams struct {
+	ID        int32
+	Namespace string
+}
+
+type GetDebtsRow struct {
+	ID       int32
+	Amount   float64
+	Currency string
+}
+
+func (q *Queries) GetDebts(ctx context.Context, arg GetDebtsParams) ([]GetDebtsRow, error) {
+	rows, err := q.db.QueryContext(ctx, getDebts, arg.ID, arg.Namespace)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetDebtsRow
+	for rows.Next() {
+		var i GetDebtsRow
+		if err := rows.Scan(&i.ID, &i.Amount, &i.Currency); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}

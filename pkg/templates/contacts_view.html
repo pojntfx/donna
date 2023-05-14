@@ -22,6 +22,49 @@
     </header>
 
     <main>
+      <section>
+        <header>
+          <div>
+            <h3>💸 Debts</h3>
+          </div>
+
+          <div>
+            <a href="/debts/add?id={{ .Entry.ID }}">➕ Add debt</a>
+          </div>
+        </header>
+
+        <main>
+          {{ if eq (len .Debts) 0 }}
+          <div>
+            Manage debts you owe to {{ .Entry.FirstName }} or {{
+            .Entry.FirstName }} owes you
+          </div>
+          {{ else }}
+          <ul>
+            {{ range .Debts }}
+            <li>
+              {{ if gt .Amount 0.0 }}You owe them {{ Abs .Amount }} {{ .Currency
+              }}. {{ else }}They owe you {{ Abs .Amount }} {{ .Currency }}.{{
+              end }}
+
+              <div>
+                <form
+                  action="/debts/settle?id={{ .ID }}"
+                  method="post"
+                  onsubmit="return confirm('Are you sure you want to settle this debt?')"
+                >
+                  <input type="submit" value="✔️ Settle debt" />
+                </form>
+
+                <a href="/debts/edit?id={{ .ID }}">✏️ Edit debt</a>
+              </div>
+            </li>
+            {{ end }}
+          </ul>
+          {{ end }}
+        </main>
+      </section>
+
       <form
         id="delete"
         action="/contacts/delete?id={{ .Entry.ID }}"

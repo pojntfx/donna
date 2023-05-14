@@ -19,3 +19,11 @@ insertion as (
 )
 select id
 from insertion;
+-- name: GetDebts :many
+select debts.id,
+    debts.amount,
+    debts.currency
+from contacts
+    right join debts on debts.contact_id = contacts.id
+where contacts.id = $1
+    and contacts.namespace = $2;
