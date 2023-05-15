@@ -51,6 +51,23 @@ func (q *Queries) CreateDebt(ctx context.Context, arg CreateDebtParams) (int32, 
 	return id, err
 }
 
+const deleteDebtsForContact = `-- name: DeleteDebtsForContact :exec
+delete from debts using contacts
+where debts.contact_id = contacts.id
+    and contacts.id = $1
+    and contacts.namespace = $2
+`
+
+type DeleteDebtsForContactParams struct {
+	ID        int32
+	Namespace string
+}
+
+func (q *Queries) DeleteDebtsForContact(ctx context.Context, arg DeleteDebtsForContactParams) error {
+	_, err := q.db.ExecContext(ctx, deleteDebtsForContact, arg.ID, arg.Namespace)
+	return err
+}
+
 const getDebts = `-- name: GetDebts :many
 select debts.id,
     debts.amount,

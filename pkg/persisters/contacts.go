@@ -37,10 +37,29 @@ func (p *Persister) GetContact(ctx context.Context, id int32, namespace string) 
 }
 
 func (p *Persister) DeleteContact(ctx context.Context, id int32, namespace string) error {
-	return p.queries.DeleteContact(ctx, models.DeleteContactParams{
+	tx, err := p.db.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	qtx := p.queries.WithTx(tx)
+
+	if err := qtx.DeleteDebtsForContact(ctx, models.DeleteDebtsForContactParams{
 		ID:        id,
 		Namespace: namespace,
-	})
+	}); err != nil {
+		return err
+	}
+
+	if err := qtx.DeleteContact(ctx, models.DeleteContactParams{
+		ID:        id,
+		Namespace: namespace,
+	}); err != nil {
+		return err
+	}
+
+	return tx.Commit()
 }
 
 func (p *Persister) UpdateContact(ctx context.Context, id int32, firstName, lastName, nickname, email, pronouns, namespace string) error {

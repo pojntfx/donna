@@ -33,3 +33,8 @@ where debts.id = $3
     and debts.contact_id = contacts.id
     and contacts.id = $1
     and contacts.namespace = $2;
+-- name: DeleteDebtsForContact :exec
+delete from debts using contacts
+where debts.contact_id = contacts.id
+    and contacts.id = $1
+    and contacts.namespace = $2;
