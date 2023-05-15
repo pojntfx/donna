@@ -27,3 +27,9 @@ from contacts
     right join debts on debts.contact_id = contacts.id
 where contacts.id = $1
     and contacts.namespace = $2;
+-- name: SettleDebt :exec
+delete from debts using contacts
+where debts.id = $3
+    and debts.contact_id = contacts.id
+    and contacts.id = $1
+    and contacts.namespace = $2;

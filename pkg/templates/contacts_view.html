@@ -49,10 +49,17 @@
 
               <div>
                 <form
-                  action="/debts/settle?id={{ .ID }}"
+                  action="/debts/settle"
                   method="post"
                   onsubmit="return confirm('Are you sure you want to settle this debt?')"
                 >
+                  <input
+                    type="hidden"
+                    name="contact_id"
+                    value="{{ $.Entry.ID }}"
+                  />
+                  <input type="hidden" name="id" value="{{ .ID }}" />
+
                   <input type="submit" value="✔️ Settle debt" />
                 </form>
 

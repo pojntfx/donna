@@ -94,3 +94,22 @@ func (q *Queries) GetDebts(ctx context.Context, arg GetDebtsParams) ([]GetDebtsR
 	}
 	return items, nil
 }
+
+const settleDebt = `-- name: SettleDebt :exec
+delete from debts using contacts
+where debts.id = $3
+    and debts.contact_id = contacts.id
+    and contacts.id = $1
+    and contacts.namespace = $2
+`
+
+type SettleDebtParams struct {
+	ID        int32
+	Namespace string
+	ID_2      int32
+}
+
+func (q *Queries) SettleDebt(ctx context.Context, arg SettleDebtParams) error {
+	_, err := q.db.ExecContext(ctx, settleDebt, arg.ID, arg.Namespace, arg.ID_2)
+	return err
+}

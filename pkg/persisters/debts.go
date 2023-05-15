@@ -34,3 +34,19 @@ func (p *Persister) GetDebts(
 		Namespace: namespace,
 	})
 }
+
+func (p *Persister) SettleDebt(
+	ctx context.Context,
+
+	id int32,
+
+	contactID int32,
+	namespace string,
+) error {
+	return p.queries.SettleDebt(ctx, models.SettleDebtParams{
+		ID_2: id,
+
+		ID:        contactID,
+		Namespace: namespace,
+	})
+}
