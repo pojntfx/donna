@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  {{ template "header.html" . }}
+
+  <body>
+    {{ template "nav.html" . }}
+
+    <header>
+      <div>
+        <a href="/todo">🔙</a>
+
+        <h2>{{ .Todo.Name }}</h2>
+      </div>
+
+      <div>
+        <div>📅 Deadline: {{ .Todo.Deadline.Format "2006-01-02" }}</div>
+        <div>
+          ⭐ Importance: {{if eq .Todo.Importance 3}}😱{{else if eq .Todo.Importance
+          2}}😅{{else if eq .Todo.Importance 1}}😊{{end}}
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div style="display: flex; gap: 20px;">
+         {{if .Todo.Pending}}
+        <form
+          id="complete"
+          action="/todo/complete?id={{ .Todo.ID }}"
+          method="post"
+          onsubmit="return confirm('Are you sure you want to mark this todo as done?')"
+        >
+          <input type="submit" value="✅ Done" />
+        </form>
+        {{end}}
+
+        <form
+          id="delete"
+          action="/todo/delete?id={{ .Todo.ID }}"
+          method="post"
+          onsubmit="return confirm('Are you sure you want to delete this todo?')"
+        >
+          <input type="submit" value="🗑️ Delete" />
+        </form>
+         {{if .Todo.Pending}}
+          <a href="/todo/edit?id={{ .Todo.ID }}">✏️ Edit</a>
+          {{end}}
+      </div>
+    </main>
+
+    {{ template "footer.html" . }}
+  </body>
+</html>

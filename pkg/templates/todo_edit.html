@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  {{ template "header.html" . }}
+
+  <body>
+    {{ template "nav.html" . }}
+
+    <header>
+      <h2>✏️ Edit "{{ .Todo.Name }}"</h2>
+    </header>
+
+    <main>
+      <form id="update" action="/todo/update">
+        <input type="hidden" name="id" id="id" value="{{ .Todo.ID }}" />
+
+        <fieldset>
+          <legend>⭐ Importance?</legend>
+
+          <input
+            type="radio"
+            id="high"
+            name="importance"
+            value="3"
+            {{if eq .Todo.Importance 3}}checked{{end}}
+          />
+          <label for="high">😱</label>
+
+          <input
+            type="radio"
+            id="medium"
+            name="importance"
+            value="2"
+            {{if eq .Todo.Importance 2}}checked{{end}}
+          />
+          <label for="medium">😅</label>
+
+          <input
+            type="radio"
+            id="low"
+            name="importance"
+            value="1"
+            {{if eq .Todo.Importance 1}}checked{{end}}
+          />
+          <label for="low">😊</label>
+        </fieldset>
+
+        <label for="name">📋 Name</label>
+        <br />
+        <input
+          type="text"
+          name="name"
+          id="name"
+          value="{{ .Todo.Name }}"
+          required
+          autofocus
+        />
+        <br />
+
+        <label for="deadline">📅 Deadline</label>
+        <br />
+        <input
+          type="date"
+          name="deadline"
+          id="deadline"
+          value="{{ .Todo.Deadline.Format "2006-01-02" }}"
+          required
+        />
+        <br />
+      </form>
+
+      <div>
+        <input type="submit" value="💾 Save changes" form="update" />
+
+        <a href="/todo/view?id={{ .Todo.ID }}">🔙 Cancel</a>
+      </div>
+    </main>
+
+    {{ template "footer.html" . }}
+  </body>
+</html>
