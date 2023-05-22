@@ -6,6 +6,7 @@ import (
 	"errors"
 	"html/template"
 	"log"
+	"math"
 	"net/http"
 
 	"github.com/coreos/go-oidc/v3/oidc"
@@ -82,6 +83,9 @@ func (b *Controller) Init(ctx context.Context) error {
 			}
 
 			return template.HTML(buf.String())
+		},
+		"Abs": func(number float64) float64 {
+			return math.Abs(number)
 		},
 	}).ParseFS(templates.FS, "*.html")
 	if err != nil {

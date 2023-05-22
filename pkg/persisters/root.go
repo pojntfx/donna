@@ -13,6 +13,7 @@ import (
 type Persister struct {
 	dbaddr  string
 	queries *models.Queries
+	db      *sql.DB
 }
 
 func NewPersister(dbaddr string) *Persister {
@@ -22,7 +23,8 @@ func NewPersister(dbaddr string) *Persister {
 }
 
 func (p *Persister) Init() error {
-	db, err := sql.Open("postgres", p.dbaddr)
+	var err error
+	p.db, err = sql.Open("postgres", p.dbaddr)
 	if err != nil {
 		return err
 	}
@@ -33,11 +35,11 @@ func (p *Persister) Init() error {
 		return err
 	}
 
-	if err := goose.Up(db, "."); err != nil {
+	if err := goose.Up(p.db, "."); err != nil {
 		return err
 	}
 
-	p.queries = models.New(db)
+	p.queries = models.New(p.db)
 
 	return nil
 }

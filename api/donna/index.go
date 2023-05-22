@@ -52,7 +52,10 @@ func DonnaHandler(
 	mux.HandleFunc("/contacts/delete", c.HandleDeleteContact)
 	mux.HandleFunc("/contacts/update", c.HandleUpdateContact)
 
+	mux.HandleFunc("/debts/add", c.HandleAddDebt)
+
 	mux.HandleFunc("/debts/create", c.HandleCreateDebt)
+	mux.HandleFunc("/debts/settle", c.HandleSettleDebt)
 
 	mux.HandleFunc("/imprint", c.HandleImprint)
 

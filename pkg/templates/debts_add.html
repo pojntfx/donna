@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  {{ template "header.html" . }}
+
+  <body>
+    {{ template "nav.html" . }}
+
+    <header>
+      <h2>
+        💸 Add a New Debt For {{ .Entry.FirstName }} {{ .Entry.LastName }}
+      </h2>
+    </header>
+
+    <main>
+      <form action="/debts/create">
+        <input
+          type="hidden"
+          name="contact_id"
+          id="contact-id"
+          value="{{ .Entry.ID }}"
+        />
+
+        <fieldset>
+          <input type="radio" id="you-owe" name="you_owe" value="1" checked />
+          <label for="you-owe">You owe {{ .Entry.FirstName }}</label>
+
+          <input type="radio" id="owed-to-you" name="you_owe" value="0" />
+          <label for="owed-to-you">{{ .Entry.FirstName }} owes you</label>
+        </fieldset>
+
+        <label for="amount">💲 Amount</label>
+        <br />
+        <input
+          type="number"
+          name="amount"
+          id="amount"
+          placeholder="50"
+          required
+          autofocus
+        />
+        <br />
+
+        <label for="currency">💱 Currency</label>
+        <br />
+        <input
+          type="text"
+          name="currency"
+          id="currency"
+          placeholder="Dollar"
+          required
+        />
+        <br />
+
+        <input type="submit" value="➕ Add debt" />
+      </form>
+    </main>
+
+    {{ template "footer.html" . }}
+  </body>
+</html>
