@@ -62,6 +62,7 @@ body > footer {
 main input[type="text"],
 main input[type="number"],
 main input[type="email"],
+main input[type="date"],
 main textarea {
   box-sizing: border-box;
   width: 100%;

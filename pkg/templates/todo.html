@@ -6,11 +6,12 @@
     {{ template "nav.html" . }}
 
     <header>
-      <h2>Todo List</h2>
+      <h2>Todos</h2>
+
       <a href="/todo/add">✍️ Add a Todo</a>
 
-      <a href="/todo?show=pending">🔄 Show pending Todos</a>
-      <a href="/todo?show=done">✔️ Show done Todos</a>
+      <a href="/todo?show=pending">🔄 Pending todos</a>
+      <a href="/todo?show=done">✔️ Done todos</a>
     </header>
 
     <ul>
@@ -22,21 +23,22 @@
           </h3>
 
           <div>
-            {{ .Deadline.Format "2006-01-02" }} | {{if eq .Importance 3}}😱{{else
-            if eq .Importance 2}}😅{{else if eq .Importance 1}}😊{{end}}
+            {{ .Deadline.Format "2006-01-02" }} | {{if eq .Importance
+            3}}😱{{else if eq .Importance 2}}😅{{else if eq .Importance
+            1}}😊{{end}}
           </div>
         </div>
 
         <div>
-         {{if .Pending}}
-         <form
-         action="/todo/complete?id={{ .ID }}"
-         method="post"
-         onsubmit="return confirm('Are you sure you want to complete this todo?')"
-         >
-           <input type="submit" value="✅ complete" />
-         </form>
-         {{end}}
+          {{if .Pending}}
+          <form
+            action="/todo/complete?id={{ .ID }}"
+            method="post"
+            onsubmit="return confirm('Are you sure you want to complete this todo?')"
+          >
+            <input type="submit" value="✅ Complete" />
+          </form>
+          {{end}}
           <form
             action="/todo/delete?id={{ .ID }}"
             method="post"

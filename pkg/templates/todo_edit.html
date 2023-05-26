@@ -14,14 +14,17 @@
         <input type="hidden" name="id" id="id" value="{{ .Todo.ID }}" />
 
         <fieldset>
-          <legend>⭐ Importance?</legend>
+          <legend>⭐ How important is this todo to you?</legend>
 
           <input
             type="radio"
             id="high"
             name="importance"
             value="3"
-            {{if eq .Todo.Importance 3}}checked{{end}}
+            {{if
+            eq
+            .Todo.Importance
+            3}}checked{{end}}
           />
           <label for="high">😱</label>
 
@@ -30,7 +33,10 @@
             id="medium"
             name="importance"
             value="2"
-            {{if eq .Todo.Importance 2}}checked{{end}}
+            {{if
+            eq
+            .Todo.Importance
+            2}}checked{{end}}
           />
           <label for="medium">😅</label>
 
@@ -39,7 +45,10 @@
             id="low"
             name="importance"
             value="1"
-            {{if eq .Todo.Importance 1}}checked{{end}}
+            {{if
+            eq
+            .Todo.Importance
+            1}}checked{{end}}
           />
           <label for="low">😊</label>
         </fieldset>
@@ -58,13 +67,8 @@
 
         <label for="deadline">📅 Deadline</label>
         <br />
-        <input
-          type="date"
-          name="deadline"
-          id="deadline"
-          value="{{ .Todo.Deadline.Format "2006-01-02" }}"
-          required
-        />
+        <input type="date" name="deadline" id="deadline" value="{{
+        .Todo.Deadline.Format "2006-01-02" }}" required />
         <br />
       </form>
 
