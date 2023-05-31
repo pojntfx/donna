@@ -35,9 +35,14 @@ func (b *Controller) HandleTodo(w http.ResponseWriter, r *http.Request) {
 
 	var todos []models.Todo
 
-	showDone := r.URL.Query().Get("show") == "done"
+	show := r.URL.Query().Get("show")
 
-	if showDone {
+	if show != "done" && show != "pending" {
+		http.Redirect(w, r, "/todo?show=pending", http.StatusFound)
+		return
+	}
+
+	if show == "done" {
 		todos, err = b.persister.GetDoneTodos(r.Context(), authorizationData.Email)
 	} else {
 		todos, err = b.persister.GetPendingTodos(r.Context(), authorizationData.Email)
