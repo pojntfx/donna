@@ -63,7 +63,9 @@
                   <input type="submit" value="✔️ Settle debt" />
                 </form>
 
-                <a href="/debts/edit?id={{ .ID }}">✏️ Edit debt</a>
+                <a href="/debts/edit?id={{ .ID }}&contact_id={{ $.Entry.ID }}"
+                  >✏️ Edit debt</a
+                >
               </div>
             </li>
             {{ end }}

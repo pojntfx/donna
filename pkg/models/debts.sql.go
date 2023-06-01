@@ -68,6 +68,49 @@ func (q *Queries) DeleteDebtsForContact(ctx context.Context, arg DeleteDebtsForC
 	return err
 }
 
+const getDebtAndContact = `-- name: GetDebtAndContact :one
+select debts.id as debt_id,
+    debts.amount,
+    debts.currency,
+    contacts.id as contact_id,
+    contacts.first_name,
+    contacts.last_name
+from contacts
+    inner join debts on debts.contact_id = contacts.id
+where contacts.id = $1
+    and contacts.namespace = $2
+    and debts.id = $3
+`
+
+type GetDebtAndContactParams struct {
+	ID        int32
+	Namespace string
+	ID_2      int32
+}
+
+type GetDebtAndContactRow struct {
+	DebtID    int32
+	Amount    float64
+	Currency  string
+	ContactID int32
+	FirstName string
+	LastName  string
+}
+
+func (q *Queries) GetDebtAndContact(ctx context.Context, arg GetDebtAndContactParams) (GetDebtAndContactRow, error) {
+	row := q.db.QueryRowContext(ctx, getDebtAndContact, arg.ID, arg.Namespace, arg.ID_2)
+	var i GetDebtAndContactRow
+	err := row.Scan(
+		&i.DebtID,
+		&i.Amount,
+		&i.Currency,
+		&i.ContactID,
+		&i.FirstName,
+		&i.LastName,
+	)
+	return i, err
+}
+
 const getDebts = `-- name: GetDebts :many
 select debts.id,
     debts.amount,
@@ -128,5 +171,35 @@ type SettleDebtParams struct {
 
 func (q *Queries) SettleDebt(ctx context.Context, arg SettleDebtParams) error {
 	_, err := q.db.ExecContext(ctx, settleDebt, arg.ID, arg.Namespace, arg.ID_2)
+	return err
+}
+
+const updateDebt = `-- name: UpdateDebt :exec
+update debts
+set amount = $4,
+    currency = $5
+from contacts
+where contacts.id = $1
+    and contacts.namespace = $2
+    and debts.id = $3
+    and debts.contact_id = contacts.id
+`
+
+type UpdateDebtParams struct {
+	ID        int32
+	Namespace string
+	ID_2      int32
+	Amount    float64
+	Currency  string
+}
+
+func (q *Queries) UpdateDebt(ctx context.Context, arg UpdateDebtParams) error {
+	_, err := q.db.ExecContext(ctx, updateDebt,
+		arg.ID,
+		arg.Namespace,
+		arg.ID_2,
+		arg.Amount,
+		arg.Currency,
+	)
 	return err
 }
