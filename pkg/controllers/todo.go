@@ -14,6 +14,7 @@ import (
 type todosData struct {
 	pageData
 	Todos []models.Todo
+	Show  string
 }
 
 type todoData struct {
@@ -63,6 +64,7 @@ func (b *Controller) HandleTodo(w http.ResponseWriter, r *http.Request) {
 			Page: "✅ Todo",
 		},
 		Todos: todos,
+		Show:  show,
 	}); err != nil {
 		log.Println(errCouldNotRenderTemplate, err)
 
