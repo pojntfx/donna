@@ -143,17 +143,7 @@ func (b *Controller) HandleIndex(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := b.tpl.ExecuteTemplate(w, "index.html", pageData{
-		authorizationData: authorizationData,
-
-		Page: "🏠 Home",
-	}); err != nil {
-		log.Println(errCouldNotRenderTemplate, err)
-
-		http.Error(w, errCouldNotRenderTemplate.Error(), http.StatusInternalServerError)
-
-		return
-	}
+	http.Redirect(w, r, "/contacts", http.StatusFound)
 }
 
 func (b *Controller) HandleImprint(w http.ResponseWriter, r *http.Request) {
