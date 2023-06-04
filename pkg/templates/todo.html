@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  {{ template "header.html" . }}
+
+  <body>
+    {{ template "nav.html" . }}
+
+    <header>
+      <h2>To-Do List</h2>
+      <a href="/todo/add">✍️ Add a to-do</a>
+
+      {{if eq .Show "done"}}
+      <a href="/todo?show=pending">🔄 Show pending to-dos</a>
+      {{else}}
+      <a href="/todo?show=done">✔️ Show done to-dos</a>
+      {{end}}
+    </header>
+
+    <ul>
+      {{ range .Todos }}
+      <li>
+        <div>
+          <h3>
+            <a href="/todo/view?id={{ .ID }}">{{ .Name }}</a>
+          </h3>
+
+          <div>
+            {{ .Deadline.Format "2006-01-02" }} | {{if eq .Importance
+            3}}😱{{else if eq .Importance 2}}😅{{else if eq .Importance
+            1}}😊{{end}}
+          </div>
+        </div>
+
+        <div>
+          {{if .Pending}}
+          <form
+            action="/todo/complete?id={{ .ID }}"
+            method="post"
+            onsubmit="return confirm('Are you sure you want to complete this todo?')"
+          >
+            <input type="submit" value="✅ Complete" />
+          </form>
+          {{end}}
+          <form
+            action="/todo/delete?id={{ .ID }}"
+            method="post"
+            onsubmit="return confirm('Are you sure you want to delete this todo?')"
+          >
+            <input type="submit" value="🗑️ Delete" />
+          </form>
+          {{if .Pending}}
+          <a href="/todo/edit?id={{ .ID }}">✏️ Edit</a>
+          {{end}}
+        </div>
+      </li>
+      {{ else }}
+      <li>No todo entries yet.</li>
+      {{ end }}
+    </ul>
+
+    {{ template "footer.html" . }}
+  </body>
+</html>

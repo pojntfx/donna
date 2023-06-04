@@ -25,6 +25,15 @@ func DonnaHandler(
 
 	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.FS(static.FS))))
 
+	mux.HandleFunc("/todo", c.HandleTodo)
+	mux.HandleFunc("/todo/add", c.HandleAddTodo)
+	mux.HandleFunc("/todo/edit", c.HandleEditTodo)
+	mux.HandleFunc("/todo/view", c.HandleViewTodo)
+
+	mux.HandleFunc("/todo/create", c.HandleCreateTodo)
+	mux.HandleFunc("/todo/delete", c.HandleDeleteTodo)
+	mux.HandleFunc("/todo/complete", c.HandleCompleteTodo)
+
 	mux.HandleFunc("/journal", c.HandleJournal)
 	mux.HandleFunc("/journal/add", c.HandleAddJournal)
 	mux.HandleFunc("/journal/edit", c.HandleEditJournal)

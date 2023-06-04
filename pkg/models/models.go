@@ -34,3 +34,12 @@ type JournalEntry struct {
 	Rating    int32
 	Namespace string
 }
+
+type Todo struct {
+	ID         int32
+	Name       string
+	Deadline   time.Time
+	Importance int32
+	Pending    bool
+	Namespace  string
+}
