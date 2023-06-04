@@ -145,15 +145,3 @@ func (b *Controller) HandleIndex(w http.ResponseWriter, r *http.Request) {
 
 	http.Redirect(w, r, "/contacts", http.StatusFound)
 }
-
-func (b *Controller) HandleImprint(w http.ResponseWriter, r *http.Request) {
-	if err := b.tpl.ExecuteTemplate(w, "imprint.html", pageData{
-		Page: "ℹ️ Imprint",
-	}); err != nil {
-		log.Println(errCouldNotRenderTemplate, err)
-
-		http.Error(w, errCouldNotRenderTemplate.Error(), http.StatusInternalServerError)
-
-		return
-	}
-}

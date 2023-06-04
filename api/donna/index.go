@@ -59,8 +59,6 @@ func DonnaHandler(
 	mux.HandleFunc("/debts/settle", c.HandleSettleDebt)
 	mux.HandleFunc("/debts/update", c.HandleUpdateDebt)
 
-	mux.HandleFunc("/imprint", c.HandleImprint)
-
 	mux.HandleFunc("/authorize", c.HandleAuthorize)
 
 	mux.HandleFunc("/", c.HandleIndex)

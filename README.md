@@ -8,6 +8,6 @@ Minimal personal CRM.
 
 ## License
 
-Donna (c) 2023 Felicitas Pojtinger and contributors
+Donna (c) 2023 Felicitas Pojtinger, Daniel Hiller and contributors
 
 SPDX-License-Identifier: AGPL-3.0
