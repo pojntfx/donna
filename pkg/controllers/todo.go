@@ -61,7 +61,7 @@ func (b *Controller) HandleTodo(w http.ResponseWriter, r *http.Request) {
 		pageData: pageData{
 			authorizationData: authorizationData,
 
-			Page: "✅ Todo",
+			Page: "✅ To-Dos",
 		},
 		Todos: todos,
 		Show:  show,
@@ -89,7 +89,7 @@ func (b *Controller) HandleAddTodo(w http.ResponseWriter, r *http.Request) {
 	if err := b.tpl.ExecuteTemplate(w, "todo_add.html", pageData{
 		authorizationData: authorizationData,
 
-		Page: "✍️ Add Todo",
+		Page: "✍️ Add To-Do",
 	}); err != nil {
 		log.Println(errCouldNotRenderTemplate, err)
 
@@ -264,7 +264,7 @@ func (b *Controller) HandleEditTodo(w http.ResponseWriter, r *http.Request) {
 		pageData: pageData{
 			authorizationData: authorizationData,
 
-			Page: "✏️ Edit Todo",
+			Page: "✏️ Edit To-Do",
 		},
 		Todo: todo,
 	}); err != nil {

@@ -13,13 +13,13 @@
     {{ template "nav.html" . }}
 
     <header>
-      <h2>✍️ Add Todo</h2>
+      <h2>✍️ Add a To-Do</h2>
     </header>
 
     <main>
       <form method="POST" action="/todo/create">
         <fieldset>
-          <legend>⭐ How important is this todo to you?</legend>
+          <legend>⭐ How important is this to-do to you?</legend>
           <span class="radio-inline"
             ><input
               type="radio"
@@ -27,6 +27,7 @@
               name="importance"
               value="1"
               required
+              checked
             />
             <label for="importance1">1 😊</label></span
           >
@@ -48,7 +49,7 @@
         <label for="deadline">📅 Deadline</label><br />
         <input type="date" id="deadline" name="deadline" required /><br />
 
-        <input type="submit" value="➕ Add Todo" /><br />
+        <input type="submit" value="➕ Add to-do" /><br />
       </form>
     </main>
 
