@@ -12,4 +12,5 @@ create table todos (
     )
 );
 -- +goose Down
+alter table todos drop constraint check_raiting;
 drop table todos;

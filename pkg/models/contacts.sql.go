@@ -62,7 +62,7 @@ func (q *Queries) DeleteContact(ctx context.Context, arg DeleteContactParams) er
 }
 
 const getContact = `-- name: GetContact :one
-select id, first_name, last_name, nickname, email, pronouns, namespace
+select id, first_name, last_name, nickname, email, pronouns, namespace, birthday, address, notes
 from contacts
 where id = $1
     and namespace = $2
@@ -84,12 +84,15 @@ func (q *Queries) GetContact(ctx context.Context, arg GetContactParams) (Contact
 		&i.Email,
 		&i.Pronouns,
 		&i.Namespace,
+		&i.Birthday,
+		&i.Address,
+		&i.Notes,
 	)
 	return i, err
 }
 
 const getContacts = `-- name: GetContacts :many
-select id, first_name, last_name, nickname, email, pronouns, namespace
+select id, first_name, last_name, nickname, email, pronouns, namespace, birthday, address, notes
 from contacts
 where namespace = $1
 order by first_name desc
@@ -112,6 +115,9 @@ func (q *Queries) GetContacts(ctx context.Context, namespace string) ([]Contact,
 			&i.Email,
 			&i.Pronouns,
 			&i.Namespace,
+			&i.Birthday,
+			&i.Address,
+			&i.Notes,
 		); err != nil {
 			return nil, err
 		}

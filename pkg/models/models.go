@@ -5,6 +5,7 @@
 package models
 
 import (
+	"database/sql"
 	"time"
 )
 
@@ -16,6 +17,9 @@ type Contact struct {
 	Email     string
 	Pronouns  string
 	Namespace string
+	Birthday  sql.NullTime
+	Address   string
+	Notes     string
 }
 
 type Debt struct {
