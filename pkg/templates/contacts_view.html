@@ -44,8 +44,9 @@
             {{ range .Debts }}
             <li>
               {{ if le .Amount 0.0 }}You owe {{ $.Entry.FirstName }} {{ Abs
-              .Amount }} {{ .Currency }}. {{ else }}{{ $.Entry.FirstName }} owes
-              you {{ Abs .Amount }} {{ .Currency }}.{{ end }}
+              .Amount }} {{ .Currency }}{{ else }}{{ $.Entry.FirstName }} owes
+              you {{ Abs .Amount }} {{ .Currency }}{{ end }}{{ if .Description
+              }}: {{ .Description }}{{ else }}.{{ end }}
 
               <div>
                 <form

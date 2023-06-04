@@ -79,6 +79,13 @@
           value="{{ .Entry.Currency }}"
         />
         <br />
+
+        <label for="description">📜 Description (optional)</label>
+        <br />
+        <textarea name="description" id="description" rows="10">
+{{ .Entry.Description }}</textarea
+        >
+        <br />
       </form>
 
       <div>

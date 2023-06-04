@@ -19,10 +19,11 @@ type Contact struct {
 }
 
 type Debt struct {
-	ID        int32
-	Amount    float64
-	Currency  string
-	ContactID int32
+	ID          int32
+	Amount      float64
+	Currency    string
+	ContactID   int32
+	Description string
 }
 
 type JournalEntry struct {

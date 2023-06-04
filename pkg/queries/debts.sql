@@ -6,9 +6,10 @@ with contact as (
         and namespace = $2
 ),
 insertion as (
-    insert into debts (amount, currency, contact_id)
+    insert into debts (amount, currency, description, contact_id)
     select $3,
         $4,
+        $5,
         $1
     from contact
     where exists (
@@ -22,7 +23,8 @@ from insertion;
 -- name: GetDebts :many
 select debts.id,
     debts.amount,
-    debts.currency
+    debts.currency,
+    debts.description
 from contacts
     right join debts on debts.contact_id = contacts.id
 where contacts.id = $1
@@ -42,6 +44,7 @@ where debts.contact_id = contacts.id
 select debts.id as debt_id,
     debts.amount,
     debts.currency,
+    debts.description,
     contacts.id as contact_id,
     contacts.first_name,
     contacts.last_name
@@ -53,7 +56,8 @@ where contacts.id = $1
 -- name: UpdateDebt :exec
 update debts
 set amount = $4,
-    currency = $5
+    currency = $5,
+    description = $6
 from contacts
 where contacts.id = $1
     and contacts.namespace = $2

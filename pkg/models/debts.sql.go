@@ -17,9 +17,10 @@ with contact as (
         and namespace = $2
 ),
 insertion as (
-    insert into debts (amount, currency, contact_id)
+    insert into debts (amount, currency, description, contact_id)
     select $3,
         $4,
+        $5,
         $1
     from contact
     where exists (
@@ -33,10 +34,11 @@ from insertion
 `
 
 type CreateDebtParams struct {
-	ID        int32
-	Namespace string
-	Amount    float64
-	Currency  string
+	ID          int32
+	Namespace   string
+	Amount      float64
+	Currency    string
+	Description string
 }
 
 func (q *Queries) CreateDebt(ctx context.Context, arg CreateDebtParams) (int32, error) {
@@ -45,6 +47,7 @@ func (q *Queries) CreateDebt(ctx context.Context, arg CreateDebtParams) (int32, 
 		arg.Namespace,
 		arg.Amount,
 		arg.Currency,
+		arg.Description,
 	)
 	var id int32
 	err := row.Scan(&id)
@@ -72,6 +75,7 @@ const getDebtAndContact = `-- name: GetDebtAndContact :one
 select debts.id as debt_id,
     debts.amount,
     debts.currency,
+    debts.description,
     contacts.id as contact_id,
     contacts.first_name,
     contacts.last_name
@@ -89,12 +93,13 @@ type GetDebtAndContactParams struct {
 }
 
 type GetDebtAndContactRow struct {
-	DebtID    int32
-	Amount    float64
-	Currency  string
-	ContactID int32
-	FirstName string
-	LastName  string
+	DebtID      int32
+	Amount      float64
+	Currency    string
+	Description string
+	ContactID   int32
+	FirstName   string
+	LastName    string
 }
 
 func (q *Queries) GetDebtAndContact(ctx context.Context, arg GetDebtAndContactParams) (GetDebtAndContactRow, error) {
@@ -104,6 +109,7 @@ func (q *Queries) GetDebtAndContact(ctx context.Context, arg GetDebtAndContactPa
 		&i.DebtID,
 		&i.Amount,
 		&i.Currency,
+		&i.Description,
 		&i.ContactID,
 		&i.FirstName,
 		&i.LastName,
@@ -114,7 +120,8 @@ func (q *Queries) GetDebtAndContact(ctx context.Context, arg GetDebtAndContactPa
 const getDebts = `-- name: GetDebts :many
 select debts.id,
     debts.amount,
-    debts.currency
+    debts.currency,
+    debts.description
 from contacts
     right join debts on debts.contact_id = contacts.id
 where contacts.id = $1
@@ -127,9 +134,10 @@ type GetDebtsParams struct {
 }
 
 type GetDebtsRow struct {
-	ID       int32
-	Amount   float64
-	Currency string
+	ID          int32
+	Amount      float64
+	Currency    string
+	Description string
 }
 
 func (q *Queries) GetDebts(ctx context.Context, arg GetDebtsParams) ([]GetDebtsRow, error) {
@@ -141,7 +149,12 @@ func (q *Queries) GetDebts(ctx context.Context, arg GetDebtsParams) ([]GetDebtsR
 	var items []GetDebtsRow
 	for rows.Next() {
 		var i GetDebtsRow
-		if err := rows.Scan(&i.ID, &i.Amount, &i.Currency); err != nil {
+		if err := rows.Scan(
+			&i.ID,
+			&i.Amount,
+			&i.Currency,
+			&i.Description,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -177,7 +190,8 @@ func (q *Queries) SettleDebt(ctx context.Context, arg SettleDebtParams) error {
 const updateDebt = `-- name: UpdateDebt :exec
 update debts
 set amount = $4,
-    currency = $5
+    currency = $5,
+    description = $6
 from contacts
 where contacts.id = $1
     and contacts.namespace = $2
@@ -186,11 +200,12 @@ where contacts.id = $1
 `
 
 type UpdateDebtParams struct {
-	ID        int32
-	Namespace string
-	ID_2      int32
-	Amount    float64
-	Currency  string
+	ID          int32
+	Namespace   string
+	ID_2        int32
+	Amount      float64
+	Currency    string
+	Description string
 }
 
 func (q *Queries) UpdateDebt(ctx context.Context, arg UpdateDebtParams) error {
@@ -200,6 +215,7 @@ func (q *Queries) UpdateDebt(ctx context.Context, arg UpdateDebtParams) error {
 		arg.ID_2,
 		arg.Amount,
 		arg.Currency,
+		arg.Description,
 	)
 	return err
 }

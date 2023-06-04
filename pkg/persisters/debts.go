@@ -10,16 +10,18 @@ func (p *Persister) CreateDebt(
 	ctx context.Context,
 
 	amount float64,
-	currency string,
+	currency,
+	description string,
 
 	contactID int32,
 	namespace string,
 ) (int32, error) {
 	return p.queries.CreateDebt(ctx, models.CreateDebtParams{
-		ID:        contactID,
-		Namespace: namespace,
-		Amount:    amount,
-		Currency:  currency,
+		ID:          contactID,
+		Namespace:   namespace,
+		Amount:      amount,
+		Currency:    currency,
+		Description: description,
 	})
 }
 
@@ -76,7 +78,8 @@ func (p *Persister) UpdateDebt(
 	namespace string,
 
 	amount float64,
-	currency string,
+	currency,
+	description string,
 ) error {
 	return p.queries.UpdateDebt(ctx, models.UpdateDebtParams{
 		ID_2: id,
@@ -84,7 +87,8 @@ func (p *Persister) UpdateDebt(
 		ID:        contactID,
 		Namespace: namespace,
 
-		Amount:   amount,
-		Currency: currency,
+		Amount:      amount,
+		Currency:    currency,
+		Description: description,
 	})
 }

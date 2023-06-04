@@ -160,11 +160,14 @@ func (b *Controller) HandleCreateDebt(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	description := r.FormValue("description")
+
 	if _, err := b.persister.CreateDebt(
 		r.Context(),
 
 		amount,
 		currency,
+		description,
 
 		int32(contactID),
 		authorizationData.Email,
@@ -360,6 +363,8 @@ func (b *Controller) HandleUpdateDebt(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	description := r.FormValue("description")
+
 	if err := b.persister.UpdateDebt(
 		r.Context(),
 
@@ -370,6 +375,7 @@ func (b *Controller) HandleUpdateDebt(w http.ResponseWriter, r *http.Request) {
 
 		amount,
 		currency,
+		description,
 	); err != nil {
 		log.Println(errCouldNotUpdateInDB, err)
 
