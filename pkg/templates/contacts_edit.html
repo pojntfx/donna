@@ -38,7 +38,7 @@
         />
         <br />
 
-        <label for="nickname">📟 Nickname</label>
+        <label for="nickname">📟 Nickname (optional)</label>
         <br />
         <input
           type="text"
@@ -70,6 +70,27 @@
           required
           value="{{ .Entry.Pronouns }}"
         />
+        <br />
+
+        <label for="birthday">✨ Birthday (optional)</label>
+        <br />
+        <input type="date" name="birthday" id="birthday" {{ if
+        .Entry.Birthday.Valid }}value="{{ .Entry.Birthday.Value.Format
+        "2006-01-02" }}"{{ end }} />
+        <br />
+
+        <label for="address">📍 Address (optional)</label>
+        <br />
+        <textarea name="address" id="address" rows="3">
+{{ .Entry.Address }}</textarea
+        >
+        <br />
+
+        <label for="notes">📜 Notes (optional)</label>
+        <br />
+        <textarea name="notes" id="notes" rows="10">
+{{ .Entry.Notes }}</textarea
+        >
         <br />
       </form>
 

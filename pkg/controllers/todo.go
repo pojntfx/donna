@@ -40,6 +40,7 @@ func (b *Controller) HandleTodo(w http.ResponseWriter, r *http.Request) {
 
 	if show != "done" && show != "pending" {
 		http.Redirect(w, r, "/todo?show=pending", http.StatusFound)
+
 		return
 	}
 
@@ -131,14 +132,18 @@ func (b *Controller) HandleCreateTodo(w http.ResponseWriter, r *http.Request) {
 	rdeadline := r.FormValue("deadline")
 	if strings.TrimSpace(rdeadline) == "" {
 		log.Println(errInvalidForm)
+
 		http.Error(w, errInvalidForm.Error(), http.StatusUnprocessableEntity)
+
 		return
 	}
 
 	deadline, err := time.Parse("2006-01-02", rdeadline)
 	if err != nil {
 		log.Println(errInvalidForm)
+
 		http.Error(w, errInvalidForm.Error(), http.StatusUnprocessableEntity)
+
 		return
 	}
 

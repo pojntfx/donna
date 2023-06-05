@@ -23,6 +23,21 @@
 
     <main>
       <section>
+        <dl>
+          {{ if .Entry.Birthday.Valid }}
+          <dt>✨ Birthday</dt>
+          <dd>{{ .Entry.Birthday.Value.Format "2006-01-02" }}</dd>
+          {{ end }} {{ if .Entry.Address }}
+          <dt>📍 Address</dt>
+          <dd>{{ .Entry.Address }}</dd>
+          {{ end }} {{ if .Entry.Notes }}
+          <dt>📜 Notes</dt>
+          <dd>{{ .Entry.Notes }}</dd>
+          {{ end }}
+        </dl>
+      </section>
+
+      <section>
         <header>
           <div>
             <h3>💸 Debts</h3>

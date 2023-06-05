@@ -2,6 +2,8 @@ package persisters
 
 import (
 	"context"
+	"database/sql"
+	"time"
 
 	"github.com/pojntfx/donna/pkg/models"
 )
@@ -62,7 +64,19 @@ func (p *Persister) DeleteContact(ctx context.Context, id int32, namespace strin
 	return tx.Commit()
 }
 
-func (p *Persister) UpdateContact(ctx context.Context, id int32, firstName, lastName, nickname, email, pronouns, namespace string) error {
+func (p *Persister) UpdateContact(
+	ctx context.Context,
+	id int32,
+	firstName,
+	lastName,
+	nickname,
+	email,
+	pronouns,
+	namespace string,
+	birthday *time.Time,
+	address,
+	notes string,
+) error {
 	return p.queries.UpdateContact(ctx, models.UpdateContactParams{
 		ID:        id,
 		Namespace: namespace,
@@ -71,5 +85,11 @@ func (p *Persister) UpdateContact(ctx context.Context, id int32, firstName, last
 		Nickname:  nickname,
 		Email:     email,
 		Pronouns:  pronouns,
+		Birthday: sql.NullTime{
+			Time:  *birthday,
+			Valid: true,
+		},
+		Address: address,
+		Notes:   notes,
 	})
 }

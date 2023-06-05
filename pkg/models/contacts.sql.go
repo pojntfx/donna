@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	"database/sql"
 )
 
 const createContact = `-- name: CreateContact :one
@@ -138,7 +139,10 @@ set first_name = $3,
     last_name = $4,
     nickname = $5,
     email = $6,
-    pronouns = $7
+    pronouns = $7,
+    birthday = $8,
+    address = $9,
+    notes = $10
 where id = $1
     and namespace = $2
 `
@@ -151,6 +155,9 @@ type UpdateContactParams struct {
 	Nickname  string
 	Email     string
 	Pronouns  string
+	Birthday  sql.NullTime
+	Address   string
+	Notes     string
 }
 
 func (q *Queries) UpdateContact(ctx context.Context, arg UpdateContactParams) error {
@@ -162,6 +169,9 @@ func (q *Queries) UpdateContact(ctx context.Context, arg UpdateContactParams) er
 		arg.Nickname,
 		arg.Email,
 		arg.Pronouns,
+		arg.Birthday,
+		arg.Address,
+		arg.Notes,
 	)
 	return err
 }

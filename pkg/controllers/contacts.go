@@ -7,6 +7,7 @@ import (
 	"net/mail"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/pojntfx/donna/pkg/models"
 )
@@ -352,6 +353,26 @@ func (b *Controller) HandleUpdateContact(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	rbirthday := r.FormValue("birthday")
+
+	var birthday *time.Time
+	if strings.TrimSpace(rbirthday) != "" {
+		b, err := time.Parse("2006-01-02", rbirthday)
+		if err != nil {
+			log.Println(errInvalidForm)
+
+			http.Error(w, errInvalidForm.Error(), http.StatusUnprocessableEntity)
+
+			return
+		}
+
+		birthday = &b
+	}
+
+	address := r.FormValue("address")
+
+	notes := r.FormValue("notes")
+
 	if err := b.persister.UpdateContact(
 		r.Context(),
 		int32(id),
@@ -361,6 +382,9 @@ func (b *Controller) HandleUpdateContact(w http.ResponseWriter, r *http.Request)
 		email,
 		pronouns,
 		authorizationData.Email,
+		birthday,
+		address,
+		notes,
 	); err != nil {
 		log.Println(errCouldNotUpdateInDB, err)
 
