@@ -15,6 +15,47 @@ Minimal personal CRM.
 
 🚧 This project is a work-in-progress! Instructions will be added as soon as it is usable. 🚧
 
+## Installation
+
+### Hosted Demo
+
+If you just want to quickly evaluate Donna, check out the hosted demo:
+
+[<img src="https://github.com/pojntfx/webnetesctl/raw/main/img/launch.png" width="240">](https://donna-demo.vercel.app/)
+
+### Containerized
+
+You can get the OCI image like so:
+
+```shell
+$ podman pull ghcr.io/pojntfx/donna
+```
+
+### Natively
+
+Static binaries are available on [GitHub releases](https://github.com/pojntfx/donna/releases).
+
+On Linux, you can install them like so:
+
+```shell
+$ curl -L -o /tmp/donna "https://github.com/pojntfx/donna/releases/latest/download/donna.linux-$(uname -m)"
+$ sudo install /tmp/donna /usr/local/bin
+```
+
+On macOS, you can use the following:
+
+```shell
+$ curl -L -o /tmp/donna "https://github.com/pojntfx/donna/releases/latest/download/donna.darwin-$(uname -m)"
+```
+
+On Windows, the following should work (using PowerShell as administrator):
+
+```shell
+PS> Invoke-WebRequest https://github.com/pojntfx/donna/releases/latest/download/donna.windows-x86_64.exe -OutFile \Windows\System32\donna.exe
+```
+
+You can find binaries for more operating systems and architectures on [GitHub releases](https://github.com/pojntfx/donna/releases).
+
 ## Contributing
 
 To contribute, please use the [GitHub flow](https://guides.github.com/introduction/flow/) and follow our [Code of Conduct](./CODE_OF_CONDUCT.md).
