@@ -24,7 +24,7 @@ var (
 
 func main() {
 	laddr := flag.String("laddr", ":1337", "Listen address (port can also be set with `PORT` env variable)")
-	dbaddr := flag.String("dbaddr", "postgresql://postgres@localhost:5432/donna?sslmode=disable", "Database address (can also be set using `DATABASE_URL` env variable)")
+	pgaddr := flag.String("pgaddr", "postgresql://postgres@localhost:5432/donna?sslmode=disable", "Database address (can also be set using `POSTGRES_URL` env variable)")
 	oidcIssuer := flag.String("oidc-issuer", "", "OIDC Issuer (i.e. https://pojntfx.eu.auth0.com/) (can also be set using the OIDC_ISSUER env variable)")
 	oidcClientID := flag.String("oidc-client-id", "", "OIDC Client ID (i.e. myoidcclientid) (can also be set using the OIDC_CLIENT_ID env variable)")
 	oidcRedirectURL := flag.String("oidc-redirect-url", "http://localhost:1337/authorize", "OIDC redirect URL (can also be set using the OIDC_REDIRECT_URL env variable)")
@@ -51,10 +51,10 @@ func main() {
 		*laddr = la.String()
 	}
 
-	if v := os.Getenv("DATABASE_URL"); v != "" {
-		log.Println("Using database address from DATABASE_URL env variable")
+	if v := os.Getenv("POSTGRES_URL"); v != "" {
+		log.Println("Using database address from POSTGRES_URL env variable")
 
-		*dbaddr = v
+		*pgaddr = v
 	}
 
 	if v := os.Getenv("OIDC_ISSUER"); v != "" {
@@ -87,7 +87,7 @@ func main() {
 		panic(errMissingOIDCRedirectURL)
 	}
 
-	p := persisters.NewPersister(*dbaddr)
+	p := persisters.NewPersister(*pgaddr)
 
 	if err := p.Init(); err != nil {
 		panic(err)
