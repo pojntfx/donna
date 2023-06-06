@@ -111,3 +111,7 @@ section > main > ul > li > div:last-child {
   display: flex;
   align-items: center;
 }
+
+body > header > div > h1 > a > img {
+  max-width: 155px;
+}

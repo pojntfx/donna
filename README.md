@@ -1,5 +1,7 @@
 # Donna
 
+![Logo](./docs/logo-readme.png)
+
 Minimal personal CRM.
 
 ## Overview
