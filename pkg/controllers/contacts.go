@@ -14,13 +14,15 @@ import (
 
 type contactsData struct {
 	pageData
-	Entries []models.Contact
+	Entries    []models.Contact
+	Activities []models.Activity
 }
 
 type contactData struct {
 	pageData
-	Entry models.Contact
-	Debts []models.GetDebtsRow
+	Entry      models.Contact
+	Debts      []models.GetDebtsRow
+	Activities []models.GetActivitiesRow
 }
 
 func (b *Controller) HandleContacts(w http.ResponseWriter, r *http.Request) {

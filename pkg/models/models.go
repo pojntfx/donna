@@ -9,6 +9,14 @@ import (
 	"time"
 )
 
+type Activity struct {
+	ID          int32
+	Name        string
+	Date        time.Time
+	ContactID   int32
+	Description string
+}
+
 type Contact struct {
 	ID        int32
 	FirstName string
