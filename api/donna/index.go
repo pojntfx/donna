@@ -78,7 +78,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	r.URL.Path = r.URL.Query().Get("path")
 
 	if p == nil {
-		p = persisters.NewPersister(os.Getenv("DATABASE_URL"))
+		p = persisters.NewPersister(os.Getenv("POSTGRES_URL"))
 
 		if err := p.Init(); err != nil {
 			panic(err)

@@ -11,20 +11,20 @@ import (
 )
 
 type Persister struct {
-	dbaddr  string
+	pgaddr  string
 	queries *models.Queries
 	db      *sql.DB
 }
 
-func NewPersister(dbaddr string) *Persister {
+func NewPersister(pgaddr string) *Persister {
 	return &Persister{
-		dbaddr: dbaddr,
+		pgaddr: pgaddr,
 	}
 }
 
 func (p *Persister) Init() error {
 	var err error
-	p.db, err = sql.Open("postgres", p.dbaddr)
+	p.db, err = sql.Open("postgres", p.pgaddr)
 	if err != nil {
 		return err
 	}
