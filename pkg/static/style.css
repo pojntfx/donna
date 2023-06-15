@@ -16,11 +16,17 @@ header,
 body > header:first-child > div,
 body > header:nth-child(2) > div:first-child,
 body > ul > li > div:first-child,
+body > main > section:nth-child(3) > main > ul > li > div:first-child,
 body > footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
+}
+
+body > main > section:nth-child(3) > main > ul > li > div:first-child > h3 {
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 body > ul > li > div:last-child {

@@ -7,13 +7,14 @@
 
     <header>
       <h2>To-Do List</h2>
-      <a href="/todo/add">✍️ Add a to-do</a>
 
       {{if eq .Show "done"}}
       <a href="/todo?show=pending">🔄 Show pending to-dos</a>
       {{else}}
       <a href="/todo?show=done">✔️ Show done to-dos</a>
       {{end}}
+
+      <a href="/todo/add">✍️ Add a to-do</a>
     </header>
 
     <ul>

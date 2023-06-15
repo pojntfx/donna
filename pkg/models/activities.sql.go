@@ -156,7 +156,7 @@ func (q *Queries) GetActivity(ctx context.Context, arg GetActivityParams) (Conta
 }
 
 const getActivityAndContact = `-- name: GetActivityAndContact :one
-select activities.id as log_id,
+select activities.id as activity_id,
     activities.name,
     activities.date,
     activities.description,
@@ -177,7 +177,7 @@ type GetActivityAndContactParams struct {
 }
 
 type GetActivityAndContactRow struct {
-	LogID       int32
+	ActivityID  int32
 	Name        string
 	Date        time.Time
 	Description string
@@ -190,7 +190,7 @@ func (q *Queries) GetActivityAndContact(ctx context.Context, arg GetActivityAndC
 	row := q.db.QueryRowContext(ctx, getActivityAndContact, arg.ID, arg.Namespace, arg.ID_2)
 	var i GetActivityAndContactRow
 	err := row.Scan(
-		&i.LogID,
+		&i.ActivityID,
 		&i.Name,
 		&i.Date,
 		&i.Description,

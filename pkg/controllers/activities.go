@@ -392,7 +392,7 @@ func (b *Controller) HandleEditActivity(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	if err := b.tpl.ExecuteTemplate(w, "activity_edit.html", activityData{
+	if err := b.tpl.ExecuteTemplate(w, "activities_edit.html", activityData{
 		pageData: pageData{
 			authorizationData: authorizationData,
 
@@ -438,7 +438,25 @@ func (b *Controller) HandleViewActivity(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	activity, err := b.persister.GetActivities(r.Context(), int32(id), authorizationData.Email)
+	rcontactID := r.URL.Query().Get("contact_id")
+	if strings.TrimSpace(rcontactID) == "" {
+		log.Println(errInvalidQueryParam)
+
+		http.Error(w, errInvalidQueryParam.Error(), http.StatusUnprocessableEntity)
+
+		return
+	}
+
+	contactID, err := strconv.Atoi(rcontactID)
+	if err != nil {
+		log.Println(errInvalidQueryParam)
+
+		http.Error(w, errInvalidQueryParam.Error(), http.StatusUnprocessableEntity)
+
+		return
+	}
+
+	activityAndContact, err := b.persister.GetActivityAndContact(r.Context(), int32(id), int32(contactID), authorizationData.Email)
 	if err != nil {
 		log.Println(errCouldNotFetchFromDB, err)
 
@@ -451,9 +469,9 @@ func (b *Controller) HandleViewActivity(w http.ResponseWriter, r *http.Request) 
 		pageData: pageData{
 			authorizationData: authorizationData,
 
-			Page: activity.Name,
+			Page: activityAndContact.Name,
 		},
-		Entry: activity,
+		Entry: activityAndContact,
 	}); err != nil {
 		log.Println(errCouldNotRenderTemplate, err)
 

@@ -1,146 +1,166 @@
 <!DOCTYPE html>
 <html lang="en">
-{{ template "header.html" . }}
+  {{ template "header.html" . }}
 
-<body>
-   {{ template "nav.html" . }}
+  <body>
+    {{ template "nav.html" . }}
 
-   <header>
+    <header>
       <div>
-         <a href="/contacts">🔙</a>
+        <a href="/contacts">🔙</a>
 
-         <h2>
-            {{ .Entry.FirstName }} {{ .Entry.LastName }} {{ if ne .Entry.Nickname
-            ""}} ({{ .Entry.Nickname }}) {{ end }}
-         </h2>
+        <h2>
+          {{ .Entry.FirstName }} {{ .Entry.LastName }} {{ if ne .Entry.Nickname
+          ""}} ({{ .Entry.Nickname }}) {{ end }}
+        </h2>
       </div>
 
       <div>
-         {{ .Entry.Email }} {{if and (ne .Entry.Email "") (ne .Entry.Pronouns
-         "")}}|{{end}} {{ .Entry.Pronouns}}
+        {{ .Entry.Email }} {{if and (ne .Entry.Email "") (ne .Entry.Pronouns
+        "")}}|{{end}} {{ .Entry.Pronouns}}
       </div>
-   </header>
+    </header>
 
-   <main>
+    <main>
       <section>
-         <dl>
-            {{ if .Entry.Birthday.Valid }}
-            <dt>✨ Birthday</dt>
-            <dd>{{ .Entry.Birthday.Value.Format "2006-01-02" }}</dd>
-            {{ end }} {{ if .Entry.Address }}
-            <dt>📍 Address</dt>
-            <dd>{{ .Entry.Address }}</dd>
-            {{ end }} {{ if .Entry.Notes }}
-            <dt>📜 Notes</dt>
-            <dd>{{ .Entry.Notes }}</dd>
-            {{ end }}
-         </dl>
+        <dl>
+          {{ if .Entry.Birthday.Valid }}
+          <dt>✨ Birthday</dt>
+          <dd>{{ .Entry.Birthday.Value.Format "2006-01-02" }}</dd>
+          {{ end }} {{ if .Entry.Address }}
+          <dt>📍 Address</dt>
+          <dd>{{ .Entry.Address }}</dd>
+          {{ end }} {{ if .Entry.Notes }}
+          <dt>📜 Notes</dt>
+          <dd>{{ .Entry.Notes }}</dd>
+          {{ end }}
+        </dl>
       </section>
 
       <section>
-         <header>
-            <div>
-               <h3>💸 Debts</h3>
-            </div>
+        <header>
+          <div>
+            <h3>💸 Debts</h3>
+          </div>
 
-            <div>
-               <a href="/debts/add?id={{ .Entry.ID }}">➕ Add debt</a>
-            </div>
-         </header>
+          <div>
+            <a href="/debts/add?id={{ .Entry.ID }}">➕ Add debt</a>
+          </div>
+        </header>
 
-         <main>
-            {{ if eq (len .Debts) 0 }}
-            <div>
-               Manage debts you owe to {{ .Entry.FirstName }} or {{
-               .Entry.FirstName }} owes you
-            </div>
-            {{ else }}
-            <ul>
-               {{ range .Debts }}
-               <li>
-                  {{ if le .Amount 0.0 }}You owe {{ $.Entry.FirstName }} {{ Abs
-                  .Amount }} {{ .Currency }}{{ else }}{{ $.Entry.FirstName }} owes
-                  you {{ Abs .Amount }} {{ .Currency }}{{ end }}{{ if .Description
-                  }}: {{ .Description }}{{ else }}.{{ end }}
+        <main>
+          {{ if eq (len .Debts) 0 }}
+          <div>
+            Manage debts you owe to {{ .Entry.FirstName }} or {{
+            .Entry.FirstName }} owes you
+          </div>
+          {{ else }}
+          <ul>
+            {{ range .Debts }}
+            <li>
+              {{ if le .Amount 0.0 }}You owe {{ $.Entry.FirstName }} {{ Abs
+              .Amount }} {{ .Currency }}{{ else }}{{ $.Entry.FirstName }} owes
+              you {{ Abs .Amount }} {{ .Currency }}{{ end }}{{ if .Description
+              }}: {{ .Description }}{{ else }}.{{ end }}
 
-                  <div>
-                     <form action="/debts/settle" method="post"
-                        onsubmit="return confirm('Are you sure you want to settle this debt?')">
-                        <input type="hidden" name="contact_id" value="{{ $.Entry.ID }}" />
-                        <input type="hidden" name="id" value="{{ .ID }}" />
+              <div>
+                <form
+                  action="/debts/settle"
+                  method="post"
+                  onsubmit="return confirm('Are you sure you want to settle this debt?')"
+                >
+                  <input
+                    type="hidden"
+                    name="contact_id"
+                    value="{{ $.Entry.ID }}"
+                  />
+                  <input type="hidden" name="id" value="{{ .ID }}" />
 
-                        <input type="submit" value="✔️ Settle debt" />
-                     </form>
+                  <input type="submit" value="✔️ Settle debt" />
+                </form>
 
-                     <a href="/debts/edit?id={{ .ID }}&contact_id={{ $.Entry.ID }}">✏️ Edit debt</a>
-                  </div>
-               </li>
-               {{ end }}
-            </ul>
+                <a href="/debts/edit?id={{ .ID }}&contact_id={{ $.Entry.ID }}"
+                  >✏️ Edit debt</a
+                >
+              </div>
+            </li>
             {{ end }}
-         </main>
+          </ul>
+          {{ end }}
+        </main>
       </section>
 
       <section>
-         <header>
-            <div>
-               <h3>📅 Activities</h3>
-            </div>
+        <header>
+          <div>
+            <h3>📅 Activities</h3>
+          </div>
 
-            <div>
-               <a href="/activities/add?id={{ .Entry.ID }}">➕ Add activity</a>
-            </div>
-         </header>
+          <div>
+            <a href="/activities/add?id={{ .Entry.ID }}">➕ Add activity</a>
+          </div>
+        </header>
 
-         <main>
-            {{ if eq (len .Activities) 0 }}
-            <div>
-               No activities with {{ .Entry.FirstName }} yet.
-            </div>
-            {{ else }}
-            <ul>
-               {{ range .Activities }}
-               <li>
-                  <div>
-                     <h3>
-                        <a href="/activities/view?id={{ .LogID }}">{{ .Name }}</a>
-                     </h3>
+        <main>
+          {{ if eq (len .Activities) 0 }}
+          <div>No activities with {{ .Entry.FirstName }} yet.</div>
+          {{ else }}
+          <ul>
+            {{ range .Activities }}
+            <li>
+              <div>
+                <h3>
+                  <a
+                    href="/activities/view?id={{ .ID }}&contact_id={{ $.Entry.ID }}"
+                    >{{ .Name }}</a
+                  >
+                </h3>
 
-                     <div>
-                        Date: {{ .Date.Format "2006-01-02" }} | Description: {{ .Description }}
-                     </div>
-                  </div>
+                <div>{{ .Date.Format "2006-01-02" }}</div>
+              </div>
 
-                  <div>
-                     <form action="/activities/delete" method="post"
-                        onsubmit="return confirm('Are you sure you want to delete this activity?')">
-                        <input type="hidden" name="contact_id" value="{{ $.Entry.ID }}" />
-                        <input type="hidden" name="id" value="{{ .LogID }}" />
+              <div>
+                <form
+                  action="/activities/delete"
+                  method="post"
+                  onsubmit="return confirm('Are you sure you want to delete this activity?')"
+                >
+                  <input
+                    type="hidden"
+                    name="contact_id"
+                    value="{{ $.Entry.ID }}"
+                  />
+                  <input type="hidden" name="id" value="{{ .ID }}" />
 
-                        <input type="submit" value="🗑️ Delete activity" />
-                     </form>
+                  <input type="submit" value="🗑️ Delete activity" />
+                </form>
 
-                     <a href="/activities/edit?id={{ .LogID }}&contact_id={{ $.Entry.ID }}">✏️ Edit activity</a>
-                  </div>
-               </li>
-               {{ end }}
-            </ul>
+                <a
+                  href="/activities/edit?id={{ .ID }}&contact_id={{ $.Entry.ID }}"
+                  >✏️ Edit activity</a
+                >
+              </div>
+            </li>
             {{ end }}
-         </main>
+          </ul>
+          {{ end }}
+        </main>
       </section>
 
-
-      <form id="delete" action="/contacts/delete?id={{ .Entry.ID }}" method="post"
-         onsubmit="return confirm('Are you sure you want to delete this contact?')"></form>
+      <form
+        id="delete"
+        action="/contacts/delete?id={{ .Entry.ID }}"
+        method="post"
+        onsubmit="return confirm('Are you sure you want to delete this contact?')"
+      ></form>
 
       <div>
-         <input type="submit" value="🗑️ Delete" form="delete" />
+        <input type="submit" value="🗑️ Delete" form="delete" />
 
-         <a href="/contacts/edit?id={{ .Entry.ID }}">✏️ Edit</a>
+        <a href="/contacts/edit?id={{ .Entry.ID }}">✏️ Edit</a>
       </div>
-   </main>
+    </main>
 
-   {{ template "footer.html" . }}
-</body>
-
+    {{ template "footer.html" . }}
+  </body>
 </html>

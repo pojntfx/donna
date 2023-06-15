@@ -262,14 +262,24 @@ func (b *Controller) HandleViewContact(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	activities, err := b.persister.GetActivities(r.Context(), int32(id), authorizationData.Email)
+	if err != nil {
+		log.Println(errCouldNotFetchFromDB, err)
+
+		http.Error(w, errCouldNotFetchFromDB.Error(), http.StatusInternalServerError)
+
+		return
+	}
+
 	if err := b.tpl.ExecuteTemplate(w, "contacts_view.html", contactData{
 		pageData: pageData{
 			authorizationData: authorizationData,
 
 			Page: contact.FirstName + " " + contact.LastName,
 		},
-		Entry: contact,
-		Debts: debts,
+		Entry:      contact,
+		Debts:      debts,
+		Activities: activities,
 	}); err != nil {
 		log.Println(errCouldNotRenderTemplate, err)
 

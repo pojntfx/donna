@@ -41,7 +41,7 @@ where activities.id = $3
     and contacts.id = $1
     and contacts.namespace = $2;
 -- name: GetActivityAndContact :one
-select activities.id as log_id,
+select activities.id as activity_id,
     activities.name,
     activities.date,
     activities.description,
