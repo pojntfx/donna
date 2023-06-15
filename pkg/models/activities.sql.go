@@ -55,6 +55,23 @@ func (q *Queries) CreateActivity(ctx context.Context, arg CreateActivityParams) 
 	return id, err
 }
 
+const deleteActivitesForContact = `-- name: DeleteActivitesForContact :exec
+delete from activities using contacts
+where activities.contact_id = contacts.id
+    and contacts.id = $1
+    and contacts.namespace = $2
+`
+
+type DeleteActivitesForContactParams struct {
+	ID        int32
+	Namespace string
+}
+
+func (q *Queries) DeleteActivitesForContact(ctx context.Context, arg DeleteActivitesForContactParams) error {
+	_, err := q.db.ExecContext(ctx, deleteActivitesForContact, arg.ID, arg.Namespace)
+	return err
+}
+
 const deleteActivity = `-- name: DeleteActivity :exec
 delete from activities using contacts
 where activities.id = $3

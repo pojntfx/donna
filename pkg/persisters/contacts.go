@@ -54,6 +54,13 @@ func (p *Persister) DeleteContact(ctx context.Context, id int32, namespace strin
 		return err
 	}
 
+	if err := qtx.DeleteDebtsForContact(ctx, models.DeleteDebtsForContactParams{
+		ID:        id,
+		Namespace: namespace,
+	}); err != nil {
+		return err
+	}
+
 	if err := qtx.DeleteContact(ctx, models.DeleteContactParams{
 		ID:        id,
 		Namespace: namespace,

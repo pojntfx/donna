@@ -29,16 +29,32 @@ Click on an image to see a larger version.
 <img src="./docs/screenshot-add-contact.png" width="45%" alt="Screenshot of the add contact screen" title="Screenshot of the add contact screen">
 </a>
 
+<a display="inline" href="./docs/screenshot-edit-contact.png?raw=true">
+<img src="./docs/screenshot-edit-contact.png" width="45%" alt="Screenshot of the edit contact screen" title="Screenshot of the edit contact screen">
+</a>
+
 <a display="inline" href="./docs/screenshot-add-debt.png?raw=true">
 <img src="./docs/screenshot-add-debt.png" width="45%" alt="Screenshot of the add debt screen" title="Screenshot of the add debt screen">
 </a>
 
-<a display="inline" href="./docs/screenshot-add-journal-entry.png?raw=true">
-<img src="./docs/screenshot-add-journal-entry.png" width="45%" alt="Screenshot of the add journal entry screen" title="Screenshot of the add journal entry screen">
+<a display="inline" href="./docs/screenshot-add-activity.png?raw=true">
+<img src="./docs/screenshot-add-activity.png" width="45%" alt="Screenshot of the add activity screen" title="Screenshot of the add activity screen">
+</a>
+
+<a display="inline" href="./docs/screenshot-view-contact.png?raw=true">
+<img src="./docs/screenshot-view-contact.png" width="45%" alt="Screenshot of the view contact screen" title="Screenshot of the view contact screen">
 </a>
 
 <a display="inline" href="./docs/screenshot-add-todo.png?raw=true">
 <img src="./docs/screenshot-add-todo.png" width="45%" alt="Screenshot of the add todo screen" title="Screenshot of the add todo screen">
+</a>
+
+<a display="inline" href="./docs/screenshot-add-journal.png?raw=true">
+<img src="./docs/screenshot-add-journal.png" width="45%" alt="Screenshot of the add journal screen" title="Screenshot of the add journal screen">
+</a>
+
+<a display="inline" href="./docs/screenshot-view-journal.png?raw=true">
+<img src="./docs/screenshot-view-journal.png" width="45%" alt="Screenshot of the view journal screen" title="Screenshot of the view journal screen">
 </a>
 
 ## Installation

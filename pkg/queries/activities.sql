@@ -40,6 +40,11 @@ where activities.id = $3
     and activities.contact_id = contacts.id
     and contacts.id = $1
     and contacts.namespace = $2;
+-- name: DeleteActivitesForContact :exec
+delete from activities using contacts
+where activities.contact_id = contacts.id
+    and contacts.id = $1
+    and contacts.namespace = $2;
 -- name: GetActivityAndContact :one
 select activities.id as activity_id,
     activities.name,
