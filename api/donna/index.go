@@ -59,6 +59,14 @@ func DonnaHandler(
 	mux.HandleFunc("/debts/settle", c.HandleSettleDebt)
 	mux.HandleFunc("/debts/update", c.HandleUpdateDebt)
 
+	mux.HandleFunc("/activities/add", c.HandleAddActivity)
+	mux.HandleFunc("/activities/view", c.HandleViewActivity)
+	mux.HandleFunc("/activities/edit", c.HandleEditActivity)
+
+	mux.HandleFunc("/activities/create", c.HandleCreateActivity)
+	mux.HandleFunc("/activities/delete", c.HandleDeleteActivity)
+	mux.HandleFunc("/activities/update", c.HandleUpdateActivity)
+
 	mux.HandleFunc("/authorize", c.HandleAuthorize)
 
 	mux.HandleFunc("/", c.HandleIndex)

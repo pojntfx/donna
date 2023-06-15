@@ -14,13 +14,15 @@ import (
 
 type contactsData struct {
 	pageData
-	Entries []models.Contact
+	Entries    []models.Contact
+	Activities []models.Activity
 }
 
 type contactData struct {
 	pageData
-	Entry models.Contact
-	Debts []models.GetDebtsRow
+	Entry      models.Contact
+	Debts      []models.GetDebtsRow
+	Activities []models.GetActivitiesRow
 }
 
 func (b *Controller) HandleContacts(w http.ResponseWriter, r *http.Request) {
@@ -260,14 +262,24 @@ func (b *Controller) HandleViewContact(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	activities, err := b.persister.GetActivities(r.Context(), int32(id), authorizationData.Email)
+	if err != nil {
+		log.Println(errCouldNotFetchFromDB, err)
+
+		http.Error(w, errCouldNotFetchFromDB.Error(), http.StatusInternalServerError)
+
+		return
+	}
+
 	if err := b.tpl.ExecuteTemplate(w, "contacts_view.html", contactData{
 		pageData: pageData{
 			authorizationData: authorizationData,
 
 			Page: contact.FirstName + " " + contact.LastName,
 		},
-		Entry: contact,
-		Debts: debts,
+		Entry:      contact,
+		Debts:      debts,
+		Activities: activities,
 	}); err != nil {
 		log.Println(errCouldNotRenderTemplate, err)
 

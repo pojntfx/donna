@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  {{ template "header.html" . }}
+
+  <body>
+    {{ template "nav.html" . }}
+
+    <header>
+      <h2>✏️ Edit Activity for {{ .Entry.FirstName }} {{ .Entry.LastName }}</h2>
+    </header>
+
+    <main>
+      <form id="update" action="/activities/update">
+        <input
+          type="hidden"
+          name="id"
+          id="id"
+          value="{{ .Entry.ActivityID }}"
+        />
+
+        <input
+          type="hidden"
+          name="contact_id"
+          id="contact-id"
+          value="{{ .Entry.ContactID }}"
+        />
+
+        <label for="name">🔖 Name</label>
+        <br />
+        <input
+          type="text"
+          name="name"
+          id="name"
+          required
+          autofocus
+          value="{{ .Entry.Name }}"
+        />
+        <br />
+
+        <label for="date">📅 Date</label>
+        <br />
+        <input type="date" name="date" id="date" required value="{{
+        .Entry.Date.Format "2006-01-02" }}" />
+        <br />
+
+        <label for="description">📜 Description</label>
+        <br />
+        <textarea name="description" id="description" rows="10">
+{{ .Entry.Description }}</textarea
+        >
+        <br />
+      </form>
+
+      <div>
+        <input type="submit" value="💾 Save changes" form="update" />
+
+        <a href="/contacts/view?id={{ .Entry.ContactID }}">🔙 Cancel</a>
+      </div>
+    </main>
+
+    {{ template "footer.html" . }}
+  </body>
+</html>

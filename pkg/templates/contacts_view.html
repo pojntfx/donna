@@ -90,6 +90,63 @@
         </main>
       </section>
 
+      <section>
+        <header>
+          <div>
+            <h3>📅 Activities</h3>
+          </div>
+
+          <div>
+            <a href="/activities/add?id={{ .Entry.ID }}">➕ Add activity</a>
+          </div>
+        </header>
+
+        <main>
+          {{ if eq (len .Activities) 0 }}
+          <div>No activities with {{ .Entry.FirstName }} yet.</div>
+          {{ else }}
+          <ul>
+            {{ range .Activities }}
+            <li>
+              <div>
+                <h3>
+                  <a
+                    href="/activities/view?id={{ .ID }}&contact_id={{ $.Entry.ID }}"
+                    >{{ .Name }}</a
+                  >
+                </h3>
+
+                <div>{{ .Date.Format "2006-01-02" }}</div>
+              </div>
+
+              <div>
+                <form
+                  action="/activities/delete"
+                  method="post"
+                  onsubmit="return confirm('Are you sure you want to delete this activity?')"
+                >
+                  <input
+                    type="hidden"
+                    name="contact_id"
+                    value="{{ $.Entry.ID }}"
+                  />
+                  <input type="hidden" name="id" value="{{ .ID }}" />
+
+                  <input type="submit" value="🗑️ Delete activity" />
+                </form>
+
+                <a
+                  href="/activities/edit?id={{ .ID }}&contact_id={{ $.Entry.ID }}"
+                  >✏️ Edit activity</a
+                >
+              </div>
+            </li>
+            {{ end }}
+          </ul>
+          {{ end }}
+        </main>
+      </section>
+
       <form
         id="delete"
         action="/contacts/delete?id={{ .Entry.ID }}"
