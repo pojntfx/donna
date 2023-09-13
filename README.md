@@ -123,7 +123,7 @@ You can set some flags using environment variables, which are compatible with th
 
 ## Acknowledgements
 
-- [kyleconroy/sqlc](https://github.com/kyleconroy/sqlc) provides the SQL library.
+- [sqlc-dev/sqlc](https://github.com/sqlc-dev/sqlc) provides the SQL library.
 - [pressly/goose](https://github.com/pressly/goose) provides migration support.
 - [yuin/goldmark](https://github.com/yuin/goldmark) enables markdown rendering.
 
