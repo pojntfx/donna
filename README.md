@@ -1,21 +1,20 @@
-# Donna
+<img alt="Project icon" style="vertical-align: middle;" src="./docs/icon.svg" width="128" height="128" align="left">
 
-![Logo](./docs/logo-readme.png)
+# Donna
 
 Minimal personal CRM.
 
 [![hydrun CI](https://github.com/pojntfx/donna/actions/workflows/hydrun.yaml/badge.svg)](https://github.com/pojntfx/donna/actions/workflows/hydrun.yaml)
 [![Docker CI](https://github.com/pojntfx/donna/actions/workflows/docker.yaml/badge.svg)](https://github.com/pojntfx/donna/actions/workflows/docker.yaml)
-![Go Version](https://img.shields.io/badge/go%20version-%3E=1.18-61CFDD.svg)
+![Go Version](https://img.shields.io/badge/go%20version-%3E=1.21-61CFDD.svg)
 [![Go Reference](https://pkg.go.dev/badge/github.com/pojntfx/donna.svg)](https://pkg.go.dev/github.com/pojntfx/donna)
-[![Matrix](https://img.shields.io/matrix/donnadev:matrix.org)](https://matrix.to/#/#donnadev:matrix.org?via=matrix.org)
-[![Binary Downloads](https://img.shields.io/github/downloads/pojntfx/donna/total?label=binary%20downloads)](https://github.com/pojntfx/donna/releases)
+[![Matrix](https://img.shields.io/matrix/donna:matrix.org)](https://matrix.to/#/#donna:matrix.org?via=matrix.org)
 
 ## Overview
 
 Donna is personal relationship management tool, commonly known as a personal CRM. It is named after [Donna Paulsen](https://suits.fandom.com/wiki/Donna_Paulsen), Harvey's assistant from the series "Suits".
 
-It enables you too ...
+It enables you to:
 
 - **Keep track of your contacts**: Donna serves as a simple contact book, enabling you to safely store names, addresses and more.
 - **Register activities**: By using it's integrated activity tracker, you can easily get a quick overview of your recent history with a contact.
@@ -147,6 +146,6 @@ Have any questions or need help? Chat with us [on Matrix](https://matrix.to/#/#d
 
 ## License
 
-Donna (c) 2023 Felicitas Pojtinger, Daniel Hiller and contributors
+Donna (c) 2024 Felicitas Pojtinger, Daniel Hiller and contributors
 
 SPDX-License-Identifier: AGPL-3.0
