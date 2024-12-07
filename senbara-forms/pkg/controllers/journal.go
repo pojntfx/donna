@@ -382,7 +382,8 @@ func (b *Controller) HandleViewJournal(w http.ResponseWriter, r *http.Request) {
 		pageData: pageData{
 			authorizationData: authorizationData,
 
-			Page: journalEntry.Title,
+			Page:    journalEntry.Title,
+			BackURL: "/journal",
 		},
 		Entry: journalEntry,
 	}); err != nil {

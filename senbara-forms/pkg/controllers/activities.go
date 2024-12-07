@@ -469,7 +469,8 @@ func (b *Controller) HandleViewActivity(w http.ResponseWriter, r *http.Request) 
 		pageData: pageData{
 			authorizationData: authorizationData,
 
-			Page: activityAndContact.Name,
+			Page:    activityAndContact.Name,
+			BackURL: fmt.Sprintf("/contacts/view?id=%v", contactID),
 		},
 		Entry: activityAndContact,
 	}); err != nil {

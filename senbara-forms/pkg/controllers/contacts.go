@@ -275,7 +275,8 @@ func (b *Controller) HandleViewContact(w http.ResponseWriter, r *http.Request) {
 		pageData: pageData{
 			authorizationData: authorizationData,
 
-			Page: contact.FirstName + " " + contact.LastName,
+			Page:    contact.FirstName + " " + contact.LastName,
+			BackURL: "/contacts",
 		},
 		Entry:      contact,
 		Debts:      debts,

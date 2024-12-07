@@ -35,7 +35,8 @@ body > ul > li > div:last-child {
   flex-wrap: wrap;
 }
 
-body > header:first-child > div > h1,
+body > header:first-child > div,
+body > header:first-child > div > h1:not(:last-child),
 body > header:nth-child(2) > h2,
 body > header:nth-child(2) > div > h2,
 body > footer > a:first-child,
@@ -50,10 +51,6 @@ body > ul > li > div:first-child > h3 {
 
 body > ul > li:not(:last-child) {
   margin-bottom: 1.5rem;
-}
-
-body > header:nth-child(2) > div > h2 {
-  margin-left: 0.5rem;
 }
 
 body > ul {
@@ -119,6 +116,9 @@ section > main > ul > li > div:last-child {
   align-items: center;
 }
 
+section:last-of-type > main > ul > li > div:last-child {
+  margin-bottom: 2rem;
+}
 
 body > header > div > h1 > a > picture > img {
   max-width: 128px;

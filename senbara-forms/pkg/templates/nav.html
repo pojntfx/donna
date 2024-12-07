@@ -11,6 +11,10 @@
         </picture>
       </a>
     </h1>
+
+    {{ if ne .BackURL "" }}
+    <a href="{{ .BackURL }}">Go back</a>
+    {{ end }}
   </div>
 
   <nav>

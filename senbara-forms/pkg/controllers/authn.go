@@ -13,7 +13,8 @@ import (
 type pageData struct {
 	authorizationData
 
-	Page string
+	Page    string
+	BackURL string
 }
 
 type authorizationData struct {
