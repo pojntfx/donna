@@ -6,83 +6,61 @@
     {{ template "nav.html" . }}
 
     <header>
-      <h2><span aria-hidden="true">🤝</span> Add a Contact</h2>
+      <h2>🤝 Add a Contact</h2>
     </header>
 
     <main>
-      <form action="/contacts/create" method="post">
-        <div>
-          <label for="first_name">
-            <span aria-hidden="true">🧑</span> First Name
-          </label>
-          <br />
-          <input
-            type="text"
-            name="first_name"
-            id="first_name"
-            placeholder="Jean"
-            required
-            autofocus
-          />
-        </div>
+      <form action="/contacts/create">
+        <label for="first_name">🧑 First Name</label>
+        <br />
+        <input
+          type="text"
+          name="first_name"
+          id="first_name"
+          placeholder="Jean"
+          required
+          autofocus
+        />
         <br />
 
-        <div>
-          <label for="last_name">
-            <span aria-hidden="true">👪</span> Last Name
-          </label>
-          <br />
-          <input
-            type="text"
-            name="last_name"
-            id="last_name"
-            placeholder="Doe"
-            required
-          />
-        </div>
+        <label for="last_name">👪 Last Name</label>
+        <br />
+        <input
+          type="text"
+          name="last_name"
+          id="last_name"
+          placeholder="Doe"
+          required
+        />
         <br />
 
-        <div>
-          <label for="nickname">
-            <span aria-hidden="true">📟</span> Nickname (optional)
-          </label>
-          <br />
-          <input type="text" name="nickname" id="nickname" placeholder="jdoe" />
-        </div>
+        <label for="nickname">📟 Nickname (optional)</label>
+        <br />
+        <input type="text" name="nickname" id="nickname" placeholder="jdoe" />
         <br />
 
-        <div>
-          <label for="email"> <span aria-hidden="true">📧</span> Email </label>
-          <br />
-          <input
-            type="email"
-            name="email"
-            id="email"
-            placeholder="jean@doe.com"
-          />
-        </div>
+        <label for="email">📧 Email</label>
+        <br />
+        <input
+          type="email"
+          name="email"
+          id="email"
+          placeholder="jean@doe.com"
+        />
         <br />
 
-        <div>
-          <label for="pronouns">
-            <span aria-hidden="true">⚧️</span> Pronouns
-          </label>
-          <br />
-          <input
-            type="text"
-            name="pronouns"
-            id="pronouns"
-            placeholder="they/them"
-            required
-          />
-        </div>
+        <label for="pronouns">⚧️ Pronouns</label>
+        <br />
+        <input
+          type="text"
+          name="pronouns"
+          id="pronouns"
+          placeholder="they/them"
+          required
+        />
         <br />
 
-        <div>
-          <button type="submit">
-            <span aria-hidden="true">➕</span> Add Contact
-          </button>
-        </div>
+        <input type="submit" value="➕ Add contact" />
       </form>
     </main>
 

@@ -7,9 +7,7 @@
 
     <header>
       <div>
-        <a href="/contacts/view?id={{ .Entry.ContactID }}">
-          <span aria-hidden="true">🔙</span> Back
-        </a>
+        <a href="/contacts/view?id={{ .Entry.ContactID }}">🔙</a>
 
         <h2>
           Activity {{ .Entry.Name }} for {{ .Entry.FirstName }} {{
@@ -18,10 +16,7 @@
       </div>
 
       <div>
-        <div>
-          <span aria-hidden="true">📅</span> Date: {{ .Entry.Date.Format
-          "2006-01-02" }}
-        </div>
+        <div>📅 Date: {{ .Entry.Date.Format "2006-01-02" }}</div>
       </div>
     </header>
 
@@ -36,15 +31,12 @@
       ></form>
 
       <div>
-        <button type="submit" form="delete">
-          <span aria-hidden="true">🗑️</span> Delete
-        </button>
+        <input type="submit" value="🗑️ Delete" form="delete" />
 
         <a
           href="/activities/edit?id={{ .Entry.EntryID }}&contact_id={{ .Entry.ContactID }}"
+          >✏️ Edit</a
         >
-          <span aria-hidden="true">✏️</span> Edit
-        </a>
       </div>
     </main>
 

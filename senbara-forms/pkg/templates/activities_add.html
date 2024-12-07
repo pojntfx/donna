@@ -1,49 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
-  {{ template "header.html" . }}
+{{ template "header.html" . }}
 
-  <body>
-    {{ template "nav.html" . }}
+<body>
+   {{ template "nav.html" . }}
 
-    <header>
+   <header>
       <h2>
-        <span aria-hidden="true">☕</span> Add a New Activity For {{
-        .Entry.FirstName }} {{ .Entry.LastName }}
+         ☕ Add a New Activity For {{ .Entry.FirstName }} {{ .Entry.LastName }}
       </h2>
-    </header>
+   </header>
 
-    <main>
+   <main>
       <form action="/activities/create">
-        <input
-          type="hidden"
-          name="contact_id"
-          id="contact-id"
-          value="{{ .Entry.ID }}"
-        />
+         <input type="hidden" name="contact_id" id="contact-id" value="{{ .Entry.ID }}" />
 
-        <label for="name"><span aria-hidden="true">🔖</span> Name</label>
-        <br />
-        <input type="text" name="name" id="name" required autofocus />
-        <br />
+         <label for="name">🔖 Name</label>
+         <br />
+         <input type="text" name="name" id="name" required autofocus />
+         <br />
 
-        <label for="date"><span aria-hidden="true">📅</span> Date</label>
-        <br />
-        <input type="date" name="date" id="date" required />
-        <br />
+         <label for="date">📅 Date</label>
+         <br />
+         <input type="date" name="date" id="date" required />
+         <br />
 
-        <label for="description"
-          ><span aria-hidden="true">📜</span> Description</label
-        >
-        <br />
-        <textarea name="description" id="description" rows="10"></textarea>
-        <br />
+         <label for="description">📜 Description</label>
+         <br />
+         <textarea name="description" id="description" rows="10"></textarea>
+         <br />
 
-        <button type="submit">
-          <span aria-hidden="true">➕</span> Add Activity
-        </button>
+         <input type="submit" value="➕ Add Activity" />
       </form>
-    </main>
+   </main>
 
-    {{ template "footer.html" . }}
-  </body>
+   {{ template "footer.html" . }}
+</body>
+
 </html>

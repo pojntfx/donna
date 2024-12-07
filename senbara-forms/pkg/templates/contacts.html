@@ -8,9 +8,7 @@
     <header>
       <h2>Contacts</h2>
 
-      <a href="/contacts/add">
-        <span aria-hidden="true">🤝</span> Add a contact
-      </a>
+      <a href="/contacts/add">🤝 Add a contact</a>
     </header>
 
     <ul>
@@ -18,15 +16,15 @@
       <li>
         <div>
           <h3>
-            <a href="/contacts/view?id={{ .ID }}">
-              {{ .FirstName }} {{ .LastName }} {{ if ne .Nickname "" }} ({{
-              .Nickname }}) {{ end }}
-            </a>
+            <a href="/contacts/view?id={{ .ID }}"
+              >{{ .FirstName }} {{ .LastName }} {{ if ne .Nickname ""}} ({{
+              .Nickname }}) {{ end }}</a
+            >
           </h3>
 
           <div>
-            {{ .Email }} {{ if and (ne .Email "") (ne .Pronouns "") }} | {{ end
-            }} {{ .Pronouns }}
+            {{ .Email }} {{if and (ne .Email "") (ne .Pronouns "")}}|{{end}} {{
+            .Pronouns}}
           </div>
         </div>
 
@@ -36,14 +34,10 @@
             method="post"
             onsubmit="return confirm('Are you sure you want to delete this contact?')"
           >
-            <button type="submit">
-              <span aria-hidden="true">🗑️</span> Delete
-            </button>
+            <input type="submit" value="🗑️ Delete" />
           </form>
 
-          <a href="/contacts/edit?id={{ .ID }}">
-            <span aria-hidden="true">✏️</span> Edit
-          </a>
+          <a href="/contacts/edit?id={{ .ID }}">✏️ Edit</a>
         </div>
       </li>
       {{ else }}

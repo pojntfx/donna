@@ -6,19 +6,14 @@
     {{ template "nav.html" . }}
 
     <header>
-      <h2>
-        <span aria-hidden="true">✏️</span> Edit {{ .Entry.FirstName }} {{
-        .Entry.LastName }}
-      </h2>
+      <h2>✏️ Edit {{ .Entry.FirstName }} {{ .Entry.LastName }}</h2>
     </header>
 
     <main>
       <form id="update" action="/contacts/update">
         <input type="hidden" name="id" id="id" value="{{ .Entry.ID }}" />
 
-        <label for="first_name">
-          <span aria-hidden="true">🧑</span> First Name
-        </label>
+        <label for="first_name">🧑 First Name</label>
         <br />
         <input
           type="text"
@@ -31,9 +26,7 @@
         />
         <br />
 
-        <label for="last_name">
-          <span aria-hidden="true">👪</span> Last Name
-        </label>
+        <label for="last_name">👪 Last Name</label>
         <br />
         <input
           type="text"
@@ -45,9 +38,7 @@
         />
         <br />
 
-        <label for="nickname">
-          <span aria-hidden="true">📟</span> Nickname (optional)
-        </label>
+        <label for="nickname">📟 Nickname (optional)</label>
         <br />
         <input
           type="text"
@@ -58,7 +49,7 @@
         />
         <br />
 
-        <label for="email"> <span aria-hidden="true">📧</span> Email </label>
+        <label for="email">📧 Email</label>
         <br />
         <input
           type="email"
@@ -69,9 +60,7 @@
         />
         <br />
 
-        <label for="pronouns">
-          <span aria-hidden="true">⚧️</span> Pronouns
-        </label>
+        <label for="pronouns">⚧️ Pronouns</label>
         <br />
         <input
           type="text"
@@ -83,27 +72,21 @@
         />
         <br />
 
-        <label for="birthday">
-          <span aria-hidden="true">✨</span> Birthday (optional)
-        </label>
+        <label for="birthday">✨ Birthday (optional)</label>
         <br />
         <input type="date" name="birthday" id="birthday" {{ if
         .Entry.Birthday.Valid }}value="{{ .Entry.Birthday.Value.Format
         "2006-01-02" }}"{{ end }} />
         <br />
 
-        <label for="address">
-          <span aria-hidden="true">📍</span> Address (optional)
-        </label>
+        <label for="address">📍 Address (optional)</label>
         <br />
         <textarea name="address" id="address" rows="3">
 {{ .Entry.Address }}</textarea
         >
         <br />
 
-        <label for="notes">
-          <span aria-hidden="true">📜</span> Notes (optional)
-        </label>
+        <label for="notes">📜 Notes (optional)</label>
         <br />
         <textarea name="notes" id="notes" rows="10">
 {{ .Entry.Notes }}</textarea
@@ -112,13 +95,9 @@
       </form>
 
       <div>
-        <button type="submit" form="update">
-          <span aria-hidden="true">💾</span> Save changes
-        </button>
+        <input type="submit" value="💾 Save changes" form="update" />
 
-        <a href="/contacts/view?id={{ .Entry.ID }}">
-          <span aria-hidden="true">🔙</span> Cancel
-        </a>
+        <a href="/contacts/view?id={{ .Entry.ID }}">🔙 Cancel</a>
       </div>
     </main>
 
