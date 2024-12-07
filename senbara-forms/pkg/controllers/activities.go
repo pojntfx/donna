@@ -59,7 +59,7 @@ func (b *Controller) HandleAddActivity(w http.ResponseWriter, r *http.Request) {
 		pageData: pageData{
 			authorizationData: authorizationData,
 
-			Page: "☕ Add Activity",
+			Page: "Add Activity",
 		},
 		Entry: contact,
 	}); err != nil {
@@ -396,7 +396,7 @@ func (b *Controller) HandleEditActivity(w http.ResponseWriter, r *http.Request) 
 		pageData: pageData{
 			authorizationData: authorizationData,
 
-			Page: "✏️ Edit Activity",
+			Page: "Edit Activity",
 		},
 		Entry: activityAndContact,
 	}); err != nil {

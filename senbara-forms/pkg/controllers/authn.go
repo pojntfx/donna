@@ -149,7 +149,7 @@ func (b *Controller) HandleAuthorize(w http.ResponseWriter, r *http.Request) {
 
 		if err := b.tpl.ExecuteTemplate(w, "redirect.html", redirectData{
 			pageData: pageData{
-				Page: "🔒 Signing You Out ...",
+				Page: "Signing You Out ...",
 			},
 			Href: "/",
 		}); err != nil {
@@ -204,7 +204,7 @@ func (b *Controller) HandleAuthorize(w http.ResponseWriter, r *http.Request) {
 
 	if err := b.tpl.ExecuteTemplate(w, "redirect.html", redirectData{
 		pageData: pageData{
-			Page: "🔒 Signing You In ...",
+			Page: "Signing You In ...",
 		},
 		Href: "/",
 	}); err != nil {

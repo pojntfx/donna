@@ -7,16 +7,16 @@
 
     <header>
       <div>
-        <a href="/journal">🔙</a>
+        <a href="/journal">Back</a>
 
         <h2>{{ .Entry.Title }}</h2>
       </div>
 
       <div>
-        <div>📅 {{ .Entry.Date.Format "2006-01-02 15:04" }}</div>
+        <div>{{ .Entry.Date.Format "2006-01-02 15:04" }}</div>
         <div>
-          🎚️ Your day was: {{if eq .Entry.Rating 3}}😊{{else if eq .Entry.Rating
-          2}}😐{{else if eq .Entry.Rating 1}}😞{{end}}
+          Your day was: {{if eq .Entry.Rating 3}}Great{{else if eq .Entry.Rating
+          2}}OK{{else if eq .Entry.Rating 1}}Bad{{end}}
         </div>
       </div>
     </header>
@@ -32,9 +32,9 @@
       ></form>
 
       <div>
-        <input type="submit" value="🗑️ Delete" form="delete" />
+        <input type="submit" value="Delete" form="delete" />
 
-        <a href="/journal/edit?id={{ .Entry.ID }}">✏️ Edit</a>
+        <a href="/journal/edit?id={{ .Entry.ID }}">Edit</a>
       </div>
     </main>
 

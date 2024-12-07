@@ -131,7 +131,7 @@ func (b *Controller) HandleIndex(w http.ResponseWriter, r *http.Request) {
 		if err := b.tpl.ExecuteTemplate(w, "404.html", pageData{
 			authorizationData: authorizationData,
 
-			Page: "🕳️ Page not found",
+			Page: "Page not found",
 		}); err != nil {
 			log.Println(errCouldNotRenderTemplate, err)
 

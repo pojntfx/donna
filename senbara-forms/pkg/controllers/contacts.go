@@ -50,7 +50,7 @@ func (b *Controller) HandleContacts(w http.ResponseWriter, r *http.Request) {
 		pageData: pageData{
 			authorizationData: authorizationData,
 
-			Page: "👥 Contacts",
+			Page: "Contacts",
 		},
 		Entries: contacts,
 	}); err != nil {
@@ -77,7 +77,7 @@ func (b *Controller) HandleAddContact(w http.ResponseWriter, r *http.Request) {
 	if err := b.tpl.ExecuteTemplate(w, "contacts_add.html", pageData{
 		authorizationData: authorizationData,
 
-		Page: "🤝 Add Contact",
+		Page: "Add Contact",
 	}); err != nil {
 		log.Println(errCouldNotRenderTemplate, err)
 
@@ -451,7 +451,7 @@ func (b *Controller) HandleEditContact(w http.ResponseWriter, r *http.Request) {
 		pageData: pageData{
 			authorizationData: authorizationData,
 
-			Page: "✏️ Edit Contact",
+			Page: "Edit Contact",
 		},
 		Entry: contact,
 	}); err != nil {

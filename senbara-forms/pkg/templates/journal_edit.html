@@ -6,7 +6,7 @@
     {{ template "nav.html" . }}
 
     <header>
-      <h2>✏️ Edit "{{ .Entry.Title }}"</h2>
+      <h2>Edit "{{ .Entry.Title }}"</h2>
     </header>
 
     <main>
@@ -14,11 +14,11 @@
         <input type="hidden" name="id" id="id" value="{{ .Entry.ID }}" />
 
         <fieldset>
-          <legend>🎚️ How as your day?</legend>
+          <legend>How as your day?</legend>
 
           <input
             type="radio"
-            id="happy"
+            id="great"
             name="rating"
             value="3"
             {{-
@@ -30,7 +30,7 @@
             end
             -}}
           />
-          <label for="happy">😊</label>
+          <label for="great">Great</label>
 
           <input
             type="radio"
@@ -46,7 +46,7 @@
             end
             -}}
           />
-          <label for="ok">😐</label>
+          <label for="ok">OK</label>
 
           <input
             type="radio"
@@ -62,11 +62,10 @@
             end
             -}}
           />
-          <label for="bad">😞</label>
+          <label for="bad">Bad</label>
         </fieldset>
 
-        <label for="title">🗞️ Title</label>
-        <br />
+        <label for="title">Title</label>
         <input
           type="text"
           name="title"
@@ -77,8 +76,7 @@
         />
         <br />
 
-        <label for="body">📜 Body</label>
-        <br />
+        <label for="body">Body</label>
         <textarea name="body" id="body" required rows="20">
 {{ .Entry.Body }}</textarea
         >
@@ -86,9 +84,9 @@
       </form>
 
       <div>
-        <input type="submit" value="💾 Save changes" form="update" />
+        <input type="submit" value="Save changes" form="update" />
 
-        <a href="/journal/view?id={{ .Entry.ID }}">🔙 Cancel</a>
+        <a href="/journal/view?id={{ .Entry.ID }}">Cancel</a>
       </div>
     </main>
 

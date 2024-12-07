@@ -45,7 +45,7 @@ func (b *Controller) HandleJournal(w http.ResponseWriter, r *http.Request) {
 		pageData: pageData{
 			authorizationData: authorizationData,
 
-			Page: "📓 Journal",
+			Page: "Journal",
 		},
 		Entries: journalEntries,
 	}); err != nil {
@@ -72,7 +72,7 @@ func (b *Controller) HandleAddJournal(w http.ResponseWriter, r *http.Request) {
 	if err := b.tpl.ExecuteTemplate(w, "journal_add.html", pageData{
 		authorizationData: authorizationData,
 
-		Page: "✍️ Add Journal Entry",
+		Page: "Add Journal Entry",
 	}); err != nil {
 		log.Println(errCouldNotRenderTemplate, err)
 
@@ -242,7 +242,7 @@ func (b *Controller) HandleEditJournal(w http.ResponseWriter, r *http.Request) {
 		pageData: pageData{
 			authorizationData: authorizationData,
 
-			Page: "✏️ Edit Journal Entry",
+			Page: "Edit Journal Entry",
 		},
 		Entry: journalEntry,
 	}); err != nil {

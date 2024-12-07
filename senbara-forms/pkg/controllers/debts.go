@@ -59,7 +59,7 @@ func (b *Controller) HandleAddDebt(w http.ResponseWriter, r *http.Request) {
 		pageData: pageData{
 			authorizationData: authorizationData,
 
-			Page: "💸 Add Debt",
+			Page: "Add Debt",
 		},
 		Entry: contact,
 	}); err != nil {
@@ -448,7 +448,7 @@ func (b *Controller) HandleEditDebt(w http.ResponseWriter, r *http.Request) {
 		pageData: pageData{
 			authorizationData: authorizationData,
 
-			Page: "✏️ Edit Debt",
+			Page: "Edit Debt",
 		},
 		Entry: debtAndContact,
 	}); err != nil {

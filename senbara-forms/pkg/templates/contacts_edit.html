@@ -6,15 +6,14 @@
     {{ template "nav.html" . }}
 
     <header>
-      <h2>✏️ Edit {{ .Entry.FirstName }} {{ .Entry.LastName }}</h2>
+      <h2>Edit {{ .Entry.FirstName }} {{ .Entry.LastName }}</h2>
     </header>
 
     <main>
       <form id="update" action="/contacts/update">
         <input type="hidden" name="id" id="id" value="{{ .Entry.ID }}" />
 
-        <label for="first_name">🧑 First Name</label>
-        <br />
+        <label for="first_name">First Name</label>
         <input
           type="text"
           name="first_name"
@@ -26,8 +25,7 @@
         />
         <br />
 
-        <label for="last_name">👪 Last Name</label>
-        <br />
+        <label for="last_name">Last Name</label>
         <input
           type="text"
           name="last_name"
@@ -38,8 +36,7 @@
         />
         <br />
 
-        <label for="nickname">📟 Nickname (optional)</label>
-        <br />
+        <label for="nickname">Nickname (optional)</label>
         <input
           type="text"
           name="nickname"
@@ -49,8 +46,7 @@
         />
         <br />
 
-        <label for="email">📧 Email</label>
-        <br />
+        <label for="email">Email</label>
         <input
           type="email"
           name="email"
@@ -60,8 +56,7 @@
         />
         <br />
 
-        <label for="pronouns">⚧️ Pronouns</label>
-        <br />
+        <label for="pronouns">Pronouns</label>
         <input
           type="text"
           name="pronouns"
@@ -72,22 +67,19 @@
         />
         <br />
 
-        <label for="birthday">✨ Birthday (optional)</label>
-        <br />
+        <label for="birthday">Birthday (optional)</label>
         <input type="date" name="birthday" id="birthday" {{ if
         .Entry.Birthday.Valid }}value="{{ .Entry.Birthday.Value.Format
         "2006-01-02" }}"{{ end }} />
         <br />
 
-        <label for="address">📍 Address (optional)</label>
-        <br />
+        <label for="address">Address (optional)</label>
         <textarea name="address" id="address" rows="3">
 {{ .Entry.Address }}</textarea
         >
         <br />
 
-        <label for="notes">📜 Notes (optional)</label>
-        <br />
+        <label for="notes">Notes (optional)</label>
         <textarea name="notes" id="notes" rows="10">
 {{ .Entry.Notes }}</textarea
         >
@@ -95,9 +87,9 @@
       </form>
 
       <div>
-        <input type="submit" value="💾 Save changes" form="update" />
+        <input type="submit" value="Save changes" form="update" />
 
-        <a href="/contacts/view?id={{ .Entry.ID }}">🔙 Cancel</a>
+        <a href="/contacts/view?id={{ .Entry.ID }}">Cancel</a>
       </div>
     </main>
 

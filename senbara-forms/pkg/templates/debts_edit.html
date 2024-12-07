@@ -6,7 +6,7 @@
     {{ template "nav.html" . }}
 
     <header>
-      <h2>✏️ Edit Debt for {{ .Entry.FirstName }} {{ .Entry.LastName }}</h2>
+      <h2>Edit Debt for {{ .Entry.FirstName }} {{ .Entry.LastName }}</h2>
     </header>
 
     <main>
@@ -55,8 +55,7 @@
           <label for="owed-to-you">{{ .Entry.FirstName }} owes you</label>
         </fieldset>
 
-        <label for="amount">💲 Amount</label>
-        <br />
+        <label for="amount">Amount</label>
         <input
           type="number"
           name="amount"
@@ -68,8 +67,7 @@
         />
         <br />
 
-        <label for="currency">💱 Currency</label>
-        <br />
+        <label for="currency">Currency</label>
         <input
           type="text"
           name="currency"
@@ -80,8 +78,7 @@
         />
         <br />
 
-        <label for="description">📜 Description (optional)</label>
-        <br />
+        <label for="description">Description (optional)</label>
         <textarea name="description" id="description" rows="10">
 {{ .Entry.Description }}</textarea
         >
@@ -89,9 +86,9 @@
       </form>
 
       <div>
-        <input type="submit" value="💾 Save changes" form="update" />
+        <input type="submit" value="Save changes" form="update" />
 
-        <a href="/contacts/view?id={{ .Entry.ContactID }}">🔙 Cancel</a>
+        <a href="/contacts/view?id={{ .Entry.ContactID }}">Cancel</a>
       </div>
     </main>
 

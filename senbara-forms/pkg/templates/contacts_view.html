@@ -7,7 +7,7 @@
 
     <header>
       <div>
-        <a href="/contacts">🔙</a>
+        <a href="/contacts">Back</a>
 
         <h2>
           {{ .Entry.FirstName }} {{ .Entry.LastName }} {{ if ne .Entry.Nickname
@@ -25,13 +25,13 @@
       <section>
         <dl>
           {{ if .Entry.Birthday.Valid }}
-          <dt>✨ Birthday</dt>
+          <dt>Birthday</dt>
           <dd>{{ .Entry.Birthday.Value.Format "2006-01-02" }}</dd>
           {{ end }} {{ if .Entry.Address }}
-          <dt>📍 Address</dt>
+          <dt>Address</dt>
           <dd>{{ .Entry.Address }}</dd>
           {{ end }} {{ if .Entry.Notes }}
-          <dt>📜 Notes</dt>
+          <dt>Notes</dt>
           <dd>{{ .Entry.Notes }}</dd>
           {{ end }}
         </dl>
@@ -40,11 +40,11 @@
       <section>
         <header>
           <div>
-            <h3>💸 Debts</h3>
+            <h3>Debts</h3>
           </div>
 
           <div>
-            <a href="/debts/add?id={{ .Entry.ID }}">➕ Add debt</a>
+            <a href="/debts/add?id={{ .Entry.ID }}">Add debt</a>
           </div>
         </header>
 
@@ -76,11 +76,11 @@
                   />
                   <input type="hidden" name="id" value="{{ .ID }}" />
 
-                  <input type="submit" value="✔️ Settle debt" />
+                  <input type="submit" value="Settle debt" />
                 </form>
 
                 <a href="/debts/edit?id={{ .ID }}&contact_id={{ $.Entry.ID }}"
-                  >✏️ Edit debt</a
+                  >Edit debt</a
                 >
               </div>
             </li>
@@ -93,11 +93,11 @@
       <section>
         <header>
           <div>
-            <h3>📅 Activities</h3>
+            <h3>Activities</h3>
           </div>
 
           <div>
-            <a href="/activities/add?id={{ .Entry.ID }}">➕ Add activity</a>
+            <a href="/activities/add?id={{ .Entry.ID }}">Add activity</a>
           </div>
         </header>
 
@@ -132,12 +132,12 @@
                   />
                   <input type="hidden" name="id" value="{{ .ID }}" />
 
-                  <input type="submit" value="🗑️ Delete activity" />
+                  <input type="submit" value="Delete activity" />
                 </form>
 
                 <a
                   href="/activities/edit?id={{ .ID }}&contact_id={{ $.Entry.ID }}"
-                  >✏️ Edit activity</a
+                  >Edit activity</a
                 >
               </div>
             </li>
@@ -155,9 +155,9 @@
       ></form>
 
       <div>
-        <input type="submit" value="🗑️ Delete" form="delete" />
+        <input type="submit" value="Delete" form="delete" />
 
-        <a href="/contacts/edit?id={{ .Entry.ID }}">✏️ Edit</a>
+        <a href="/contacts/edit?id={{ .Entry.ID }}">Edit</a>
       </div>
     </main>
 

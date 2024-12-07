@@ -2,21 +2,21 @@
   <div>
     <h1>
       <a href="/">
-        <img src="/static/logo-light.png" alt="Donna logo (light)" />
-        <img src="/static/logo-dark.png" alt="Donna logo (dark)" />
+        <img src="/static/logo-light.png" alt="Senbara Forms logo (light)" />
+        <img src="/static/logo-dark.png" alt="Senbara Forms logo (dark)" />
       </a>
     </h1>
   </div>
 
   <nav>
-    <a href="/contacts">👥 Contacts</a>
-    <a href="/journal">📓 Journal</a>
+    <a href="/contacts">Contacts</a>
+    <a href="/journal">Journal</a>
 
     {{ if ne .LogoutURL "" }}
     <a
       href="{{ .LogoutURL }}"
       onclick="return confirm('Are you sure you want to log out?')"
-      >🏞️️ Logout</a
+      >Logout</a
     >
     {{ end }}
   </nav>

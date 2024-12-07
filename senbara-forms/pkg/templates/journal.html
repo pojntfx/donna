@@ -8,7 +8,7 @@
     <header>
       <h2>Journal</h2>
 
-      <a href="/journal/add">✍️ Add a journal entry</a>
+      <a href="/journal/add">Add a journal entry</a>
     </header>
 
     <ul>
@@ -20,8 +20,8 @@
           </h3>
 
           <div>
-            {{ .Date.Format "2006-01-02 15:04" }} | {{if eq .Rating 3}}😊{{else
-            if eq .Rating 2}}😐{{else if eq .Rating 1}}😞{{end}}
+            {{ .Date.Format "2006-01-02 15:04" }} | {{if eq .Rating
+            3}}Great{{else if eq .Rating 2}}OK{{else if eq .Rating 1}}Bad{{end}}
           </div>
         </div>
 
@@ -33,10 +33,10 @@
             method="post"
             onsubmit="return confirm('Are you sure you want to delete this entry?')"
           >
-            <input type="submit" value="🗑️ Delete" />
+            <input type="submit" value="Delete" />
           </form>
 
-          <a href="/journal/edit?id={{ .ID }}">✏️ Edit</a>
+          <a href="/journal/edit?id={{ .ID }}">Edit</a>
         </div>
       </li>
       {{ else }}
