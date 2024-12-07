@@ -84,6 +84,14 @@ func (p *Persister) UpdateContact(
 	address,
 	notes string,
 ) error {
+	var birthdayDate sql.NullTime
+	if birthday != nil {
+		birthdayDate = sql.NullTime{
+			Time:  *birthday,
+			Valid: true,
+		}
+	}
+
 	return p.queries.UpdateContact(ctx, models.UpdateContactParams{
 		ID:        id,
 		Namespace: namespace,
@@ -92,11 +100,8 @@ func (p *Persister) UpdateContact(
 		Nickname:  nickname,
 		Email:     email,
 		Pronouns:  pronouns,
-		Birthday: sql.NullTime{
-			Time:  *birthday,
-			Valid: true,
-		},
-		Address: address,
-		Notes:   notes,
+		Birthday:  birthdayDate,
+		Address:   address,
+		Notes:     notes,
 	})
 }
