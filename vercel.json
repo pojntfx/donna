@@ -1,8 +1,0 @@
-{
-  "redirects": [
-    {
-      "source": "/((?!api/donna).*)",
-      "destination": "/api/donna?path=/$1"
-    }
-  ]
-}
