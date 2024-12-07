@@ -62,7 +62,8 @@ body > ul {
 }
 
 body > footer {
-  margin-top: 1rem;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
 }
 
 main input[type="text"],
@@ -119,7 +120,7 @@ section > main > ul > li > div:last-child {
 }
 
 body > header > div > h1 > a > img {
-  max-width: 155px;
+  max-width: 128px;
 }
 
 body > header > div > h1 > a > img:last-child {
