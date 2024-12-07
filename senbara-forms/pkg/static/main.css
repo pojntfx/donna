@@ -119,20 +119,7 @@ section > main > ul > li > div:last-child {
   align-items: center;
 }
 
-body > header > div > h1 > a > img {
+
+body > header > div > h1 > a > picture > img {
   max-width: 128px;
-}
-
-body > header > div > h1 > a > img:last-child {
-  display: none;
-}
-
-@media (prefers-color-scheme: dark) {
-  body > header > div > h1 > a > img:first-child {
-    display: none;
-  }
-
-  body > header > div > h1 > a > img:last-child {
-    display: inherit;
-  }
 }

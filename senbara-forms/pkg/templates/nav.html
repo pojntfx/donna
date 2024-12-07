@@ -2,8 +2,13 @@
   <div>
     <h1>
       <a href="/">
-        <img src="/static/logo-light.png" alt="Senbara Forms logo (light)" />
-        <img src="/static/logo-dark.png" alt="Senbara Forms logo (dark)" />
+        <picture>
+          <source
+            srcset="/static/logo-dark.png"
+            media="(prefers-color-scheme: dark)"
+          />
+          <img src="/static/logo-light.png" alt="Senbara Forms logo" />
+        </picture>
       </a>
     </h1>
   </div>
