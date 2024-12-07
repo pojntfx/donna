@@ -6,7 +6,10 @@
     {{ template "nav.html" . }}
 
     <header>
-      <h2>✏️ Edit Activity for {{ .Entry.FirstName }} {{ .Entry.LastName }}</h2>
+      <h2>
+        <span aria-hidden="true">✏️</span> Edit Activity for {{ .Entry.FirstName
+        }} {{ .Entry.LastName }}
+      </h2>
     </header>
 
     <main>
@@ -25,7 +28,7 @@
           value="{{ .Entry.ContactID }}"
         />
 
-        <label for="name">🔖 Name</label>
+        <label for="name"> <span aria-hidden="true">🔖</span> Name </label>
         <br />
         <input
           type="text"
@@ -37,13 +40,15 @@
         />
         <br />
 
-        <label for="date">📅 Date</label>
+        <label for="date"> <span aria-hidden="true">📅</span> Date </label>
         <br />
         <input type="date" name="date" id="date" required value="{{
         .Entry.Date.Format "2006-01-02" }}" />
         <br />
 
-        <label for="description">📜 Description</label>
+        <label for="description">
+          <span aria-hidden="true">📜</span> Description
+        </label>
         <br />
         <textarea name="description" id="description" rows="10">
 {{ .Entry.Description }}</textarea
@@ -52,9 +57,13 @@
       </form>
 
       <div>
-        <input type="submit" value="💾 Save changes" form="update" />
+        <button type="submit" form="update">
+          <span aria-hidden="true">💾</span> Save changes
+        </button>
 
-        <a href="/contacts/view?id={{ .Entry.ContactID }}">🔙 Cancel</a>
+        <a href="/contacts/view?id={{ .Entry.ContactID }}">
+          <span aria-hidden="true">🔙</span> Cancel
+        </a>
       </div>
     </main>
 
