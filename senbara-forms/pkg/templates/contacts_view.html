@@ -23,7 +23,7 @@
       <section>
         <dl>
           {{ if .Entry.Birthday.Valid }}
-          <dt>Birthday</dt>
+          <dt>{{ .Locale.Get "Birthday" }}</dt>
           <dd>{{ .Entry.Birthday.Value.Format "2006-01-02" }}</dd>
           {{ end }} {{ if .Entry.Address }}
           <dt>Address</dt>

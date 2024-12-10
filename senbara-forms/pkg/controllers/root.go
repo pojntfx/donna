@@ -28,6 +28,7 @@ var (
 	errInvalidQueryParam      = errors.New("could not use invalid query parameter")
 	errCouldNotLogin          = errors.New("could not login")
 	errEmailNotVerified       = errors.New("email not verified")
+	errCouldNotLocalize       = errors.New("could not localize")
 )
 
 const (
@@ -114,11 +115,11 @@ func (b *Controller) Init(ctx context.Context) error {
 }
 
 func (b *Controller) HandleIndex(w http.ResponseWriter, r *http.Request) {
-	redirected, authorizationData, err := b.authorize(w, r)
+	redirected, userData, status, err := b.authorize(w, r)
 	if err != nil {
-		log.Println(errCouldNotLogin, err)
+		log.Println(err)
 
-		http.Error(w, errCouldNotLogin.Error(), http.StatusUnauthorized)
+		http.Error(w, err.Error(), status)
 
 		return
 	} else if redirected {
@@ -129,7 +130,7 @@ func (b *Controller) HandleIndex(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
 
 		if err := b.tpl.ExecuteTemplate(w, "404.html", pageData{
-			authorizationData: authorizationData,
+			userData: userData,
 
 			Page: "Page not found",
 		}); err != nil {

@@ -4,10 +4,12 @@ go 1.23.3
 
 require (
 	github.com/coreos/go-oidc/v3 v3.11.0
+	github.com/leonelquinteros/gotext v1.7.0
 	github.com/lib/pq v1.10.9
 	github.com/pressly/goose/v3 v3.23.0
 	github.com/yuin/goldmark v1.7.8
 	golang.org/x/oauth2 v0.24.0
+	golang.org/x/text v0.19.0
 )
 
 require (

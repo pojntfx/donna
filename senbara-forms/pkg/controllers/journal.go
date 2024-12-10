@@ -21,18 +21,18 @@ type journalEntryData struct {
 }
 
 func (b *Controller) HandleJournal(w http.ResponseWriter, r *http.Request) {
-	redirected, authorizationData, err := b.authorize(w, r)
+	redirected, userData, status, err := b.authorize(w, r)
 	if err != nil {
-		log.Println(errCouldNotLogin, err)
+		log.Println(err)
 
-		http.Error(w, errCouldNotLogin.Error(), http.StatusUnauthorized)
+		http.Error(w, err.Error(), status)
 
 		return
 	} else if redirected {
 		return
 	}
 
-	journalEntries, err := b.persister.GetJournalEntries(r.Context(), authorizationData.Email)
+	journalEntries, err := b.persister.GetJournalEntries(r.Context(), userData.Email)
 	if err != nil {
 		log.Println(errCouldNotFetchFromDB, err)
 
@@ -43,7 +43,7 @@ func (b *Controller) HandleJournal(w http.ResponseWriter, r *http.Request) {
 
 	if err := b.tpl.ExecuteTemplate(w, "journal.html", journalData{
 		pageData: pageData{
-			authorizationData: authorizationData,
+			userData: userData,
 
 			Page: "Journal",
 		},
@@ -58,11 +58,11 @@ func (b *Controller) HandleJournal(w http.ResponseWriter, r *http.Request) {
 }
 
 func (b *Controller) HandleAddJournal(w http.ResponseWriter, r *http.Request) {
-	redirected, authorizationData, err := b.authorize(w, r)
+	redirected, userData, status, err := b.authorize(w, r)
 	if err != nil {
-		log.Println(errCouldNotLogin, err)
+		log.Println(err)
 
-		http.Error(w, errCouldNotLogin.Error(), http.StatusUnauthorized)
+		http.Error(w, err.Error(), status)
 
 		return
 	} else if redirected {
@@ -70,7 +70,7 @@ func (b *Controller) HandleAddJournal(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := b.tpl.ExecuteTemplate(w, "journal_add.html", pageData{
-		authorizationData: authorizationData,
+		userData: userData,
 
 		Page: "Add Journal Entry",
 	}); err != nil {
@@ -83,11 +83,11 @@ func (b *Controller) HandleAddJournal(w http.ResponseWriter, r *http.Request) {
 }
 
 func (b *Controller) HandleCreateJournal(w http.ResponseWriter, r *http.Request) {
-	redirected, authorizationData, err := b.authorize(w, r)
+	redirected, userData, status, err := b.authorize(w, r)
 	if err != nil {
-		log.Println(errCouldNotLogin, err)
+		log.Println(err)
 
-		http.Error(w, errCouldNotLogin.Error(), http.StatusUnauthorized)
+		http.Error(w, err.Error(), status)
 
 		return
 	} else if redirected {
@@ -138,7 +138,7 @@ func (b *Controller) HandleCreateJournal(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	id, err := b.persister.CreateJournalEntry(r.Context(), title, body, int32(rating), authorizationData.Email)
+	id, err := b.persister.CreateJournalEntry(r.Context(), title, body, int32(rating), userData.Email)
 	if err != nil {
 		log.Println(errCouldNotInsertIntoDB, err)
 
@@ -151,11 +151,11 @@ func (b *Controller) HandleCreateJournal(w http.ResponseWriter, r *http.Request)
 }
 
 func (b *Controller) HandleDeleteJournal(w http.ResponseWriter, r *http.Request) {
-	redirected, authorizationData, err := b.authorize(w, r)
+	redirected, userData, status, err := b.authorize(w, r)
 	if err != nil {
-		log.Println(errCouldNotLogin, err)
+		log.Println(err)
 
-		http.Error(w, errCouldNotLogin.Error(), http.StatusUnauthorized)
+		http.Error(w, err.Error(), status)
 
 		return
 	} else if redirected {
@@ -188,7 +188,7 @@ func (b *Controller) HandleDeleteJournal(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	if err := b.persister.DeleteJournalEntry(r.Context(), int32(id), authorizationData.Email); err != nil {
+	if err := b.persister.DeleteJournalEntry(r.Context(), int32(id), userData.Email); err != nil {
 		log.Println(errCouldNotDeleteFromDB, err)
 
 		http.Error(w, errCouldNotDeleteFromDB.Error(), http.StatusInternalServerError)
@@ -200,11 +200,11 @@ func (b *Controller) HandleDeleteJournal(w http.ResponseWriter, r *http.Request)
 }
 
 func (b *Controller) HandleEditJournal(w http.ResponseWriter, r *http.Request) {
-	redirected, authorizationData, err := b.authorize(w, r)
+	redirected, userData, status, err := b.authorize(w, r)
 	if err != nil {
-		log.Println(errCouldNotLogin, err)
+		log.Println(err)
 
-		http.Error(w, errCouldNotLogin.Error(), http.StatusUnauthorized)
+		http.Error(w, err.Error(), status)
 
 		return
 	} else if redirected {
@@ -229,7 +229,7 @@ func (b *Controller) HandleEditJournal(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	journalEntry, err := b.persister.GetJournalEntry(r.Context(), int32(id), authorizationData.Email)
+	journalEntry, err := b.persister.GetJournalEntry(r.Context(), int32(id), userData.Email)
 	if err != nil {
 		log.Println(errCouldNotFetchFromDB, err)
 
@@ -240,7 +240,7 @@ func (b *Controller) HandleEditJournal(w http.ResponseWriter, r *http.Request) {
 
 	if err := b.tpl.ExecuteTemplate(w, "journal_edit.html", journalEntryData{
 		pageData: pageData{
-			authorizationData: authorizationData,
+			userData: userData,
 
 			Page: "Edit Journal Entry",
 		},
@@ -255,11 +255,11 @@ func (b *Controller) HandleEditJournal(w http.ResponseWriter, r *http.Request) {
 }
 
 func (b *Controller) HandleUpdateJournal(w http.ResponseWriter, r *http.Request) {
-	redirected, authorizationData, err := b.authorize(w, r)
+	redirected, userData, status, err := b.authorize(w, r)
 	if err != nil {
-		log.Println(errCouldNotLogin, err)
+		log.Println(err)
 
-		http.Error(w, errCouldNotLogin.Error(), http.StatusUnauthorized)
+		http.Error(w, err.Error(), status)
 
 		return
 	} else if redirected {
@@ -328,7 +328,7 @@ func (b *Controller) HandleUpdateJournal(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	if err := b.persister.UpdateJournalEntry(r.Context(), int32(id), title, body, int32(rating), authorizationData.Email); err != nil {
+	if err := b.persister.UpdateJournalEntry(r.Context(), int32(id), title, body, int32(rating), userData.Email); err != nil {
 		log.Println(errCouldNotUpdateInDB, err)
 
 		http.Error(w, errCouldNotInsertIntoDB.Error(), http.StatusInternalServerError)
@@ -340,11 +340,11 @@ func (b *Controller) HandleUpdateJournal(w http.ResponseWriter, r *http.Request)
 }
 
 func (b *Controller) HandleViewJournal(w http.ResponseWriter, r *http.Request) {
-	redirected, authorizationData, err := b.authorize(w, r)
+	redirected, userData, status, err := b.authorize(w, r)
 	if err != nil {
-		log.Println(errCouldNotLogin, err)
+		log.Println(err)
 
-		http.Error(w, errCouldNotLogin.Error(), http.StatusUnauthorized)
+		http.Error(w, err.Error(), status)
 
 		return
 	} else if redirected {
@@ -369,7 +369,7 @@ func (b *Controller) HandleViewJournal(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	journalEntry, err := b.persister.GetJournalEntry(r.Context(), int32(id), authorizationData.Email)
+	journalEntry, err := b.persister.GetJournalEntry(r.Context(), int32(id), userData.Email)
 	if err != nil {
 		log.Println(errCouldNotFetchFromDB, err)
 
@@ -380,7 +380,7 @@ func (b *Controller) HandleViewJournal(w http.ResponseWriter, r *http.Request) {
 
 	if err := b.tpl.ExecuteTemplate(w, "journal_view.html", journalEntryData{
 		pageData: pageData{
-			authorizationData: authorizationData,
+			userData: userData,
 
 			Page:    journalEntry.Title,
 			BackURL: "/journal",

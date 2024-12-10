@@ -17,11 +17,11 @@ type debtData struct {
 }
 
 func (b *Controller) HandleAddDebt(w http.ResponseWriter, r *http.Request) {
-	redirected, authorizationData, err := b.authorize(w, r)
+	redirected, userData, status, err := b.authorize(w, r)
 	if err != nil {
-		log.Println(errCouldNotLogin, err)
+		log.Println(err)
 
-		http.Error(w, errCouldNotLogin.Error(), http.StatusUnauthorized)
+		http.Error(w, err.Error(), status)
 
 		return
 	} else if redirected {
@@ -46,7 +46,7 @@ func (b *Controller) HandleAddDebt(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	contact, err := b.persister.GetContact(r.Context(), int32(id), authorizationData.Email)
+	contact, err := b.persister.GetContact(r.Context(), int32(id), userData.Email)
 	if err != nil {
 		log.Println(errCouldNotFetchFromDB, err)
 
@@ -57,7 +57,7 @@ func (b *Controller) HandleAddDebt(w http.ResponseWriter, r *http.Request) {
 
 	if err := b.tpl.ExecuteTemplate(w, "debts_add.html", contactData{
 		pageData: pageData{
-			authorizationData: authorizationData,
+			userData: userData,
 
 			Page: "Add Debt",
 		},
@@ -72,11 +72,11 @@ func (b *Controller) HandleAddDebt(w http.ResponseWriter, r *http.Request) {
 }
 
 func (b *Controller) HandleCreateDebt(w http.ResponseWriter, r *http.Request) {
-	redirected, authorizationData, err := b.authorize(w, r)
+	redirected, userData, status, err := b.authorize(w, r)
 	if err != nil {
-		log.Println(errCouldNotLogin, err)
+		log.Println(err)
 
-		http.Error(w, errCouldNotLogin.Error(), http.StatusUnauthorized)
+		http.Error(w, err.Error(), status)
 
 		return
 	} else if redirected {
@@ -170,7 +170,7 @@ func (b *Controller) HandleCreateDebt(w http.ResponseWriter, r *http.Request) {
 		description,
 
 		int32(contactID),
-		authorizationData.Email,
+		userData.Email,
 	); err != nil {
 		log.Println(errCouldNotInsertIntoDB, err)
 
@@ -183,11 +183,11 @@ func (b *Controller) HandleCreateDebt(w http.ResponseWriter, r *http.Request) {
 }
 
 func (b *Controller) HandleSettleDebt(w http.ResponseWriter, r *http.Request) {
-	redirected, authorizationData, err := b.authorize(w, r)
+	redirected, userData, status, err := b.authorize(w, r)
 	if err != nil {
-		log.Println(errCouldNotLogin, err)
+		log.Println(err)
 
-		http.Error(w, errCouldNotLogin.Error(), http.StatusUnauthorized)
+		http.Error(w, err.Error(), status)
 
 		return
 	} else if redirected {
@@ -244,7 +244,7 @@ func (b *Controller) HandleSettleDebt(w http.ResponseWriter, r *http.Request) {
 		int32(id),
 
 		int32(contactID),
-		authorizationData.Email,
+		userData.Email,
 	); err != nil {
 		log.Println(errCouldNotUpdateInDB, err)
 
@@ -257,11 +257,11 @@ func (b *Controller) HandleSettleDebt(w http.ResponseWriter, r *http.Request) {
 }
 
 func (b *Controller) HandleUpdateDebt(w http.ResponseWriter, r *http.Request) {
-	redirected, authorizationData, err := b.authorize(w, r)
+	redirected, userData, status, err := b.authorize(w, r)
 	if err != nil {
-		log.Println(errCouldNotLogin, err)
+		log.Println(err)
 
-		http.Error(w, errCouldNotLogin.Error(), http.StatusUnauthorized)
+		http.Error(w, err.Error(), status)
 
 		return
 	} else if redirected {
@@ -371,7 +371,7 @@ func (b *Controller) HandleUpdateDebt(w http.ResponseWriter, r *http.Request) {
 		int32(id),
 
 		int32(contactID),
-		authorizationData.Email,
+		userData.Email,
 
 		amount,
 		currency,
@@ -388,11 +388,11 @@ func (b *Controller) HandleUpdateDebt(w http.ResponseWriter, r *http.Request) {
 }
 
 func (b *Controller) HandleEditDebt(w http.ResponseWriter, r *http.Request) {
-	redirected, authorizationData, err := b.authorize(w, r)
+	redirected, userData, status, err := b.authorize(w, r)
 	if err != nil {
-		log.Println(errCouldNotLogin, err)
+		log.Println(err)
 
-		http.Error(w, errCouldNotLogin.Error(), http.StatusUnauthorized)
+		http.Error(w, err.Error(), status)
 
 		return
 	} else if redirected {
@@ -435,7 +435,7 @@ func (b *Controller) HandleEditDebt(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	debtAndContact, err := b.persister.GetDebtAndContact(r.Context(), int32(id), int32(contactID), authorizationData.Email)
+	debtAndContact, err := b.persister.GetDebtAndContact(r.Context(), int32(id), int32(contactID), userData.Email)
 	if err != nil {
 		log.Println(errCouldNotFetchFromDB, err)
 
@@ -446,7 +446,7 @@ func (b *Controller) HandleEditDebt(w http.ResponseWriter, r *http.Request) {
 
 	if err := b.tpl.ExecuteTemplate(w, "debts_edit.html", debtData{
 		pageData: pageData{
-			authorizationData: authorizationData,
+			userData: userData,
 
 			Page: "Edit Debt",
 		},

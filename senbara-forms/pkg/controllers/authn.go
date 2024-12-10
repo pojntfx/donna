@@ -7,31 +7,39 @@ import (
 	"net/url"
 	"time"
 
+	"github.com/leonelquinteros/gotext"
 	"golang.org/x/oauth2"
 )
 
 type pageData struct {
-	authorizationData
+	userData
 
 	Page    string
 	BackURL string
 }
 
-type authorizationData struct {
+type userData struct {
 	Email     string
 	LogoutURL string
+
+	Locale *gotext.Locale
 }
 
-func (b *Controller) authorize(w http.ResponseWriter, r *http.Request) (bool, authorizationData, error) {
+func (b *Controller) authorize(w http.ResponseWriter, r *http.Request) (bool, userData, int, error) {
+	locale, err := b.localize(r)
+	if err != nil {
+		return false, userData{}, http.StatusInternalServerError, errors.Join(errCouldNotLocalize, err)
+	}
+
 	rt, err := r.Cookie(refreshTokenKey)
 	if err != nil {
 		if errors.Is(err, http.ErrNoCookie) {
 			http.Redirect(w, r, b.config.AuthCodeURL(b.oidcRedirectURL), http.StatusFound)
 
-			return true, authorizationData{}, nil
+			return true, userData{}, http.StatusTemporaryRedirect, nil
 		}
 
-		return false, authorizationData{}, err
+		return false, userData{}, http.StatusUnauthorized, errors.Join(errCouldNotLogin, err)
 	}
 	refreshToken := rt.Value
 
@@ -40,10 +48,10 @@ func (b *Controller) authorize(w http.ResponseWriter, r *http.Request) (bool, au
 		if errors.Is(err, http.ErrNoCookie) {
 			http.Redirect(w, r, b.config.AuthCodeURL(b.oidcRedirectURL), http.StatusFound)
 
-			return true, authorizationData{}, nil
+			return true, userData{}, http.StatusTemporaryRedirect, nil
 		}
 
-		return false, authorizationData{}, err
+		return false, userData{}, http.StatusUnauthorized, errors.Join(errCouldNotLogin, err)
 	}
 	idToken := it.Value
 
@@ -55,7 +63,7 @@ func (b *Controller) authorize(w http.ResponseWriter, r *http.Request) (bool, au
 		if err != nil {
 			http.Redirect(w, r, b.config.AuthCodeURL(b.oidcRedirectURL), http.StatusFound)
 
-			return true, authorizationData{}, nil
+			return true, userData{}, http.StatusOK, nil
 		}
 
 		var ok bool
@@ -63,14 +71,14 @@ func (b *Controller) authorize(w http.ResponseWriter, r *http.Request) (bool, au
 		if !ok {
 			http.Redirect(w, r, b.config.AuthCodeURL(b.oidcRedirectURL), http.StatusFound)
 
-			return true, authorizationData{}, nil
+			return true, userData{}, http.StatusOK, nil
 		}
 
 		id, err = b.verifier.Verify(r.Context(), idToken)
 		if err != nil {
 			http.Redirect(w, r, b.config.AuthCodeURL(b.oidcRedirectURL), http.StatusFound)
 
-			return true, authorizationData{}, nil
+			return true, userData{}, http.StatusOK, nil
 		}
 
 		if refreshToken = oauth2Token.RefreshToken; refreshToken != "" {
@@ -101,16 +109,16 @@ func (b *Controller) authorize(w http.ResponseWriter, r *http.Request) (bool, au
 		EmailVerified bool   `json:"email_verified"`
 	}
 	if err := id.Claims(&claims); err != nil {
-		return false, authorizationData{}, err
+		return false, userData{}, http.StatusUnauthorized, errors.Join(errCouldNotLogin, err)
 	}
 
 	if !claims.EmailVerified {
-		return false, authorizationData{}, errEmailNotVerified
+		return false, userData{}, http.StatusUnauthorized, errors.Join(errCouldNotLogin, errEmailNotVerified)
 	}
 
 	logoutURL, err := url.Parse(b.oidcIssuer)
 	if err != nil {
-		return false, authorizationData{}, err
+		return false, userData{}, http.StatusUnauthorized, errors.Join(errCouldNotLogin, err)
 	}
 
 	q := logoutURL.Query()
@@ -120,10 +128,12 @@ func (b *Controller) authorize(w http.ResponseWriter, r *http.Request) (bool, au
 
 	logoutURL = logoutURL.JoinPath("oidc", "logout")
 
-	return false, authorizationData{
+	return false, userData{
 		Email:     claims.Email,
 		LogoutURL: logoutURL.String(),
-	}, nil
+
+		Locale: locale,
+	}, http.StatusOK, nil
 }
 
 type redirectData struct {
@@ -132,6 +142,15 @@ type redirectData struct {
 }
 
 func (b *Controller) HandleAuthorize(w http.ResponseWriter, r *http.Request) {
+	locale, err := b.localize(r)
+	if err != nil {
+		log.Println(errCouldNotLocalize, err)
+
+		http.Error(w, errCouldNotLocalize.Error(), http.StatusInternalServerError)
+
+		return
+	}
+
 	authCode := r.URL.Query().Get("code")
 
 	// Sign out
@@ -150,6 +169,10 @@ func (b *Controller) HandleAuthorize(w http.ResponseWriter, r *http.Request) {
 
 		if err := b.tpl.ExecuteTemplate(w, "redirect.html", redirectData{
 			pageData: pageData{
+				userData: userData{
+					Locale: locale,
+				},
+
 				Page: "Signing You Out ...",
 			},
 			Href: "/",
@@ -205,6 +228,10 @@ func (b *Controller) HandleAuthorize(w http.ResponseWriter, r *http.Request) {
 
 	if err := b.tpl.ExecuteTemplate(w, "redirect.html", redirectData{
 		pageData: pageData{
+			userData: userData{
+				Locale: locale,
+			},
+
 			Page: "Signing You In ...",
 		},
 		Href: "/",

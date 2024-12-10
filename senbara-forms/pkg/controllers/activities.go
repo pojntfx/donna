@@ -17,11 +17,11 @@ type activityData struct {
 }
 
 func (b *Controller) HandleAddActivity(w http.ResponseWriter, r *http.Request) {
-	redirected, authorizationData, err := b.authorize(w, r)
+	redirected, userData, status, err := b.authorize(w, r)
 	if err != nil {
-		log.Println(errCouldNotLogin, err)
+		log.Println(err)
 
-		http.Error(w, errCouldNotLogin.Error(), http.StatusUnauthorized)
+		http.Error(w, err.Error(), status)
 
 		return
 	} else if redirected {
@@ -46,7 +46,7 @@ func (b *Controller) HandleAddActivity(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	contact, err := b.persister.GetContact(r.Context(), int32(id), authorizationData.Email)
+	contact, err := b.persister.GetContact(r.Context(), int32(id), userData.Email)
 	if err != nil {
 		log.Println(errCouldNotFetchFromDB, err)
 
@@ -57,7 +57,7 @@ func (b *Controller) HandleAddActivity(w http.ResponseWriter, r *http.Request) {
 
 	if err := b.tpl.ExecuteTemplate(w, "activities_add.html", contactData{
 		pageData: pageData{
-			authorizationData: authorizationData,
+			userData: userData,
 
 			Page: "Add Activity",
 		},
@@ -72,11 +72,11 @@ func (b *Controller) HandleAddActivity(w http.ResponseWriter, r *http.Request) {
 }
 
 func (b *Controller) HandleCreateActivity(w http.ResponseWriter, r *http.Request) {
-	redirected, authorizationData, err := b.authorize(w, r)
+	redirected, userData, status, err := b.authorize(w, r)
 	if err != nil {
-		log.Println(errCouldNotLogin, err)
+		log.Println(err)
 
-		http.Error(w, errCouldNotLogin.Error(), http.StatusUnauthorized)
+		http.Error(w, err.Error(), status)
 
 		return
 	} else if redirected {
@@ -144,7 +144,7 @@ func (b *Controller) HandleCreateActivity(w http.ResponseWriter, r *http.Request
 		description,
 
 		int32(contactID),
-		authorizationData.Email,
+		userData.Email,
 	); err != nil {
 		log.Println(errCouldNotInsertIntoDB, err)
 
@@ -157,11 +157,11 @@ func (b *Controller) HandleCreateActivity(w http.ResponseWriter, r *http.Request
 }
 
 func (b *Controller) HandleDeleteActivity(w http.ResponseWriter, r *http.Request) {
-	redirected, authorizationData, err := b.authorize(w, r)
+	redirected, userData, status, err := b.authorize(w, r)
 	if err != nil {
-		log.Println(errCouldNotLogin, err)
+		log.Println(err)
 
-		http.Error(w, errCouldNotLogin.Error(), http.StatusUnauthorized)
+		http.Error(w, err.Error(), status)
 
 		return
 	} else if redirected {
@@ -218,7 +218,7 @@ func (b *Controller) HandleDeleteActivity(w http.ResponseWriter, r *http.Request
 		int32(id),
 
 		int32(contactID),
-		authorizationData.Email,
+		userData.Email,
 	); err != nil {
 		log.Println(errCouldNotUpdateInDB, err)
 
@@ -231,11 +231,11 @@ func (b *Controller) HandleDeleteActivity(w http.ResponseWriter, r *http.Request
 }
 
 func (b *Controller) HandleUpdateActivity(w http.ResponseWriter, r *http.Request) {
-	redirected, authorizationData, err := b.authorize(w, r)
+	redirected, userData, status, err := b.authorize(w, r)
 	if err != nil {
-		log.Println(errCouldNotLogin, err)
+		log.Println(err)
 
-		http.Error(w, errCouldNotLogin.Error(), http.StatusUnauthorized)
+		http.Error(w, err.Error(), status)
 
 		return
 	} else if redirected {
@@ -319,7 +319,7 @@ func (b *Controller) HandleUpdateActivity(w http.ResponseWriter, r *http.Request
 		int32(id),
 
 		int32(contactID),
-		authorizationData.Email,
+		userData.Email,
 
 		name,
 		date,
@@ -336,11 +336,11 @@ func (b *Controller) HandleUpdateActivity(w http.ResponseWriter, r *http.Request
 }
 
 func (b *Controller) HandleEditActivity(w http.ResponseWriter, r *http.Request) {
-	redirected, authorizationData, err := b.authorize(w, r)
+	redirected, userData, status, err := b.authorize(w, r)
 	if err != nil {
-		log.Println(errCouldNotLogin, err)
+		log.Println(err)
 
-		http.Error(w, errCouldNotLogin.Error(), http.StatusUnauthorized)
+		http.Error(w, err.Error(), status)
 
 		return
 	} else if redirected {
@@ -383,7 +383,7 @@ func (b *Controller) HandleEditActivity(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	activityAndContact, err := b.persister.GetActivityAndContact(r.Context(), int32(id), int32(contactID), authorizationData.Email)
+	activityAndContact, err := b.persister.GetActivityAndContact(r.Context(), int32(id), int32(contactID), userData.Email)
 	if err != nil {
 		log.Println(errCouldNotFetchFromDB, err)
 
@@ -394,7 +394,7 @@ func (b *Controller) HandleEditActivity(w http.ResponseWriter, r *http.Request) 
 
 	if err := b.tpl.ExecuteTemplate(w, "activities_edit.html", activityData{
 		pageData: pageData{
-			authorizationData: authorizationData,
+			userData: userData,
 
 			Page: "Edit Activity",
 		},
@@ -409,11 +409,11 @@ func (b *Controller) HandleEditActivity(w http.ResponseWriter, r *http.Request) 
 }
 
 func (b *Controller) HandleViewActivity(w http.ResponseWriter, r *http.Request) {
-	redirected, authorizationData, err := b.authorize(w, r)
+	redirected, userData, status, err := b.authorize(w, r)
 	if err != nil {
-		log.Println(errCouldNotLogin, err)
+		log.Println(err)
 
-		http.Error(w, errCouldNotLogin.Error(), http.StatusUnauthorized)
+		http.Error(w, err.Error(), status)
 
 		return
 	} else if redirected {
@@ -456,7 +456,7 @@ func (b *Controller) HandleViewActivity(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	activityAndContact, err := b.persister.GetActivityAndContact(r.Context(), int32(id), int32(contactID), authorizationData.Email)
+	activityAndContact, err := b.persister.GetActivityAndContact(r.Context(), int32(id), int32(contactID), userData.Email)
 	if err != nil {
 		log.Println(errCouldNotFetchFromDB, err)
 
@@ -467,7 +467,7 @@ func (b *Controller) HandleViewActivity(w http.ResponseWriter, r *http.Request) 
 
 	if err := b.tpl.ExecuteTemplate(w, "activities_view.html", activityData{
 		pageData: pageData{
-			authorizationData: authorizationData,
+			userData: userData,
 
 			Page:    activityAndContact.Name,
 			BackURL: fmt.Sprintf("/contacts/view?id=%v", contactID),
