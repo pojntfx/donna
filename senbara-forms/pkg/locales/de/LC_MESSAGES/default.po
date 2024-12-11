@@ -4,3 +4,21 @@ msgstr ""
 
 msgid "Birthday"
 msgstr "Geburtstag"
+
+msgid "Page not found"
+msgstr "Diese Seite konnte nicht gefunden werden"
+
+msgid "Add a New Activity For %s %s"
+msgstr "Neue Aktivität für %s %s hinzufügen"
+
+msgid "Name"
+msgstr "Name"
+
+msgid "Date"
+msgstr "Datum"
+
+msgid "Description"
+msgstr "Beschreibung"
+
+msgid "Add Activity"
+msgstr "Aktivität hinzufügen"
