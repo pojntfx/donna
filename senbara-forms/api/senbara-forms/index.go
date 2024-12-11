@@ -6,6 +6,7 @@ import (
 
 	_ "github.com/lib/pq"
 
+	senbaraForms "github.com/pojntfx/senbara/senbara-forms"
 	"github.com/pojntfx/senbara/senbara-forms/pkg/controllers"
 	"github.com/pojntfx/senbara/senbara-forms/pkg/persisters"
 	"github.com/pojntfx/senbara/senbara-forms/pkg/static"
@@ -59,6 +60,8 @@ func SenbaraFormsHandler(
 	mux.HandleFunc("/activities/update", c.HandleUpdateActivity)
 
 	mux.HandleFunc("/authorize", c.HandleAuthorize)
+
+	mux.Handle("/code/", http.StripPrefix("/code/", http.FileServer(http.FS(senbaraForms.FS))))
 
 	mux.HandleFunc("/", c.HandleIndex)
 
