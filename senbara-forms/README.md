@@ -12,4 +12,4 @@ Simple personal ERP web application built with HTML forms, OpenID Connect authen
 
 Senbara Forms (c) 2024 Felicitas Pojtinger and contributors
 
-SPDX-License-Identifier: Apache-2.0
+SPDX-License-Identifier: AGPL-3.0
