@@ -20,6 +20,8 @@ var (
 	errMissingOIDCIssuer      = errors.New("missing OIDC issuer")
 	errMissingOIDCClientID    = errors.New("missing OIDC client ID")
 	errMissingOIDCRedirectURL = errors.New("missing OIDC redirect URL")
+	errMissingPrivacyURL      = errors.New("missing privacy policy URL")
+	errMissingImprintURL      = errors.New("missing imprint URL")
 )
 
 func main() {
@@ -28,6 +30,8 @@ func main() {
 	oidcIssuer := flag.String("oidc-issuer", "", "OIDC Issuer (i.e. https://pojntfx.eu.auth0.com/) (can also be set using the OIDC_ISSUER env variable)")
 	oidcClientID := flag.String("oidc-client-id", "", "OIDC Client ID (i.e. myoidcclientid) (can also be set using the OIDC_CLIENT_ID env variable)")
 	oidcRedirectURL := flag.String("oidc-redirect-url", "http://localhost:1337/authorize", "OIDC redirect URL (can also be set using the OIDC_REDIRECT_URL env variable)")
+	privacyURL := flag.String("privacy-url", "", "Privacy policy URL (can also be set using the PRIVACY_URL env variable)")
+	imprintURL := flag.String("imprint-url", "", "Imprint URL (can also be set using the IMPRINT_URL env variable)")
 
 	flag.Parse()
 
@@ -75,6 +79,18 @@ func main() {
 		*oidcRedirectURL = v
 	}
 
+	if v := os.Getenv("PRIVACY_URL"); v != "" {
+		log.Println("Using privacy policy URL from PRIVACY_URL env variable")
+
+		*privacyURL = v
+	}
+
+	if v := os.Getenv("IMPRINT_URL"); v != "" {
+		log.Println("Using imprint URL from IMPRINT_URL env variable")
+
+		*imprintURL = v
+	}
+
 	if strings.TrimSpace(*oidcIssuer) == "" {
 		panic(errMissingOIDCIssuer)
 	}
@@ -87,13 +103,30 @@ func main() {
 		panic(errMissingOIDCRedirectURL)
 	}
 
+	if strings.TrimSpace(*privacyURL) == "" {
+		panic(errMissingPrivacyURL)
+	}
+
+	if strings.TrimSpace(*imprintURL) == "" {
+		panic(errMissingImprintURL)
+	}
+
 	p := persisters.NewPersister(*pgaddr)
 
 	if err := p.Init(); err != nil {
 		panic(err)
 	}
 
-	c := controllers.NewController(p, *oidcIssuer, *oidcClientID, *oidcRedirectURL)
+	c := controllers.NewController(
+		p,
+
+		*oidcIssuer,
+		*oidcClientID,
+		*oidcRedirectURL,
+
+		*privacyURL,
+		*imprintURL,
+	)
 
 	if err := c.Init(ctx); err != nil {
 		panic(err)

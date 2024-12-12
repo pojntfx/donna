@@ -80,7 +80,16 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if c == nil {
-		c = controllers.NewController(p, os.Getenv("OIDC_ISSUER"), os.Getenv("OIDC_CLIENT_ID"), os.Getenv("OIDC_REDIRECT_URL"))
+		c = controllers.NewController(
+			p,
+
+			os.Getenv("OIDC_ISSUER"),
+			os.Getenv("OIDC_CLIENT_ID"),
+			os.Getenv("OIDC_REDIRECT_URL"),
+
+			os.Getenv("PRIVACY_URL"),
+			os.Getenv("IMPRINT_URL"),
+		)
 
 		if err := c.Init(r.Context()); err != nil {
 			panic(err)

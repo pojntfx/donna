@@ -45,7 +45,9 @@ func (b *Controller) HandleJournal(w http.ResponseWriter, r *http.Request) {
 		pageData: pageData{
 			userData: userData,
 
-			Page: "Journal",
+			Page:       "Journal",
+			PrivacyURL: b.privacyURL,
+			ImprintURL: b.imprintURL,
 		},
 		Entries: journalEntries,
 	}); err != nil {
@@ -72,7 +74,9 @@ func (b *Controller) HandleAddJournal(w http.ResponseWriter, r *http.Request) {
 	if err := b.tpl.ExecuteTemplate(w, "journal_add.html", pageData{
 		userData: userData,
 
-		Page: "Add Journal Entry",
+		Page:       "Add Journal Entry",
+		PrivacyURL: b.privacyURL,
+		ImprintURL: b.imprintURL,
 	}); err != nil {
 		log.Println(errCouldNotRenderTemplate, err)
 
@@ -242,7 +246,9 @@ func (b *Controller) HandleEditJournal(w http.ResponseWriter, r *http.Request) {
 		pageData: pageData{
 			userData: userData,
 
-			Page: "Edit Journal Entry",
+			Page:       "Edit Journal Entry",
+			PrivacyURL: b.privacyURL,
+			ImprintURL: b.imprintURL,
 		},
 		Entry: journalEntry,
 	}); err != nil {
@@ -382,7 +388,10 @@ func (b *Controller) HandleViewJournal(w http.ResponseWriter, r *http.Request) {
 		pageData: pageData{
 			userData: userData,
 
-			Page:    journalEntry.Title,
+			Page:       journalEntry.Title,
+			PrivacyURL: b.privacyURL,
+			ImprintURL: b.imprintURL,
+
 			BackURL: "/journal",
 		},
 		Entry: journalEntry,

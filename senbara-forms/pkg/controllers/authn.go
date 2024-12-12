@@ -14,7 +14,10 @@ import (
 type pageData struct {
 	userData
 
-	Page    string
+	Page       string
+	PrivacyURL string
+	ImprintURL string
+
 	BackURL string
 }
 
@@ -173,7 +176,9 @@ func (b *Controller) HandleAuthorize(w http.ResponseWriter, r *http.Request) {
 					Locale: locale,
 				},
 
-				Page: "Signing You Out ...",
+				Page:       "Signing You Out ...",
+				PrivacyURL: b.privacyURL,
+				ImprintURL: b.imprintURL,
 			},
 			Href: "/",
 		}); err != nil {
@@ -232,7 +237,9 @@ func (b *Controller) HandleAuthorize(w http.ResponseWriter, r *http.Request) {
 				Locale: locale,
 			},
 
-			Page: "Signing You In ...",
+			Page:       "Signing You In ...",
+			PrivacyURL: b.privacyURL,
+			ImprintURL: b.imprintURL,
 		},
 		Href: "/",
 	}); err != nil {

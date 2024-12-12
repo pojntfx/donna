@@ -59,7 +59,9 @@ func (b *Controller) HandleAddActivity(w http.ResponseWriter, r *http.Request) {
 		pageData: pageData{
 			userData: userData,
 
-			Page: "Add Activity",
+			Page:       "Add Activity",
+			PrivacyURL: b.privacyURL,
+			ImprintURL: b.imprintURL,
 		},
 		Entry: contact,
 	}); err != nil {
@@ -396,7 +398,9 @@ func (b *Controller) HandleEditActivity(w http.ResponseWriter, r *http.Request) 
 		pageData: pageData{
 			userData: userData,
 
-			Page: "Edit Activity",
+			Page:       "Edit Activity",
+			PrivacyURL: b.privacyURL,
+			ImprintURL: b.imprintURL,
 		},
 		Entry: activityAndContact,
 	}); err != nil {
@@ -469,7 +473,10 @@ func (b *Controller) HandleViewActivity(w http.ResponseWriter, r *http.Request) 
 		pageData: pageData{
 			userData: userData,
 
-			Page:    activityAndContact.Name,
+			Page:       activityAndContact.Name,
+			PrivacyURL: b.privacyURL,
+			ImprintURL: b.imprintURL,
+
 			BackURL: fmt.Sprintf("/contacts/view?id=%v", contactID),
 		},
 		Entry: activityAndContact,

@@ -44,6 +44,9 @@ type Controller struct {
 	oidcClientID    string
 	oidcRedirectURL string
 
+	privacyURL string
+	imprintURL string
+
 	config   *oauth2.Config
 	verifier *oidc.IDTokenVerifier
 }
@@ -53,7 +56,10 @@ func NewController(
 
 	oidcIssuer,
 	oidcClientID,
-	oidcRedirectURL string,
+	oidcRedirectURL,
+
+	privacyURL,
+	imprintURL string,
 ) *Controller {
 	return &Controller{
 		persister: persister,
@@ -61,6 +67,9 @@ func NewController(
 		oidcIssuer:      oidcIssuer,
 		oidcClientID:    oidcClientID,
 		oidcRedirectURL: oidcRedirectURL,
+
+		privacyURL: privacyURL,
+		imprintURL: imprintURL,
 	}
 }
 
@@ -132,7 +141,9 @@ func (b *Controller) HandleIndex(w http.ResponseWriter, r *http.Request) {
 		if err := b.tpl.ExecuteTemplate(w, "404.html", pageData{
 			userData: userData,
 
-			Page: "Page not found",
+			Page:       "Page not found",
+			PrivacyURL: b.privacyURL,
+			ImprintURL: b.imprintURL,
 		}); err != nil {
 			log.Println(errCouldNotRenderTemplate, err)
 
