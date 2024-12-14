@@ -36,13 +36,11 @@
           <input type="submit" value="Delete your data" />
         </form>
 
-        <form
-          action="{{ .LogoutURL }}"
-          method="get"
+        <a
+          href="{{ .LogoutURL }}"
           onclick="return confirm('Are you sure you want to log out?')"
+          >Logout</a
         >
-          <input type="submit" value="Logout" />
-        </form>
       </nav>
     </details>
     {{ end }}
