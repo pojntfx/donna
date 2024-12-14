@@ -60,6 +60,7 @@ func SenbaraFormsHandler(
 	mux.HandleFunc("/activities/update", c.HandleUpdateActivity)
 
 	mux.HandleFunc("/userdata", c.HandleViewUserData)
+	mux.HandleFunc("/userdata/delete", c.HandleDeleteUserData)
 
 	mux.HandleFunc("/authorize", c.HandleAuthorize)
 

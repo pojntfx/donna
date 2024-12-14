@@ -37,3 +37,20 @@ func (b *Controller) HandleViewUserData(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 }
+
+func (b *Controller) HandleDeleteUserData(w http.ResponseWriter, r *http.Request) {
+	redirected, userData, status, err := b.authorize(w, r)
+	if err != nil {
+		log.Println(err)
+
+		http.Error(w, err.Error(), status)
+
+		return
+	} else if redirected {
+		return
+	}
+
+	// TODO: Delete user data based on userData.Email
+
+	http.Redirect(w, r, userData.LogoutURL, http.StatusFound)
+}
