@@ -68,3 +68,12 @@ where contacts.id = $1
     and contacts.namespace = $2
     and activities.id = $3
     and activities.contact_id = contacts.id;
+-- name: GetActivitiesForNamespace :many
+select activities.id,
+    activities.name,
+    activities.date,
+    activities.description,
+    contacts.id as contact_id
+from contacts
+    right join activities on activities.contact_id = contacts.id
+where contacts.namespace = $1;

@@ -86,6 +86,7 @@ a:not(:hover) {
 
 nav > a {
   padding-left: 0.1rem;
+  white-space: nowrap;
 }
 
 nav > a:not(:last-child) {
@@ -130,4 +131,11 @@ section:last-of-type > main > ul > li > div:last-child {
 
 body > header > div > h1 > a > picture > img {
   max-width: 128px;
+}
+
+header > nav {
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
+  justify-content: center;
 }

@@ -29,6 +29,7 @@ var (
 	errCouldNotLogin          = errors.New("could not login")
 	errEmailNotVerified       = errors.New("email not verified")
 	errCouldNotLocalize       = errors.New("could not localize")
+	errCouldNotWriteResponse  = errors.New("could not write response")
 )
 
 const (

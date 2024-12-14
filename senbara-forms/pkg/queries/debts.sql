@@ -63,3 +63,12 @@ where contacts.id = $1
     and contacts.namespace = $2
     and debts.id = $3
     and debts.contact_id = contacts.id;
+-- name: GetDebtsForNamespace :many
+select debts.id,
+    debts.amount,
+    debts.currency,
+    debts.description,
+    contacts.id as contact_id
+from contacts
+    right join debts on debts.contact_id = contacts.id
+where contacts.namespace = $1;

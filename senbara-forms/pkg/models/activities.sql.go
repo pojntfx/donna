@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	"database/sql"
 	"time"
 )
 
@@ -128,6 +129,54 @@ func (q *Queries) GetActivities(ctx context.Context, arg GetActivitiesParams) ([
 			&i.Name,
 			&i.Date,
 			&i.Description,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getActivitiesForNamespace = `-- name: GetActivitiesForNamespace :many
+select activities.id,
+    activities.name,
+    activities.date,
+    activities.description,
+    contacts.id as contact_id
+from contacts
+    right join activities on activities.contact_id = contacts.id
+where contacts.namespace = $1
+`
+
+type GetActivitiesForNamespaceRow struct {
+	ID          int32
+	Name        string
+	Date        time.Time
+	Description string
+	ContactID   sql.NullInt32
+}
+
+func (q *Queries) GetActivitiesForNamespace(ctx context.Context, namespace string) ([]GetActivitiesForNamespaceRow, error) {
+	rows, err := q.db.QueryContext(ctx, getActivitiesForNamespace, namespace)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetActivitiesForNamespaceRow
+	for rows.Next() {
+		var i GetActivitiesForNamespaceRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Date,
+			&i.Description,
+			&i.ContactID,
 		); err != nil {
 			return nil, err
 		}

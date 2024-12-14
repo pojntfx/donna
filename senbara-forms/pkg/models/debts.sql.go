@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	"database/sql"
 )
 
 const createDebt = `-- name: CreateDebt :one
@@ -154,6 +155,54 @@ func (q *Queries) GetDebts(ctx context.Context, arg GetDebtsParams) ([]GetDebtsR
 			&i.Amount,
 			&i.Currency,
 			&i.Description,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getDebtsForNamespace = `-- name: GetDebtsForNamespace :many
+select debts.id,
+    debts.amount,
+    debts.currency,
+    debts.description,
+    contacts.id as contact_id
+from contacts
+    right join debts on debts.contact_id = contacts.id
+where contacts.namespace = $1
+`
+
+type GetDebtsForNamespaceRow struct {
+	ID          int32
+	Amount      float64
+	Currency    string
+	Description string
+	ContactID   sql.NullInt32
+}
+
+func (q *Queries) GetDebtsForNamespace(ctx context.Context, namespace string) ([]GetDebtsForNamespaceRow, error) {
+	rows, err := q.db.QueryContext(ctx, getDebtsForNamespace, namespace)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetDebtsForNamespaceRow
+	for rows.Next() {
+		var i GetDebtsForNamespaceRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Amount,
+			&i.Currency,
+			&i.Description,
+			&i.ContactID,
 		); err != nil {
 			return nil, err
 		}

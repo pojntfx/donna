@@ -22,11 +22,29 @@
     <a href="/journal">Journal</a>
 
     {{ if ne .LogoutURL "" }}
-    <a
-      href="{{ .LogoutURL }}"
-      onclick="return confirm('Are you sure you want to log out?')"
-      >Logout</a
-    >
+    <details>
+      <summary>Account</summary>
+
+      <nav>
+        <a
+          href="/userdata"
+          onclick="return confirm('Are you sure you want to export your data?')"
+          >Export your data</a
+        >
+
+        <a
+          href="/userdata/delete"
+          onclick="return confirm('Are you sure you want to delete your data and your account?')"
+          >Delete your data</a
+        >
+
+        <a
+          href="{{ .LogoutURL }}"
+          onclick="return confirm('Are you sure you want to log out?')"
+          >Logout</a
+        >
+      </nav>
+    </details>
     {{ end }}
   </nav>
 </header>
