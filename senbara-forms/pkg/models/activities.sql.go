@@ -73,6 +73,17 @@ func (q *Queries) DeleteActivitesForContact(ctx context.Context, arg DeleteActiv
 	return err
 }
 
+const deleteActivitiesForNamespace = `-- name: DeleteActivitiesForNamespace :exec
+delete from activities using contacts
+where activities.contact_id = contacts.id
+    and contacts.namespace = $1
+`
+
+func (q *Queries) DeleteActivitiesForNamespace(ctx context.Context, namespace string) error {
+	_, err := q.db.ExecContext(ctx, deleteActivitiesForNamespace, namespace)
+	return err
+}
+
 const deleteActivity = `-- name: DeleteActivity :exec
 delete from activities using contacts
 where activities.id = $3

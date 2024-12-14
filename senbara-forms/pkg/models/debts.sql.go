@@ -72,6 +72,17 @@ func (q *Queries) DeleteDebtsForContact(ctx context.Context, arg DeleteDebtsForC
 	return err
 }
 
+const deleteDebtsForNamespace = `-- name: DeleteDebtsForNamespace :exec
+delete from debts using contacts
+where debts.contact_id = contacts.id
+    and contacts.namespace = $1
+`
+
+func (q *Queries) DeleteDebtsForNamespace(ctx context.Context, namespace string) error {
+	_, err := q.db.ExecContext(ctx, deleteDebtsForNamespace, namespace)
+	return err
+}
+
 const getDebtAndContact = `-- name: GetDebtAndContact :one
 select debts.id as debt_id,
     debts.amount,

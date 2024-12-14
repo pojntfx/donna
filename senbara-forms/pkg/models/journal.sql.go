@@ -34,6 +34,16 @@ func (q *Queries) CreateJournalEntry(ctx context.Context, arg CreateJournalEntry
 	return id, err
 }
 
+const deleteJournalEntriesForNamespace = `-- name: DeleteJournalEntriesForNamespace :exec
+delete from journal_entries
+where namespace = $1
+`
+
+func (q *Queries) DeleteJournalEntriesForNamespace(ctx context.Context, namespace string) error {
+	_, err := q.db.ExecContext(ctx, deleteJournalEntriesForNamespace, namespace)
+	return err
+}
+
 const deleteJournalEntry = `-- name: DeleteJournalEntry :exec
 delete from journal_entries
 where id = $1

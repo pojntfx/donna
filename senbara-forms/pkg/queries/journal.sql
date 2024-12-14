@@ -23,3 +23,6 @@ set title = $3,
     rating = $5
 where id = $1
     and namespace = $2;
+-- name: DeleteJournalEntriesForNamespace :exec
+delete from journal_entries
+where namespace = $1;

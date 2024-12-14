@@ -77,3 +77,7 @@ select activities.id,
 from contacts
     right join activities on activities.contact_id = contacts.id
 where contacts.namespace = $1;
+-- name: DeleteActivitiesForNamespace :exec
+delete from activities using contacts
+where activities.contact_id = contacts.id
+    and contacts.namespace = $1;

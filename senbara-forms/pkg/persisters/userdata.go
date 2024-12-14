@@ -50,3 +50,31 @@ func (p *Persister) GetAllUserData(ctx context.Context, namespace string) (AllUs
 
 	return allUserData, nil
 }
+
+func (p *Persister) DeleteAllUserData(ctx context.Context, namespace string) error {
+	tx, err := p.db.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	qtx := p.queries.WithTx(tx)
+
+	if err := qtx.DeleteActivitiesForNamespace(ctx, namespace); err != nil {
+		return err
+	}
+
+	if err := qtx.DeleteDebtsForNamespace(ctx, namespace); err != nil {
+		return err
+	}
+
+	if err := qtx.DeleteContactsForNamespace(ctx, namespace); err != nil {
+		return err
+	}
+
+	if err := qtx.DeleteJournalEntriesForNamespace(ctx, namespace); err != nil {
+		return err
+	}
+
+	return tx.Commit()
+}

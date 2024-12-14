@@ -72,3 +72,7 @@ select debts.id,
 from contacts
     right join debts on debts.contact_id = contacts.id
 where contacts.namespace = $1;
+-- name: DeleteDebtsForNamespace :exec
+delete from debts using contacts
+where debts.contact_id = contacts.id
+    and contacts.namespace = $1;

@@ -50,7 +50,13 @@ func (b *Controller) HandleDeleteUserData(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	// TODO: Delete user data based on userData.Email
+	if err := b.persister.DeleteAllUserData(r.Context(), userData.Email); err != nil {
+		log.Println(errCouldNotDeleteFromDB, err)
+
+		http.Error(w, errCouldNotDeleteFromDB.Error(), http.StatusInternalServerError)
+
+		return
+	}
 
 	http.Redirect(w, r, userData.LogoutURL, http.StatusFound)
 }

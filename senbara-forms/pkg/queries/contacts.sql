@@ -35,3 +35,6 @@ set first_name = $3,
     notes = $10
 where id = $1
     and namespace = $2;
+-- name: DeleteContactsForNamespace :exec
+delete from contacts
+where namespace = $1;

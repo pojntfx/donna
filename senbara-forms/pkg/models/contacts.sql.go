@@ -62,6 +62,16 @@ func (q *Queries) DeleteContact(ctx context.Context, arg DeleteContactParams) er
 	return err
 }
 
+const deleteContactsForNamespace = `-- name: DeleteContactsForNamespace :exec
+delete from contacts
+where namespace = $1
+`
+
+func (q *Queries) DeleteContactsForNamespace(ctx context.Context, namespace string) error {
+	_, err := q.db.ExecContext(ctx, deleteContactsForNamespace, namespace)
+	return err
+}
+
 const getContact = `-- name: GetContact :one
 select id, first_name, last_name, nickname, email, pronouns, namespace, birthday, address, notes
 from contacts
