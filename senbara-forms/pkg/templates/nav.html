@@ -26,23 +26,23 @@
       <summary>Account</summary>
 
       <nav>
-        <a
-          href="/userdata"
-          onclick="return confirm('Are you sure you want to export your data?')"
-          >Export your data</a
-        >
+        <a href="/userdata">Export your data</a>
 
-        <a
-          href="/userdata/delete"
+        <form
+          action="/userdata/delete"
+          method="post"
           onclick="return confirm('Are you sure you want to delete your data and your account?')"
-          >Delete your data</a
         >
+          <input type="submit" value="Delete your data" />
+        </form>
 
-        <a
-          href="{{ .LogoutURL }}"
+        <form
+          action="{{ .LogoutURL }}"
+          method="get"
           onclick="return confirm('Are you sure you want to log out?')"
-          >Logout</a
         >
+          <input type="submit" value="Logout" />
+        </form>
       </nav>
     </details>
     {{ end }}
