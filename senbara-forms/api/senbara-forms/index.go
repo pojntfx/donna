@@ -61,6 +61,7 @@ func SenbaraFormsHandler(
 
 	mux.HandleFunc("GET /userdata", c.HandleUserData)
 
+	mux.HandleFunc("POST /userdata", c.HandleCreateUserData)
 	mux.HandleFunc("POST /userdata/delete", c.HandleDeleteUserData)
 
 	mux.HandleFunc("GET /authorize", c.HandleAuthorize)

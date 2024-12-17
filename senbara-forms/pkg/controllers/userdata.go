@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func (b *Controller) HandleViewUserData(w http.ResponseWriter, r *http.Request) {
+func (b *Controller) HandleUserData(w http.ResponseWriter, r *http.Request) {
 	redirected, userData, status, err := b.authorize(w, r)
 	if err != nil {
 		log.Println(err)
@@ -36,6 +36,23 @@ func (b *Controller) HandleViewUserData(w http.ResponseWriter, r *http.Request) 
 
 		return
 	}
+}
+
+func (b *Controller) HandleCreateUserData(w http.ResponseWriter, r *http.Request) {
+	redirected, _, status, err := b.authorize(w, r)
+	if err != nil {
+		log.Println(err)
+
+		http.Error(w, err.Error(), status)
+
+		return
+	} else if redirected {
+		return
+	}
+
+	// TODO: Import user data
+
+	http.Redirect(w, r, "/contacts", http.StatusFound)
 }
 
 func (b *Controller) HandleDeleteUserData(w http.ResponseWriter, r *http.Request) {
