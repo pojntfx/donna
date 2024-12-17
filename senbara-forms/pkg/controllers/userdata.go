@@ -100,7 +100,96 @@ func (b *Controller) HandleCreateUserData(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	// TODO: Import user data
+	file, _, err := r.FormFile("userData")
+	if err != nil {
+		log.Println(errCouldNotReadRequest, err)
+
+		http.Error(w, errCouldNotReadRequest.Error(), http.StatusInternalServerError)
+
+		return
+	}
+	defer file.Close()
+
+	decoder := json.NewDecoder(file)
+
+	for {
+		var rawRow json.RawMessage
+		if err := decoder.Decode(&rawRow); err != nil {
+			if errors.Is(err, io.EOF) {
+				break
+			}
+
+			log.Println(errCouldNotReadRequest, err)
+
+			http.Error(w, errCouldNotReadRequest.Error(), http.StatusInternalServerError)
+
+			return
+		}
+
+		var userDataRow userDataRow
+		if err := json.Unmarshal(rawRow, &userDataRow); err != nil {
+			log.Println(errCouldNotReadRequest, err)
+
+			http.Error(w, errCouldNotReadRequest.Error(), http.StatusInternalServerError)
+
+			return
+		}
+
+		switch userDataRow.TableName {
+		case exportTableNameJournalEntry:
+			var journalEntry models.GetJournalEntriesExportForNamespaceRow
+			if err := json.Unmarshal(rawRow, &journalEntry); err != nil {
+				log.Println(errCouldNotReadRequest, err)
+
+				http.Error(w, errCouldNotReadRequest.Error(), http.StatusInternalServerError)
+
+				return
+			}
+
+			log.Println(journalEntry)
+
+		case exportTableNameContact:
+			var contact models.GetContactsExportForNamespaceRow
+			if err := json.Unmarshal(rawRow, &contact); err != nil {
+				log.Println(errCouldNotReadRequest, err)
+
+				http.Error(w, errCouldNotReadRequest.Error(), http.StatusInternalServerError)
+
+				return
+			}
+
+			log.Println(contact)
+
+		case exportTableNameDebt:
+			var debt models.GetDebtsExportForNamespaceRow
+			if err := json.Unmarshal(rawRow, &debt); err != nil {
+				log.Println(errCouldNotReadRequest, err)
+
+				http.Error(w, errCouldNotReadRequest.Error(), http.StatusInternalServerError)
+
+				return
+			}
+
+			log.Println(debt)
+
+		case exportTableNameActivity:
+			var activity models.GetActivitiesExportForNamespaceRow
+			if err := json.Unmarshal(rawRow, &activity); err != nil {
+				log.Println(errCouldNotReadRequest, err)
+
+				http.Error(w, errCouldNotReadRequest.Error(), http.StatusInternalServerError)
+
+				return
+			}
+
+			log.Println(activity)
+
+		default:
+			log.Println("Skipping import error:", errUnknownTableName, err)
+
+			continue
+		}
+	}
 
 	http.Redirect(w, r, "/contacts", http.StatusFound)
 }
