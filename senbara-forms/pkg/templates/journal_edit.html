@@ -10,7 +10,7 @@
     </header>
 
     <main>
-      <form id="update" action="/journal/update">
+      <form id="update" action="/journal/update" method="post">
         <input type="hidden" name="id" id="id" value="{{ .Entry.ID }}" />
 
         <fieldset>

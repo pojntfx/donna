@@ -7,12 +7,13 @@
 
     <header>
       <h2>
-        {{ .Locale.Get "Add a New Activity For %s %s" .Entry.FirstName .Entry.LastName }}
+        {{ .Locale.Get "Add a New Activity For %s %s" .Entry.FirstName
+        .Entry.LastName }}
       </h2>
     </header>
 
     <main>
-      <form action="/activities/create">
+      <form action="/activities/create" method="post">
         <input
           type="hidden"
           name="contact_id"

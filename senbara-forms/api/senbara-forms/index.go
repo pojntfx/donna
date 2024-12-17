@@ -24,47 +24,47 @@ func SenbaraFormsHandler(
 ) {
 	mux := http.NewServeMux()
 
-	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.FS(static.FS))))
+	mux.Handle("GET /static/", http.StripPrefix("/static/", http.FileServer(http.FS(static.FS))))
 
-	mux.HandleFunc("/journal", c.HandleJournal)
-	mux.HandleFunc("/journal/add", c.HandleAddJournal)
-	mux.HandleFunc("/journal/edit", c.HandleEditJournal)
-	mux.HandleFunc("/journal/view", c.HandleViewJournal)
+	mux.HandleFunc("GET /journal", c.HandleJournal)
+	mux.HandleFunc("GET /journal/add", c.HandleAddJournal)
+	mux.HandleFunc("GET /journal/edit", c.HandleEditJournal)
+	mux.HandleFunc("GET /journal/view", c.HandleViewJournal)
 
-	mux.HandleFunc("/journal/create", c.HandleCreateJournal)
-	mux.HandleFunc("/journal/delete", c.HandleDeleteJournal)
-	mux.HandleFunc("/journal/update", c.HandleUpdateJournal)
+	mux.HandleFunc("POST /journal/create", c.HandleCreateJournal)
+	mux.HandleFunc("POST /journal/delete", c.HandleDeleteJournal)
+	mux.HandleFunc("POST /journal/update", c.HandleUpdateJournal)
 
-	mux.HandleFunc("/contacts", c.HandleContacts)
-	mux.HandleFunc("/contacts/add", c.HandleAddContact)
-	mux.HandleFunc("/contacts/edit", c.HandleEditContact)
-	mux.HandleFunc("/contacts/view", c.HandleViewContact)
+	mux.HandleFunc("GET /contacts", c.HandleContacts)
+	mux.HandleFunc("GET /contacts/add", c.HandleAddContact)
+	mux.HandleFunc("GET /contacts/edit", c.HandleEditContact)
+	mux.HandleFunc("GET /contacts/view", c.HandleViewContact)
 
-	mux.HandleFunc("/contacts/create", c.HandleCreateContact)
-	mux.HandleFunc("/contacts/delete", c.HandleDeleteContact)
-	mux.HandleFunc("/contacts/update", c.HandleUpdateContact)
+	mux.HandleFunc("POST /contacts/create", c.HandleCreateContact)
+	mux.HandleFunc("POST /contacts/delete", c.HandleDeleteContact)
+	mux.HandleFunc("POST /contacts/update", c.HandleUpdateContact)
 
-	mux.HandleFunc("/debts/add", c.HandleAddDebt)
-	mux.HandleFunc("/debts/edit", c.HandleEditDebt)
+	mux.HandleFunc("GET /debts/add", c.HandleAddDebt)
+	mux.HandleFunc("GET /debts/edit", c.HandleEditDebt)
 
-	mux.HandleFunc("/debts/create", c.HandleCreateDebt)
-	mux.HandleFunc("/debts/settle", c.HandleSettleDebt)
-	mux.HandleFunc("/debts/update", c.HandleUpdateDebt)
+	mux.HandleFunc("POST /debts/create", c.HandleCreateDebt)
+	mux.HandleFunc("POST /debts/settle", c.HandleSettleDebt)
+	mux.HandleFunc("POST /debts/update", c.HandleUpdateDebt)
 
-	mux.HandleFunc("/activities/add", c.HandleAddActivity)
-	mux.HandleFunc("/activities/view", c.HandleViewActivity)
-	mux.HandleFunc("/activities/edit", c.HandleEditActivity)
+	mux.HandleFunc("GET /activities/add", c.HandleAddActivity)
+	mux.HandleFunc("GET /activities/view", c.HandleViewActivity)
+	mux.HandleFunc("GET /activities/edit", c.HandleEditActivity)
 
-	mux.HandleFunc("/activities/create", c.HandleCreateActivity)
-	mux.HandleFunc("/activities/delete", c.HandleDeleteActivity)
-	mux.HandleFunc("/activities/update", c.HandleUpdateActivity)
+	mux.HandleFunc("POST /activities/create", c.HandleCreateActivity)
+	mux.HandleFunc("POST /activities/delete", c.HandleDeleteActivity)
+	mux.HandleFunc("POST /activities/update", c.HandleUpdateActivity)
 
-	mux.HandleFunc("/userdata", c.HandleViewUserData)
-	mux.HandleFunc("/userdata/delete", c.HandleDeleteUserData)
+	mux.HandleFunc("GET /userdata", c.HandleViewUserData)
+	mux.HandleFunc("POST /userdata/delete", c.HandleDeleteUserData)
 
-	mux.HandleFunc("/authorize", c.HandleAuthorize)
+	mux.HandleFunc("GET /authorize", c.HandleAuthorize)
 
-	mux.Handle("/code/", http.StripPrefix("/code/", http.FileServer(http.FS(senbaraForms.FS))))
+	mux.Handle("GET /code/", http.StripPrefix("/code/", http.FileServer(http.FS(senbaraForms.FS))))
 
 	mux.HandleFunc("/", c.HandleIndex)
 
