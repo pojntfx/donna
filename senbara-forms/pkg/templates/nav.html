@@ -29,9 +29,28 @@
         <a href="/userdata">Export your data</a>
 
         <form
+          action="/userdata"
+          method="post"
+          enctype="multipart/form-data"
+          onsubmit="return confirm('Are you sure you want to import this user data into your account?')"
+        >
+          <label for="userData">User data</label>
+          <input
+            type="file"
+            name="userData"
+            id="userData"
+            accept="application/json"
+            required
+          />
+          <br />
+
+          <input type="submit" value="Import user data" />
+        </form>
+
+        <form
           action="/userdata/delete"
           method="post"
-          onclick="return confirm('Are you sure you want to delete your data and your account?')"
+          onsubmit="return confirm('Are you sure you want to delete your data and your account?')"
         >
           <input type="submit" value="Delete your data" />
         </form>

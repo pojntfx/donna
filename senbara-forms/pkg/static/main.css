@@ -71,13 +71,17 @@ body > footer {
   margin-top: auto;
 }
 
-main input[type="text"],
-main input[type="number"],
-main input[type="email"],
-main input[type="date"],
-main textarea {
-  box-sizing: border-box;
-  width: 100%;
+details > nav > form,
+main {
+  & input[type="text"],
+  & input[type="number"],
+  & input[type="email"],
+  & input[type="date"],
+  & input[type="file"],
+  & textarea {
+    box-sizing: border-box;
+    width: 100%;
+  }
 }
 
 a:not(:hover) {
@@ -103,6 +107,7 @@ input[type="submit"] {
 }
 
 main form > *:not(label):not(:last-child),
+details > nav > form > *:not(label):not(:last-child),
 section:not(:last-child) {
   margin-bottom: 1rem;
 }
