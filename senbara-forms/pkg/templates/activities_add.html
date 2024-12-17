@@ -13,7 +13,7 @@
     </header>
 
     <main>
-      <form action="/activities/create" method="post">
+      <form action="/activities" method="post">
         <input
           type="hidden"
           name="contact_id"
@@ -29,7 +29,12 @@
         <input type="date" name="date" id="date" required />
         <br />
 
-        <label for="description">{{ .Locale.Get "Description" }}</label>
+        <label for="description"
+          >{{ .Locale.Get "Description" }} (you can use
+          <a href="https://en.wikipedia.org/wiki/Markdown" target="_blank"
+            >Markdown</a
+          >)</label
+        >
         <textarea name="description" id="description" rows="10"></textarea>
         <br />
 

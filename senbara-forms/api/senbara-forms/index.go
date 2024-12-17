@@ -31,7 +31,7 @@ func SenbaraFormsHandler(
 	mux.HandleFunc("GET /journal/edit", c.HandleEditJournal)
 	mux.HandleFunc("GET /journal/view", c.HandleViewJournal)
 
-	mux.HandleFunc("POST /journal/create", c.HandleCreateJournal)
+	mux.HandleFunc("POST /journal", c.HandleCreateJournal)
 	mux.HandleFunc("POST /journal/delete", c.HandleDeleteJournal)
 	mux.HandleFunc("POST /journal/update", c.HandleUpdateJournal)
 
@@ -40,14 +40,14 @@ func SenbaraFormsHandler(
 	mux.HandleFunc("GET /contacts/edit", c.HandleEditContact)
 	mux.HandleFunc("GET /contacts/view", c.HandleViewContact)
 
-	mux.HandleFunc("POST /contacts/create", c.HandleCreateContact)
+	mux.HandleFunc("POST /contacts", c.HandleCreateContact)
 	mux.HandleFunc("POST /contacts/delete", c.HandleDeleteContact)
 	mux.HandleFunc("POST /contacts/update", c.HandleUpdateContact)
 
 	mux.HandleFunc("GET /debts/add", c.HandleAddDebt)
 	mux.HandleFunc("GET /debts/edit", c.HandleEditDebt)
 
-	mux.HandleFunc("POST /debts/create", c.HandleCreateDebt)
+	mux.HandleFunc("POST /debts", c.HandleCreateDebt)
 	mux.HandleFunc("POST /debts/settle", c.HandleSettleDebt)
 	mux.HandleFunc("POST /debts/update", c.HandleUpdateDebt)
 
@@ -55,11 +55,12 @@ func SenbaraFormsHandler(
 	mux.HandleFunc("GET /activities/view", c.HandleViewActivity)
 	mux.HandleFunc("GET /activities/edit", c.HandleEditActivity)
 
-	mux.HandleFunc("POST /activities/create", c.HandleCreateActivity)
+	mux.HandleFunc("POST /activities", c.HandleCreateActivity)
 	mux.HandleFunc("POST /activities/delete", c.HandleDeleteActivity)
 	mux.HandleFunc("POST /activities/update", c.HandleUpdateActivity)
 
-	mux.HandleFunc("GET /userdata", c.HandleViewUserData)
+	mux.HandleFunc("GET /userdata", c.HandleUserData)
+
 	mux.HandleFunc("POST /userdata/delete", c.HandleDeleteUserData)
 
 	mux.HandleFunc("GET /authorize", c.HandleAuthorize)
