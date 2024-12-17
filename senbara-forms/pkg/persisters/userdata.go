@@ -6,52 +6,69 @@ import (
 	"github.com/pojntfx/senbara/senbara-forms/pkg/models"
 )
 
-type AllUserData struct {
-	JournalEntries []models.JournalEntry
-	Contacts       []models.Contact
-	Debts          []models.GetDebtsForNamespaceRow
-	Activities     []models.GetActivitiesForNamespaceRow
-}
+func (p *Persister) GetUserData(
+	ctx context.Context,
 
-func (p *Persister) GetAllUserData(ctx context.Context, namespace string) (AllUserData, error) {
+	namespace string,
+
+	onJournalEntry func(journalEntry models.GetJournalEntriesExportForNamespaceRow) error,
+	onContact func(contact models.GetContactsExportForNamespaceRow) error,
+	onDebt func(debt models.GetDebtsExportForNamespaceRow) error,
+	onActivity func(activity models.GetActivitiesExportForNamespaceRow) error,
+) error {
 	tx, err := p.db.Begin()
 	if err != nil {
-		return AllUserData{}, err
+		return err
 	}
 	defer tx.Rollback()
 
-	allUserData := AllUserData{}
-
 	qtx := p.queries.WithTx(tx)
 
-	allUserData.JournalEntries, err = qtx.GetJournalEntries(ctx, namespace)
+	journalEntries, err := qtx.GetJournalEntriesExportForNamespace(ctx, namespace)
 	if err != nil {
-		return AllUserData{}, err
+		return err
+	}
+	for _, journalEntry := range journalEntries {
+		if err := onJournalEntry(journalEntry); err != nil {
+			return err
+		}
 	}
 
-	allUserData.Contacts, err = qtx.GetContacts(ctx, namespace)
+	contacts, err := qtx.GetContactsExportForNamespace(ctx, namespace)
 	if err != nil {
-		return AllUserData{}, err
+		return err
+	}
+	for _, contact := range contacts {
+		if err := onContact(contact); err != nil {
+			return err
+		}
 	}
 
-	allUserData.Debts, err = qtx.GetDebtsForNamespace(ctx, namespace)
+	debts, err := qtx.GetDebtsExportForNamespace(ctx, namespace)
 	if err != nil {
-		return AllUserData{}, err
+		return err
+	}
+	for _, debt := range debts {
+		if err := onDebt(debt); err != nil {
+			return err
+		}
 	}
 
-	allUserData.Activities, err = qtx.GetActivitiesForNamespace(ctx, namespace)
+	activities, err := qtx.GetActivitiesExportForNamespace(ctx, namespace)
 	if err != nil {
-		return AllUserData{}, err
+		return err
 	}
 
-	if err := tx.Commit(); err != nil {
-		return AllUserData{}, err
+	for _, activity := range activities {
+		if err := onActivity(activity); err != nil {
+			return err
+		}
 	}
 
-	return allUserData, nil
+	return nil
 }
 
-func (p *Persister) DeleteAllUserData(ctx context.Context, namespace string) error {
+func (p *Persister) DeleteUserData(ctx context.Context, namespace string) error {
 	tx, err := p.db.Begin()
 	if err != nil {
 		return err

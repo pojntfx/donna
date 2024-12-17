@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	"time"
 )
 
 const createJournalEntry = `-- name: CreateJournalEntry :one
@@ -77,6 +78,55 @@ func (q *Queries) GetJournalEntries(ctx context.Context, namespace string) ([]Jo
 	for rows.Next() {
 		var i JournalEntry
 		if err := rows.Scan(
+			&i.ID,
+			&i.Title,
+			&i.Date,
+			&i.Body,
+			&i.Rating,
+			&i.Namespace,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getJournalEntriesExportForNamespace = `-- name: GetJournalEntriesExportForNamespace :many
+select 'journal_entries' as table_name,
+    id, title, date, body, rating, namespace
+from journal_entries
+where namespace = $1
+order by date desc
+`
+
+type GetJournalEntriesExportForNamespaceRow struct {
+	TableName string
+	ID        int32
+	Title     string
+	Date      time.Time
+	Body      string
+	Rating    int32
+	Namespace string
+}
+
+func (q *Queries) GetJournalEntriesExportForNamespace(ctx context.Context, namespace string) ([]GetJournalEntriesExportForNamespaceRow, error) {
+	rows, err := q.db.QueryContext(ctx, getJournalEntriesExportForNamespace, namespace)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetJournalEntriesExportForNamespaceRow
+	for rows.Next() {
+		var i GetJournalEntriesExportForNamespaceRow
+		if err := rows.Scan(
+			&i.TableName,
 			&i.ID,
 			&i.Title,
 			&i.Date,

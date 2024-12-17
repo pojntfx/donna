@@ -68,8 +68,9 @@ where contacts.id = $1
     and contacts.namespace = $2
     and activities.id = $3
     and activities.contact_id = contacts.id;
--- name: GetActivitiesForNamespace :many
-select activities.id,
+-- name: GetActivitiesExportForNamespace :many
+select 'activites' as table_name,
+    activities.id,
     activities.name,
     activities.date,
     activities.description,

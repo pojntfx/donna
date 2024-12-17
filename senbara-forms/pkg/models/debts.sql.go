@@ -180,8 +180,9 @@ func (q *Queries) GetDebts(ctx context.Context, arg GetDebtsParams) ([]GetDebtsR
 	return items, nil
 }
 
-const getDebtsForNamespace = `-- name: GetDebtsForNamespace :many
-select debts.id,
+const getDebtsExportForNamespace = `-- name: GetDebtsExportForNamespace :many
+select 'debts' as table_name,
+    debts.id,
     debts.amount,
     debts.currency,
     debts.description,
@@ -191,7 +192,8 @@ from contacts
 where contacts.namespace = $1
 `
 
-type GetDebtsForNamespaceRow struct {
+type GetDebtsExportForNamespaceRow struct {
+	TableName   string
 	ID          int32
 	Amount      float64
 	Currency    string
@@ -199,16 +201,17 @@ type GetDebtsForNamespaceRow struct {
 	ContactID   sql.NullInt32
 }
 
-func (q *Queries) GetDebtsForNamespace(ctx context.Context, namespace string) ([]GetDebtsForNamespaceRow, error) {
-	rows, err := q.db.QueryContext(ctx, getDebtsForNamespace, namespace)
+func (q *Queries) GetDebtsExportForNamespace(ctx context.Context, namespace string) ([]GetDebtsExportForNamespaceRow, error) {
+	rows, err := q.db.QueryContext(ctx, getDebtsExportForNamespace, namespace)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GetDebtsForNamespaceRow
+	var items []GetDebtsExportForNamespaceRow
 	for rows.Next() {
-		var i GetDebtsForNamespaceRow
+		var i GetDebtsExportForNamespaceRow
 		if err := rows.Scan(
+			&i.TableName,
 			&i.ID,
 			&i.Amount,
 			&i.Currency,

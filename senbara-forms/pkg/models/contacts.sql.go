@@ -143,6 +143,63 @@ func (q *Queries) GetContacts(ctx context.Context, namespace string) ([]Contact,
 	return items, nil
 }
 
+const getContactsExportForNamespace = `-- name: GetContactsExportForNamespace :many
+select 'contacts' as table_name,
+    id, first_name, last_name, nickname, email, pronouns, namespace, birthday, address, notes
+from contacts
+where namespace = $1
+order by first_name desc
+`
+
+type GetContactsExportForNamespaceRow struct {
+	TableName string
+	ID        int32
+	FirstName string
+	LastName  string
+	Nickname  string
+	Email     string
+	Pronouns  string
+	Namespace string
+	Birthday  sql.NullTime
+	Address   string
+	Notes     string
+}
+
+func (q *Queries) GetContactsExportForNamespace(ctx context.Context, namespace string) ([]GetContactsExportForNamespaceRow, error) {
+	rows, err := q.db.QueryContext(ctx, getContactsExportForNamespace, namespace)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetContactsExportForNamespaceRow
+	for rows.Next() {
+		var i GetContactsExportForNamespaceRow
+		if err := rows.Scan(
+			&i.TableName,
+			&i.ID,
+			&i.FirstName,
+			&i.LastName,
+			&i.Nickname,
+			&i.Email,
+			&i.Pronouns,
+			&i.Namespace,
+			&i.Birthday,
+			&i.Address,
+			&i.Notes,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const updateContact = `-- name: UpdateContact :exec
 update contacts
 set first_name = $3,

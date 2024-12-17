@@ -63,8 +63,9 @@ where contacts.id = $1
     and contacts.namespace = $2
     and debts.id = $3
     and debts.contact_id = contacts.id;
--- name: GetDebtsForNamespace :many
-select debts.id,
+-- name: GetDebtsExportForNamespace :many
+select 'debts' as table_name,
+    debts.id,
     debts.amount,
     debts.currency,
     debts.description,

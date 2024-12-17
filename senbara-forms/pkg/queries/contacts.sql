@@ -38,3 +38,9 @@ where id = $1
 -- name: DeleteContactsForNamespace :exec
 delete from contacts
 where namespace = $1;
+-- name: GetContactsExportForNamespace :many
+select 'contacts' as table_name,
+    *
+from contacts
+where namespace = $1
+order by first_name desc;

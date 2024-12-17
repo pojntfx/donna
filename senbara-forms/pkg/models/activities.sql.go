@@ -154,8 +154,9 @@ func (q *Queries) GetActivities(ctx context.Context, arg GetActivitiesParams) ([
 	return items, nil
 }
 
-const getActivitiesForNamespace = `-- name: GetActivitiesForNamespace :many
-select activities.id,
+const getActivitiesExportForNamespace = `-- name: GetActivitiesExportForNamespace :many
+select 'activites' as table_name,
+    activities.id,
     activities.name,
     activities.date,
     activities.description,
@@ -165,7 +166,8 @@ from contacts
 where contacts.namespace = $1
 `
 
-type GetActivitiesForNamespaceRow struct {
+type GetActivitiesExportForNamespaceRow struct {
+	TableName   string
 	ID          int32
 	Name        string
 	Date        time.Time
@@ -173,16 +175,17 @@ type GetActivitiesForNamespaceRow struct {
 	ContactID   sql.NullInt32
 }
 
-func (q *Queries) GetActivitiesForNamespace(ctx context.Context, namespace string) ([]GetActivitiesForNamespaceRow, error) {
-	rows, err := q.db.QueryContext(ctx, getActivitiesForNamespace, namespace)
+func (q *Queries) GetActivitiesExportForNamespace(ctx context.Context, namespace string) ([]GetActivitiesExportForNamespaceRow, error) {
+	rows, err := q.db.QueryContext(ctx, getActivitiesExportForNamespace, namespace)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GetActivitiesForNamespaceRow
+	var items []GetActivitiesExportForNamespaceRow
 	for rows.Next() {
-		var i GetActivitiesForNamespaceRow
+		var i GetActivitiesExportForNamespaceRow
 		if err := rows.Scan(
+			&i.TableName,
 			&i.ID,
 			&i.Name,
 			&i.Date,
