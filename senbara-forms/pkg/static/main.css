@@ -13,72 +13,154 @@ body {
   min-height: 100%;
   display: flex;
   flex-direction: column;
+
+  header,
+  > header:first-child > div,
+  > header:nth-child(2) > div:first-child,
+  > ul > li > div:first-child,
+  > main > section:nth-child(3) > main > ul > li > div:first-child,
+  > footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  > header {
+    width: 100%;
+
+    &:first-child > div {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+
+      > h1:not(:last-child) {
+        margin-right: 1rem;
+      }
+    }
+
+    &:nth-child(2) {
+      > h2 {
+        margin-right: 1rem;
+      }
+
+      > div > h2 {
+        margin-right: 1rem;
+      }
+    }
+
+    > div > h1 > a > picture > img {
+      max-width: 128px;
+    }
+
+    > nav {
+      display: flex;
+      gap: 0.25rem;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  > ul {
+    list-style-type: none;
+    padding: 0;
+
+    > li {
+      &:not(:last-child) {
+        margin-bottom: 1.5rem;
+      }
+
+      > div:first-child {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+
+        > h3 {
+          margin-top: 0;
+          margin-bottom: 0;
+          margin-right: 1rem;
+        }
+      }
+
+      > div:last-child {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      > div:nth-child(2):last-child {
+        margin-top: 0.5rem;
+      }
+    }
+  }
+
+  > footer {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    margin-top: auto;
+
+    > a:first-child {
+      margin-right: 1rem;
+    }
+  }
+
+  main {
+    > section:nth-child(3) {
+      > main {
+        > ul > li {
+          > div:first-child {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+
+            > h3 {
+              margin-top: 0;
+              margin-bottom: 0;
+            }
+          }
+
+          > div:last-child {
+            display: flex;
+            align-items: center;
+            margin-top: 0.5rem;
+
+            &:last-child {
+              margin-bottom: 2rem;
+            }
+          }
+
+          &:not(:last-child) {
+            margin-bottom: 0.5rem;
+          }
+        }
+      }
+
+      > div:first-child {
+        text-align: center;
+      }
+    }
+
+    section:not(:last-child) {
+      margin-bottom: 1rem;
+    }
+  }
 }
 
-header {
-  width: 100%;
-}
+main form,
+details > nav > form {
+  > *:not(label):not(:last-child) {
+    margin-bottom: 1rem;
+  }
 
-header,
-body > header:first-child > div,
-body > header:nth-child(2) > div:first-child,
-body > ul > li > div:first-child,
-body > main > section:nth-child(3) > main > ul > li > div:first-child,
-body > footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-body > main > section:nth-child(3) > main > ul > li > div:first-child > h3 {
-  margin-top: 0;
-  margin-bottom: 0;
-}
-
-body > ul > li > div:last-child {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-body > header:first-child > div,
-body > header:first-child > div > h1:not(:last-child),
-body > header:nth-child(2) > h2,
-body > header:nth-child(2) > div > h2,
-body > footer > a:first-child,
-body > ul > li > div:first-child > h3 {
-  margin-right: 1rem;
-}
-
-body > ul > li > div:first-child > h3 {
-  margin-top: 0;
-  margin-bottom: 0;
-}
-
-body > ul > li:not(:last-child) {
-  margin-bottom: 1.5rem;
-}
-
-body > ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-body > footer {
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-  margin-top: auto;
-}
-
-details > nav > form,
-main {
-  & input[type="text"],
-  & input[type="number"],
-  & input[type="email"],
-  & input[type="date"],
-  & input[type="file"],
-  & textarea {
+  input[type="text"],
+  input[type="number"],
+  input[type="email"],
+  input[type="date"],
+  input[type="file"],
+  textarea {
     box-sizing: border-box;
     width: 100%;
   }
@@ -88,59 +170,20 @@ a:not(:hover) {
   text-decoration: none;
 }
 
-nav > a {
-  padding-left: 0.1rem;
-  white-space: nowrap;
-}
-
-nav > a:not(:last-child) {
-  padding-right: 0.1rem;
-}
-
 nav {
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
+
+  > a {
+    padding-left: 0.1rem;
+    white-space: nowrap;
+
+    &:not(:last-child) {
+      padding-right: 0.1rem;
+    }
+  }
 }
 
 input[type="submit"] {
   margin-right: 0.5rem;
-}
-
-main form > *:not(label):not(:last-child),
-details > nav > form > *:not(label):not(:last-child),
-section:not(:last-child) {
-  margin-bottom: 1rem;
-}
-
-body > ul > li > div:nth-child(2):last-child {
-  margin-top: 0.5rem;
-}
-
-section > main > div:first-child {
-  text-align: center;
-}
-
-section > main > ul > li:not(:last-child) {
-  margin-bottom: 0.5rem;
-}
-
-section > main > ul > li > div:last-child {
-  margin-top: 0.5rem;
-  display: flex;
-  align-items: center;
-}
-
-section:last-of-type > main > ul > li > div:last-child {
-  margin-bottom: 2rem;
-}
-
-body > header > div > h1 > a > picture > img {
-  max-width: 128px;
-}
-
-header > nav {
-  display: flex;
-  gap: 0.25rem;
-  align-items: center;
-  justify-content: center;
 }
