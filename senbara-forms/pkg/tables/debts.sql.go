@@ -3,7 +3,7 @@
 //   sqlc v1.27.0
 // source: debts.sql
 
-package models
+package tables
 
 import (
 	"context"

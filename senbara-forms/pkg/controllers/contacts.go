@@ -14,8 +14,7 @@ import (
 
 type contactsData struct {
 	pageData
-	Entries    []models.Contact
-	Activities []models.Activity
+	Entries []models.Contact
 }
 
 type contactData struct {

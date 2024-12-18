@@ -5,5 +5,5 @@ sql:
     schema: pkg/migrations
     gen:
       go:
-        package: models
-        out: pkg/models
+        package: tables
+        out: pkg/tables

@@ -11,10 +11,10 @@ func (p *Persister) GetUserData(
 
 	namespace string,
 
-	onJournalEntry func(journalEntry models.GetJournalEntriesExportForNamespaceRow) error,
-	onContact func(contact models.GetContactsExportForNamespaceRow) error,
-	onDebt func(debt models.GetDebtsExportForNamespaceRow) error,
-	onActivity func(activity models.GetActivitiesExportForNamespaceRow) error,
+	onJournalEntry func(journalEntry models.ExportedJournalEntry) error,
+	onContact func(contact models.ExportedContact) error,
+	onDebt func(debt models.ExportedDebt) error,
+	onActivity func(activity models.ExportedActivity) error,
 ) error {
 	tx, err := p.db.Begin()
 	if err != nil {
@@ -28,8 +28,16 @@ func (p *Persister) GetUserData(
 	if err != nil {
 		return err
 	}
+
 	for _, journalEntry := range journalEntries {
-		if err := onJournalEntry(journalEntry); err != nil {
+		if err := onJournalEntry(models.ExportedJournalEntry{
+			ID:        journalEntry.ID,
+			Title:     journalEntry.Title,
+			Date:      journalEntry.Date,
+			Body:      journalEntry.Body,
+			Rating:    journalEntry.Rating,
+			Namespace: journalEntry.Namespace,
+		}); err != nil {
 			return err
 		}
 	}
@@ -38,8 +46,20 @@ func (p *Persister) GetUserData(
 	if err != nil {
 		return err
 	}
+
 	for _, contact := range contacts {
-		if err := onContact(contact); err != nil {
+		if err := onContact(models.ExportedContact{
+			ID:        contact.ID,
+			FirstName: contact.FirstName,
+			LastName:  contact.LastName,
+			Nickname:  contact.Nickname,
+			Email:     contact.Email,
+			Pronouns:  contact.Pronouns,
+			Namespace: contact.Namespace,
+			Birthday:  contact.Birthday,
+			Address:   contact.Address,
+			Notes:     contact.Notes,
+		}); err != nil {
 			return err
 		}
 	}
@@ -48,8 +68,15 @@ func (p *Persister) GetUserData(
 	if err != nil {
 		return err
 	}
+
 	for _, debt := range debts {
-		if err := onDebt(debt); err != nil {
+		if err := onDebt(models.ExportedDebt{
+			ID:          debt.ID,
+			Amount:      debt.Amount,
+			Currency:    debt.Currency,
+			Description: debt.Description,
+			ContactID:   debt.ContactID,
+		}); err != nil {
 			return err
 		}
 	}
@@ -60,7 +87,13 @@ func (p *Persister) GetUserData(
 	}
 
 	for _, activity := range activities {
-		if err := onActivity(activity); err != nil {
+		if err := onActivity(models.ExportedActivity{
+			ID:          activity.ID,
+			Name:        activity.Name,
+			Date:        activity.Date,
+			Description: activity.Description,
+			ContactID:   activity.ContactID,
+		}); err != nil {
 			return err
 		}
 	}

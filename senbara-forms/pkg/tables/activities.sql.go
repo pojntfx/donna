@@ -3,7 +3,7 @@
 //   sqlc v1.27.0
 // source: activities.sql
 
-package models
+package tables
 
 import (
 	"context"

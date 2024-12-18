@@ -3,7 +3,7 @@
 //   sqlc v1.27.0
 // source: contacts.sql
 
-package models
+package tables
 
 import (
 	"context"

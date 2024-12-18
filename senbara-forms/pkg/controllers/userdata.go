@@ -11,15 +11,11 @@ import (
 )
 
 const (
-	exportTableNameJournalEntry = "journalEntry"
-	exportTableNameContact      = "contact"
-	exportTableNameDebt         = "debt"
-	exportTableNameActivity     = "activity"
+	EntityNameExportedJournalEntry = "journalEntry"
+	EntityNameExportedContact      = "contact"
+	EntityNameExportedDebt         = "debt"
+	EntityNameExportedActivity     = "activity"
 )
-
-type userDataRow struct {
-	TableName string
-}
 
 func (b *Controller) HandleUserData(w http.ResponseWriter, r *http.Request) {
 	redirected, userData, status, err := b.authorize(w, r)
@@ -43,8 +39,8 @@ func (b *Controller) HandleUserData(w http.ResponseWriter, r *http.Request) {
 
 		userData.Email,
 
-		func(journalEntry models.GetJournalEntriesExportForNamespaceRow) error {
-			journalEntry.TableName = exportTableNameJournalEntry
+		func(journalEntry models.ExportedJournalEntry) error {
+			journalEntry.ExportedEntityIdentifier.EntityName = EntityNameExportedJournalEntry
 
 			if err := encoder.Encode(journalEntry); err != nil {
 				return errors.Join(errCouldNotWriteResponse, err)
@@ -52,8 +48,8 @@ func (b *Controller) HandleUserData(w http.ResponseWriter, r *http.Request) {
 
 			return nil
 		},
-		func(contact models.GetContactsExportForNamespaceRow) error {
-			contact.TableName = exportTableNameContact
+		func(contact models.ExportedContact) error {
+			contact.ExportedEntityIdentifier.EntityName = EntityNameExportedContact
 
 			if err := encoder.Encode(contact); err != nil {
 				return errors.Join(errCouldNotWriteResponse, err)
@@ -61,8 +57,8 @@ func (b *Controller) HandleUserData(w http.ResponseWriter, r *http.Request) {
 
 			return nil
 		},
-		func(debt models.GetDebtsExportForNamespaceRow) error {
-			debt.TableName = exportTableNameDebt
+		func(debt models.ExportedDebt) error {
+			debt.ExportedEntityIdentifier.EntityName = EntityNameExportedDebt
 
 			if err := encoder.Encode(debt); err != nil {
 				return errors.Join(errCouldNotWriteResponse, err)
@@ -70,8 +66,8 @@ func (b *Controller) HandleUserData(w http.ResponseWriter, r *http.Request) {
 
 			return nil
 		},
-		func(activity models.GetActivitiesExportForNamespaceRow) error {
-			activity.TableName = exportTableNameActivity
+		func(activity models.ExportedActivity) error {
+			activity.ExportedEntityIdentifier.EntityName = EntityNameExportedActivity
 
 			if err := encoder.Encode(activity); err != nil {
 				return errors.Join(errCouldNotWriteResponse, err)
@@ -113,8 +109,8 @@ func (b *Controller) HandleCreateUserData(w http.ResponseWriter, r *http.Request
 	decoder := json.NewDecoder(file)
 
 	for {
-		var rawRow json.RawMessage
-		if err := decoder.Decode(&rawRow); err != nil {
+		var b json.RawMessage
+		if err := decoder.Decode(&b); err != nil {
 			if errors.Is(err, io.EOF) {
 				break
 			}
@@ -126,8 +122,8 @@ func (b *Controller) HandleCreateUserData(w http.ResponseWriter, r *http.Request
 			return
 		}
 
-		var userDataRow userDataRow
-		if err := json.Unmarshal(rawRow, &userDataRow); err != nil {
+		var entityIdentifier models.ExportedEntityIdentifier
+		if err := json.Unmarshal(b, &entityIdentifier); err != nil {
 			log.Println(errCouldNotReadRequest, err)
 
 			http.Error(w, errCouldNotReadRequest.Error(), http.StatusInternalServerError)
@@ -135,10 +131,10 @@ func (b *Controller) HandleCreateUserData(w http.ResponseWriter, r *http.Request
 			return
 		}
 
-		switch userDataRow.TableName {
-		case exportTableNameJournalEntry:
-			var journalEntry models.GetJournalEntriesExportForNamespaceRow
-			if err := json.Unmarshal(rawRow, &journalEntry); err != nil {
+		switch entityIdentifier.EntityName {
+		case EntityNameExportedJournalEntry:
+			var journalEntry models.ExportedJournalEntry
+			if err := json.Unmarshal(b, &journalEntry); err != nil {
 				log.Println(errCouldNotReadRequest, err)
 
 				http.Error(w, errCouldNotReadRequest.Error(), http.StatusInternalServerError)
@@ -148,9 +144,9 @@ func (b *Controller) HandleCreateUserData(w http.ResponseWriter, r *http.Request
 
 			log.Println(journalEntry)
 
-		case exportTableNameContact:
-			var contact models.GetContactsExportForNamespaceRow
-			if err := json.Unmarshal(rawRow, &contact); err != nil {
+		case EntityNameExportedContact:
+			var contact models.ExportedContact
+			if err := json.Unmarshal(b, &contact); err != nil {
 				log.Println(errCouldNotReadRequest, err)
 
 				http.Error(w, errCouldNotReadRequest.Error(), http.StatusInternalServerError)
@@ -160,9 +156,9 @@ func (b *Controller) HandleCreateUserData(w http.ResponseWriter, r *http.Request
 
 			log.Println(contact)
 
-		case exportTableNameDebt:
-			var debt models.GetDebtsExportForNamespaceRow
-			if err := json.Unmarshal(rawRow, &debt); err != nil {
+		case EntityNameExportedDebt:
+			var debt models.ExportedDebt
+			if err := json.Unmarshal(b, &debt); err != nil {
 				log.Println(errCouldNotReadRequest, err)
 
 				http.Error(w, errCouldNotReadRequest.Error(), http.StatusInternalServerError)
@@ -172,9 +168,9 @@ func (b *Controller) HandleCreateUserData(w http.ResponseWriter, r *http.Request
 
 			log.Println(debt)
 
-		case exportTableNameActivity:
-			var activity models.GetActivitiesExportForNamespaceRow
-			if err := json.Unmarshal(rawRow, &activity); err != nil {
+		case EntityNameExportedActivity:
+			var activity models.ExportedActivity
+			if err := json.Unmarshal(b, &activity); err != nil {
 				log.Println(errCouldNotReadRequest, err)
 
 				http.Error(w, errCouldNotReadRequest.Error(), http.StatusInternalServerError)

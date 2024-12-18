@@ -6,13 +6,13 @@ import (
 	"database/sql"
 
 	"github.com/pojntfx/senbara/senbara-forms/pkg/migrations"
-	"github.com/pojntfx/senbara/senbara-forms/pkg/models"
+	"github.com/pojntfx/senbara/senbara-forms/pkg/tables"
 	"github.com/pressly/goose/v3"
 )
 
 type Persister struct {
 	pgaddr  string
-	queries *models.Queries
+	queries *tables.Queries
 	db      *sql.DB
 }
 
@@ -39,7 +39,7 @@ func (p *Persister) Init() error {
 		return err
 	}
 
-	p.queries = models.New(p.db)
+	p.queries = tables.New(p.db)
 
 	return nil
 }
