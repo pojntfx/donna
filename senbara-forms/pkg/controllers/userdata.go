@@ -85,7 +85,7 @@ func (b *Controller) HandleUserData(w http.ResponseWriter, r *http.Request) {
 }
 
 func (b *Controller) HandleCreateUserData(w http.ResponseWriter, r *http.Request) {
-	redirected, _, status, err := b.authorize(w, r)
+	redirected, userData, status, err := b.authorize(w, r)
 	if err != nil {
 		log.Println(err)
 
@@ -107,6 +107,24 @@ func (b *Controller) HandleCreateUserData(w http.ResponseWriter, r *http.Request
 	defer file.Close()
 
 	decoder := json.NewDecoder(file)
+
+	createJournalEntry,
+		createContact,
+		createDebt,
+		createActivity,
+
+		commit,
+		rollback,
+
+		err := b.persister.CreateUserData(r.Context(), userData.Email)
+	if err != nil {
+		log.Println(errCouldNotStartTransaction, err)
+
+		http.Error(w, errCouldNotStartTransaction.Error(), http.StatusInternalServerError)
+
+		return
+	}
+	defer rollback()
 
 	for {
 		var b json.RawMessage
@@ -142,7 +160,13 @@ func (b *Controller) HandleCreateUserData(w http.ResponseWriter, r *http.Request
 				return
 			}
 
-			log.Println(journalEntry)
+			if err := createJournalEntry(journalEntry); err != nil {
+				log.Println(errCouldNotInsertIntoDB, err)
+
+				http.Error(w, errCouldNotInsertIntoDB.Error(), http.StatusInternalServerError)
+
+				return
+			}
 
 		case EntityNameExportedContact:
 			var contact models.ExportedContact
@@ -154,7 +178,13 @@ func (b *Controller) HandleCreateUserData(w http.ResponseWriter, r *http.Request
 				return
 			}
 
-			log.Println(contact)
+			if err := createContact(contact); err != nil {
+				log.Println(errCouldNotInsertIntoDB, err)
+
+				http.Error(w, errCouldNotInsertIntoDB.Error(), http.StatusInternalServerError)
+
+				return
+			}
 
 		case EntityNameExportedDebt:
 			var debt models.ExportedDebt
@@ -166,7 +196,13 @@ func (b *Controller) HandleCreateUserData(w http.ResponseWriter, r *http.Request
 				return
 			}
 
-			log.Println(debt)
+			if err := createDebt(debt); err != nil {
+				log.Println(errCouldNotInsertIntoDB, err)
+
+				http.Error(w, errCouldNotInsertIntoDB.Error(), http.StatusInternalServerError)
+
+				return
+			}
 
 		case EntityNameExportedActivity:
 			var activity models.ExportedActivity
@@ -178,13 +214,27 @@ func (b *Controller) HandleCreateUserData(w http.ResponseWriter, r *http.Request
 				return
 			}
 
-			log.Println(activity)
+			if err := createActivity(activity); err != nil {
+				log.Println(errCouldNotInsertIntoDB, err)
+
+				http.Error(w, errCouldNotInsertIntoDB.Error(), http.StatusInternalServerError)
+
+				return
+			}
 
 		default:
-			log.Println("Skipping import error:", errUnknownTableName, err)
+			log.Println("Skipping import error:", errUnknownEntityName, err)
 
 			continue
 		}
+	}
+
+	if err := commit(); err != nil {
+		log.Println(errCouldNotInsertIntoDB, err)
+
+		http.Error(w, errCouldNotInsertIntoDB.Error(), http.StatusInternalServerError)
+
+		return
 	}
 
 	http.Redirect(w, r, "/contacts", http.StatusFound)

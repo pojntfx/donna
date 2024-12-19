@@ -2,6 +2,8 @@ package persisters
 
 import (
 	"context"
+	"database/sql"
+	"sync"
 
 	"github.com/pojntfx/senbara/senbara-forms/pkg/models"
 )
@@ -127,4 +129,81 @@ func (p *Persister) DeleteUserData(ctx context.Context, namespace string) error 
 	}
 
 	return tx.Commit()
+}
+
+func (p *Persister) CreateUserData(ctx context.Context, namespace string) (
+	createJournalEntry func(journalEntry models.ExportedJournalEntry) error,
+	createContact func(contact models.ExportedContact) error,
+	createDebt func(debt models.ExportedDebt) error,
+	createActivity func(activty models.ExportedActivity) error,
+
+	commit func() error,
+	rollback func() error,
+
+	err error,
+) {
+	createJournalEntry = func(journalEntry models.ExportedJournalEntry) error { return nil }
+	createContact = func(contact models.ExportedContact) error { return nil }
+	createDebt = func(debt models.ExportedDebt) error { return nil }
+	createActivity = func(activity models.ExportedActivity) error { return nil }
+
+	commit = func() error { return nil }
+	rollback = func() error { return nil }
+
+	var tx *sql.Tx
+	tx, err = p.db.Begin()
+	if err != nil {
+		return
+	}
+
+	qtx := p.queries.WithTx(tx)
+
+	var (
+		journalEntryIDMapLock sync.Mutex
+		journalEntryIDMap     = map[int32]int32{}
+	)
+
+	createJournalEntry = func(journalEntry models.ExportedJournalEntry) error {
+		id, err := qtx.CreateJournalEntry(ctx, models.CreateJournalEntryParams{
+			Title:  journalEntry.Title,
+			Body:   journalEntry.Body,
+			Rating: journalEntry.Rating,
+
+			Namespace: namespace,
+		})
+		if err != nil {
+			return err
+		}
+
+		journalEntryIDMapLock.Lock()
+		defer journalEntryIDMapLock.Unlock()
+
+		journalEntryIDMap[journalEntry.ID] = id
+
+		return nil
+	}
+
+	// TODO: Import debts and activities, use `journalEntryIDMap` to resolve external
+	// to internal/actual IDs
+
+	createContact = func(contact models.ExportedContact) error {
+		if _, err := qtx.CreateContact(ctx, models.CreateContactParams{
+			FirstName: contact.FirstName,
+			LastName:  contact.LastName,
+			Nickname:  contact.Nickname,
+			Email:     contact.Email,
+			Pronouns:  contact.Pronouns,
+
+			Namespace: namespace,
+		}); err != nil {
+			return err
+		}
+
+		return nil
+	}
+
+	commit = tx.Commit
+	rollback = tx.Rollback
+
+	return
 }
